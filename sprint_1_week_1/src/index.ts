@@ -95,6 +95,7 @@ app.post('/videos', (req: Request, res: Response) => {
 
     if(errorsMessages.length > 0){
       res.status(400).send({errorsMessages})
+      return
     }
     
     videos.push(newVideo)
@@ -158,6 +159,7 @@ if(!Array.isArray(req.body.availableResolutions) || !req.body.availableResolutio
 
 if(errorsMessages.length > 0){
   res.status(400).send({errorsMessages})
+  return
 }
 
   
