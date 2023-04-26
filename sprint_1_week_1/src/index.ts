@@ -59,7 +59,7 @@ app.post('/videos', (req: Request, res: Response) => {
     const publication = new Date(createdDate)
     publication.setDate(publication.getDate() + 1)
     const newVideo = {
-        id: videos[videos.length - 1].id + 1,
+        id: +(new Date()),
         title: req.body.title,
         author: req.body.author,
         canBeDownloaded: false,
