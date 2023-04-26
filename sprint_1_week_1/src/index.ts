@@ -45,6 +45,8 @@ let videos = [
 ]
 enum VideobleResolutions { 'P144', 'P240', 'P360', 'P480', 'P720', 'P1080', 'P1440', 'P2160' }
 
+const errorsMessages: { message: string; field: string }[] = []
+
 app.delete('/testing/all-data', (req: Request, res: Response) => {
     videos = []
     res.status(204).send('All data is deleted') 
@@ -72,33 +74,28 @@ app.post('/videos', (req: Request, res: Response) => {
       }
     
     if(typeof newVideo.title !== 'string' || newVideo.title.length > 40){
-        res.status(400).send({
-            errorsMessages: [{
-                message: 'Title must be a string',
-                field: 'title'
-            }]
-        })
-        return
+        errorsMessages.push({
+          message: 'Title must be a string',
+          field: 'title'
+      })
     }
     if(typeof newVideo.author !== 'string' || newVideo.author.length > 20){
-        res.status(400).send({
-            errorsMessages: [{
-                message: 'Author must be a string',
-                field: 'author'
-            }]
-        })
-        return
+        errorsMessages.push({
+          message: 'Author must be a string',
+          field: 'author'
+      })
     }
 
   if(!Array.isArray(newVideo.availableResolutions) || !newVideo.availableResolutions.every(x => Object.values(VideobleResolutions).includes(x))){
-    res.status(400).send({
-        errorsMessages: [{
-            message: 'Available Resolutions must be an array',
-            field: 'availableResolutions'
-        }]
-    })
-    return
+    errorsMessages.push({
+      message: 'Available Resolutions must be an array',
+      field: 'availableResolutions'
+  })
 }
+
+    if(errorsMessages.length > 0){
+      res.status(400).send({errorsMessages})
+    }
     
     videos.push(newVideo)
     res.status(201).send(newVideo)
@@ -122,59 +119,45 @@ app.put('/videos/:id', (req: Request, res: Response) => {
   }
 
   if(typeof req.body.title !== 'string' || req.body.title.length > 40){
-      res.status(400).send({
-        errorsMessages: [{
-              message: 'Title must be a string',
-              field: 'title'
-          }]
-      })
-      return
+      errorsMessages.push({
+        message: 'Title must be a string',
+        field: 'title'
+    })
   }
   if(typeof req.body.author !== 'string' || req.body.author.length > 20){
-      res.status(400).send({
-        errorsMessages: [{
-              message: 'Author must be a string',
-              field: 'author'
-          }]
-      })
-      return
+      errorsMessages.push({
+        message: 'Author must be a string',
+        field: 'author'
+    })
   }
   if(typeof req.body.canBeDownloaded !== 'boolean' && req.body.canBeDownloaded){
-    res.status(400).send({
-      errorsMessages: [{
-          message: 'Field must be a boolean',
-          field: 'canBeDownloaded'
-      }]
+    errorsMessages.push({
+      message: 'Field must be a boolean',
+      field: 'canBeDownloaded'
   })
-  return
   }
   if(req.body.minAgeRestriction && (typeof req.body.minAgeRestriction !== 'number' || req.body.minAgeRestriction > 18 || req.body.minAgeRestriction < 1)){
-    res.status(400).send({
-      errorsMessages: [{
-          message: 'Min Age Restriction must be a number',
-          field: 'minAgeRestriction'
-      }]
+    errorsMessages.push({
+      message: 'Min Age Restriction must be a number',
+      field: 'minAgeRestriction'
   })
-  return
   }
   if(req.body.publicationDate && (typeof req.body.publicationDate !== 'string' || isNaN(Date.parse(req.body.publicationDate)) || Date.parse(req.body.publicationDate) < Date.parse(req.body.createdAt))){
-    res.status(400).send({
-      errorsMessages: [{
-            message: 'publicationDate must be a date format',
-            field: 'publicationDate'
-        }]
-    })
-    return
+    errorsMessages.push({
+      message: 'publicationDate must be a date format',
+      field: 'publicationDate'
+  })
 }
 
 if(!Array.isArray(req.body.availableResolutions) || !req.body.availableResolutions.every(x => Object.values(VideobleResolutions).includes(x))){
-  res.status(400).send({
-    errorsMessages: [{
-          message: 'Available Resolutions must be an array',
-          field: 'availableResolutions'
-      }]
-  })
-  return
+  errorsMessages.push({
+    message: 'Available Resolutions must be an array',
+    field: 'availableResolutions'
+})
+}
+
+if(errorsMessages.length > 0){
+  res.status(400).send({errorsMessages})
 }
 
   
