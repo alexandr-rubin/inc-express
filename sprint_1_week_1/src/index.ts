@@ -73,7 +73,7 @@ app.post('/videos', (req: Request, res: Response) => {
     
     if(typeof newVideo.title !== 'string'){
         res.status(400).send({
-            errorMessages: [{
+            errorsMessages: [{
                 message: 'Title must be a string',
                 field: 'title'
             }]
@@ -82,7 +82,7 @@ app.post('/videos', (req: Request, res: Response) => {
     }
     if(typeof newVideo.author !== 'string'){
         res.status(400).send({
-            errorMessages: [{
+            errorsMessages: [{
                 message: 'Author must be a string',
                 field: 'author'
             }]
@@ -92,7 +92,7 @@ app.post('/videos', (req: Request, res: Response) => {
 
   if(!Array.isArray(newVideo.availableResolutions) || !newVideo.availableResolutions.every(x => Object.values(VideobleResolutions).includes(x))){
     res.status(400).send({
-        errorMessage: [{
+        errorsMessages: [{
             message: 'Available Resolutions must be an array',
             field: 'availableResolutions'
         }]
@@ -123,7 +123,7 @@ app.put('/videos/:id', (req: Request, res: Response) => {
 
   if(typeof req.body.title !== 'string'){
       res.status(400).send({
-          errorMessage: [{
+        errorsMessages: [{
               message: 'Title must be a string',
               field: 'title'
           }]
@@ -132,7 +132,7 @@ app.put('/videos/:id', (req: Request, res: Response) => {
   }
   if(typeof req.body.author !== 'string'){
       res.status(400).send({
-          errorMessage: [{
+        errorsMessages: [{
               message: 'Author must be a string',
               field: 'author'
           }]
@@ -141,7 +141,7 @@ app.put('/videos/:id', (req: Request, res: Response) => {
   }
   if(typeof req.body.canBeDownloaded !== 'boolean' && req.body.canBeDownloaded){
     res.status(400).send({
-      errorMessage: [{
+      errorsMessages: [{
           message: 'Field must be a boolean',
           field: 'canBeDownloaded'
       }]
@@ -150,7 +150,7 @@ app.put('/videos/:id', (req: Request, res: Response) => {
   }
   if(req.body.minAgeRestriction && (typeof req.body.minAgeRestriction !== 'number' || req.body.minAgeRestriction > 18 || req.body.minAgeRestriction < 1)){
     res.status(400).send({
-      errorMessage: [{
+      errorsMessages: [{
           message: 'Min Age Restriction must be a number',
           field: 'minAgeRestriction'
       }]
@@ -159,7 +159,7 @@ app.put('/videos/:id', (req: Request, res: Response) => {
   }
   if(req.body.publicationDate && (typeof req.body.publicationDate !== 'string' || isNaN(Date.parse(req.body.publicationDate)) || Date.parse(req.body.publicationDate) < Date.parse(req.body.createdAt))){
     res.status(400).send({
-        errorMessage: [{
+      errorsMessages: [{
             message: 'publicationDate must be a date format',
             field: 'publicationDate'
         }]
@@ -169,7 +169,7 @@ app.put('/videos/:id', (req: Request, res: Response) => {
 
 if(!Array.isArray(req.body.availableResolutions) || !req.body.availableResolutions.every(x => Object.values(VideobleResolutions).includes(x))){
   res.status(400).send({
-      errorMessage: [{
+    errorsMessages: [{
           message: 'Available Resolutions must be an array',
           field: 'availableResolutions'
       }]
