@@ -73,7 +73,7 @@ app.post('/videos', (req: Request, res: Response) => {
     
     if(typeof newVideo.title !== 'string'){
         res.status(400).send({
-            errorMessage: [{
+            errorMessages: [{
                 message: 'Title must be a string',
                 field: 'title'
             }]
@@ -82,7 +82,7 @@ app.post('/videos', (req: Request, res: Response) => {
     }
     if(typeof newVideo.author !== 'string'){
         res.status(400).send({
-            errorMessage: [{
+            errorMessages: [{
                 message: 'Author must be a string',
                 field: 'author'
             }]
