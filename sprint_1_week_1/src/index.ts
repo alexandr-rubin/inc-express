@@ -71,7 +71,7 @@ app.post('/videos', (req: Request, res: Response) => {
         ]
       }
     
-    if(typeof newVideo.title !== 'string'){
+    if(typeof newVideo.title !== 'string' || newVideo.title.length > 40){
         res.status(400).send({
             errorsMessages: [{
                 message: 'Title must be a string',
@@ -80,7 +80,7 @@ app.post('/videos', (req: Request, res: Response) => {
         })
         return
     }
-    if(typeof newVideo.author !== 'string'){
+    if(typeof newVideo.author !== 'string' || newVideo.author.length > 20){
         res.status(400).send({
             errorsMessages: [{
                 message: 'Author must be a string',
@@ -121,7 +121,7 @@ app.put('/videos/:id', (req: Request, res: Response) => {
     return
   }
 
-  if(typeof req.body.title !== 'string'){
+  if(typeof req.body.title !== 'string' || req.body.title.length > 40){
       res.status(400).send({
         errorsMessages: [{
               message: 'Title must be a string',
@@ -130,7 +130,7 @@ app.put('/videos/:id', (req: Request, res: Response) => {
       })
       return
   }
-  if(typeof req.body.author !== 'string'){
+  if(typeof req.body.author !== 'string' || req.body.author.length > 20){
       res.status(400).send({
         errorsMessages: [{
               message: 'Author must be a string',
