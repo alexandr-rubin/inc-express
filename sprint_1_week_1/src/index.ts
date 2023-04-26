@@ -45,7 +45,7 @@ let videos = [
 ]
 enum VideobleResolutions { 'P144', 'P240', 'P360', 'P480', 'P720', 'P1080', 'P1440', 'P2160' }
 
-const errorsMessages: { message: string; field: string }[] = []
+let errorsMessages: { message: string; field: string }[] = []
 
 app.delete('/testing/all-data', (req: Request, res: Response) => {
     videos = []
@@ -112,6 +112,7 @@ app.get('/videos/:id', (req: Request, res: Response) => {
   }
 })
 
+errorsMessages = []
 app.put('/videos/:id', (req: Request, res: Response) => {
   const video = videos.find(x => x.id === +req.params.id)
   if(!video){
