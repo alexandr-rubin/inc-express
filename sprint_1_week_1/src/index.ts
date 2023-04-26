@@ -57,6 +57,7 @@ app.get('/videos', (req: Request, res: Response) => {
 })
 
 app.post('/videos', (req: Request, res: Response) => {
+    errorsMessages = []
     const createdDate = new Date().toISOString()
     const publication = new Date(createdDate)
     publication.setDate(publication.getDate() + 1)
@@ -86,12 +87,12 @@ app.post('/videos', (req: Request, res: Response) => {
       })
     }
 
-  if(!Array.isArray(newVideo.availableResolutions) || !newVideo.availableResolutions.every(x => Object.values(VideobleResolutions).includes(x))){
-    errorsMessages.push({
-      message: 'Available Resolutions must be an array',
-      field: 'availableResolutions'
-  })
-}
+    if(!Array.isArray(newVideo.availableResolutions) || !newVideo.availableResolutions.every(x => Object.values(VideobleResolutions).includes(x))){
+        errorsMessages.push({
+          message: 'Available Resolutions must be an array',
+          field: 'availableResolutions'
+      })
+    }
 
     if(errorsMessages.length > 0){
       res.status(400).send({errorsMessages})
@@ -112,8 +113,8 @@ app.get('/videos/:id', (req: Request, res: Response) => {
   }
 })
 
-errorsMessages = []
 app.put('/videos/:id', (req: Request, res: Response) => {
+  errorsMessages = []
   const video = videos.find(x => x.id === +req.params.id)
   if(!video){
     res.status(404).send('Video not found')
