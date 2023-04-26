@@ -45,7 +45,7 @@ let videos = [
 ]
 enum VideobleResolutions { 'P144', 'P240', 'P360', 'P480', 'P720', 'P1080', 'P1440', 'P2160' }
 
-app.delete('/videos', (req: Request, res: Response) => {
+app.delete('/testing/all-data', (req: Request, res: Response) => {
     videos = []
     res.status(204).send('All data is deleted') 
 })
@@ -148,7 +148,7 @@ app.put('/videos/:id', (req: Request, res: Response) => {
   })
   return
   }
-  if(req.body.minAgeRestriction && (typeof req.body.title.minAgeRestriction !== 'number' || req.body.title.minAgeRestriction > 18 || req.body.title.minAgeRestriction < 1)){
+  if(req.body.minAgeRestriction && (typeof req.body.minAgeRestriction !== 'number' || req.body.minAgeRestriction > 18 || req.body.minAgeRestriction < 1)){
     res.status(400).send({
       errorMessage: [{
           message: 'Min Age Restriction must be a number',
@@ -157,7 +157,7 @@ app.put('/videos/:id', (req: Request, res: Response) => {
   })
   return
   }
-  if(req.body.publicationDate && (typeof req.body.publicationDate !== 'string' || isNaN(Date.parse(req.body.title.publicationDate)) || Date.parse(req.body.title.publicationDate) < Date.parse(req.body.title.createdAt))){
+  if(req.body.publicationDate && (typeof req.body.publicationDate !== 'string' || isNaN(Date.parse(req.body.publicationDate)) || Date.parse(req.body.publicationDate) < Date.parse(req.body.createdAt))){
     res.status(400).send({
         errorMessage: [{
             message: 'publicationDate must be a date format',
