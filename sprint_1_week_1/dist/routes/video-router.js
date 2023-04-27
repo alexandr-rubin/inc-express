@@ -1,8 +1,9 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.videosRouter = void 0;
+exports.testingVideosRouter = exports.videosRouter = void 0;
 const express_1 = require("express");
 exports.videosRouter = (0, express_1.Router)({});
+exports.testingVideosRouter = (0, express_1.Router)({});
 let videos = [
     {
         "id": 0,
@@ -53,11 +54,11 @@ var VideoResolutions;
     VideoResolutions[VideoResolutions["P2160"] = 7] = "P2160";
 })(VideoResolutions || (VideoResolutions = {}));
 let errorsMessages = [];
-exports.videosRouter.delete('/testing/all-data', (req, res) => {
+exports.testingVideosRouter.delete('/', (req, res) => {
     videos = [];
     res.status(204).send('All data is deleted');
 });
-exports.videosRouter.get('/videos', (req, res) => {
+exports.videosRouter.get('/', (req, res) => {
     res.status(200).send(videos);
 });
 exports.videosRouter.post('/', (req, res) => {

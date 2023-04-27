@@ -9,7 +9,7 @@ const app = (0, express_1.default)();
 const port = 3000;
 app.use(express_1.default.json());
 app.use('/videos', video_router_1.videosRouter);
-app.use('/testing/all-data', video_router_1.videosRouter);
+app.use('/testing/all-data', video_router_1.testingVideosRouter);
 app.listen(port, () => {
     console.log(`App listening on port ${port}`);
 });

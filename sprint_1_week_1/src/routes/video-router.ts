@@ -1,6 +1,7 @@
 import { Router, Request, Response } from "express";
 
 export const videosRouter = Router({})
+export const testingVideosRouter = Router({})
 
 let videos = [
     {
@@ -44,12 +45,12 @@ enum VideoResolutions { 'P144', 'P240', 'P360', 'P480', 'P720', 'P1080', 'P1440'
 
 let errorsMessages: { message: string; field: string }[] = []
 
-videosRouter.delete('/testing/all-data', (req: Request, res: Response) => {
+testingVideosRouter.delete('/', (req: Request, res: Response) => {
     videos = []
     res.status(204).send('All data is deleted') 
 })
 
-videosRouter.get('/videos', (req: Request, res: Response) => {
+videosRouter.get('/', (req: Request, res: Response) => {
     res.status(200).send(videos)
 })
 
