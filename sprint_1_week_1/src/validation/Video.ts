@@ -1,12 +1,10 @@
+import { Video } from "../models/Video";
+
 enum VideoResolutions { 'P144', 'P240', 'P360', 'P480', 'P720', 'P1080', 'P1440', 'P2160' }
 
 let errorsMessages: { message: string; field: string }[] = []
 
-export const postVideo = (video: {
-    title: string,
-    author: string,
-    availableResolutions: string[]
-}) => {
+export const postVideo = (video: Video) => {
     errorsMessages = []
     strValidation(video.title, 'title', 40)
     strValidation(video.author, 'author', 20)
@@ -15,20 +13,12 @@ export const postVideo = (video: {
     return errorsMessages
 }
 
-export const putVideo = (video: {
-    title: string,
-    author: string,
-    canBeDownloaded: boolean,
-    minAgeRestriction: number,
-    createdAt: string,
-    publicationDate: string,
-    availableResolutions: string[]
-}) => {
+export const putVideo = (video: Video) => {
     errorsMessages = []
     strValidation(video.title, 'title', 40)
     strValidation(video.author, 'author', 20)
     canBeDownloaded(video.canBeDownloaded)
-    minAgeRestriction(video.minAgeRestriction)
+    minAgeRestriction(video.minAgeRestriction) 
     publicationValidation(video.publicationDate, video.createdAt)
     !video.availableResolutions ?? resolutionsValidation(video.availableResolutions)
 
@@ -67,7 +57,7 @@ const canBeDownloaded = (canBeDownloaded: boolean) => {
         })
     }
 }
-const minAgeRestriction = (minAgeRestriction: number) => {
+const minAgeRestriction = (minAgeRestriction: number | null) => {
     if(minAgeRestriction && (typeof minAgeRestriction !== 'number' || minAgeRestriction > 18 || minAgeRestriction < 1)){
         errorsMessages.push({
             message: 'Min Age Restriction must be a number',

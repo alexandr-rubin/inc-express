@@ -1,10 +1,11 @@
 import { Router, Request, Response } from "express"
 import { postVideo, putVideo } from "../validation/Video"
+import { Video } from "../models/Video"
 
 export const videosRouter = Router({})
 export const testingVideosRouter = Router({})
 
-export let videos = [
+export let videos: Video[] = [
     {
         "id": 0,
         "title": "title 1",
@@ -56,7 +57,7 @@ videosRouter.post('/', (req: Request, res: Response) => {
     const createdDate = new Date().toISOString()
     const publication = new Date(createdDate)
     publication.setDate(publication.getDate() + 1)
-    const newVideo = {
+    const newVideo: Video = {
         id: +(new Date()),
         title: req.body.title,
         author: req.body.author,
