@@ -22,18 +22,19 @@ const postVideo = (video) => {
 };
 exports.postVideo = postVideo;
 const putVideo = (video) => {
+    var _a;
     errorsMessages = [];
     strValidation(video.title, 'title', 40);
     strValidation(video.author, 'author', 20);
     canBeDownloaded(video.canBeDownloaded);
     minAgeRestriction(video.minAgeRestriction);
     publicationValidation(video.publicationDate, video.createdAt);
-    resolutionsValidation(video.availableResolutions);
+    (_a = !video.availableResolutions) !== null && _a !== void 0 ? _a : resolutionsValidation(video.availableResolutions);
     return errorsMessages;
 };
 exports.putVideo = putVideo;
 const strValidation = (str, field, len) => {
-    if (typeof str !== 'string' || str.length > len) {
+    if (typeof str !== 'string' || str.length > len || str.length == 0) {
         errorsMessages.push({
             message: `Incorrect ${field}`,
             field: `${field}`

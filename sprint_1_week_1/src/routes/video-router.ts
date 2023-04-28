@@ -4,7 +4,7 @@ import { postVideo, putVideo } from "../validation/Video"
 export const videosRouter = Router({})
 export const testingVideosRouter = Router({})
 
-let videos = [
+export let videos = [
     {
         "id": 0,
         "title": "title 1",
@@ -69,9 +69,9 @@ videosRouter.post('/', (req: Request, res: Response) => {
         ]
     }
 
-    const validationResult = postVideo(newVideo)
-    if(validationResult.length > 0){
-        res.status(400).send({validationResult})
+    const errorsMessages = postVideo(newVideo)
+    if(errorsMessages.length > 0){
+        res.status(400).send({errorsMessages})
         return
     }
     
@@ -96,9 +96,9 @@ videosRouter.put('/:id', (req: Request, res: Response) => {
         return
     }
 
-    const validationResult = putVideo(req.body)
-    if(validationResult.length > 0){
-        res.status(400).send({validationResult})
+    const errorsMessages = putVideo(req.body)
+    if(errorsMessages.length > 0){
+        res.status(400).send({errorsMessages})
         return
     }
 

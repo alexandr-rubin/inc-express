@@ -1,12 +1,6 @@
-import express, {Request, Response} from 'express'
-import { videosRouter, testingVideosRouter } from './routes/video-router'
+import { app } from './setting' 
 
-const app = express()
-const port = 3000
-
-app.use(express.json())
-app.use('/videos', videosRouter)
-app.use('/testing/all-data', testingVideosRouter)
+const port = process.env.PORT || 3000
 
 app.listen(port, () => {
     console.log(`App listening on port ${port}`)

@@ -1,11 +1,11 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.testingVideosRouter = exports.videosRouter = void 0;
+exports.videos = exports.testingVideosRouter = exports.videosRouter = void 0;
 const express_1 = require("express");
 const Video_1 = require("../validation/Video");
 exports.videosRouter = (0, express_1.Router)({});
 exports.testingVideosRouter = (0, express_1.Router)({});
-let videos = [
+exports.videos = [
     {
         "id": 0,
         "title": "title 1",
@@ -44,11 +44,11 @@ let videos = [
     }
 ];
 exports.testingVideosRouter.delete('/', (req, res) => {
-    videos = [];
+    exports.videos = [];
     res.status(204).send('All data is deleted');
 });
 exports.videosRouter.get('/', (req, res) => {
-    res.status(200).send(videos);
+    res.status(200).send(exports.videos);
 });
 exports.videosRouter.post('/', (req, res) => {
     const createdDate = new Date().toISOString();
@@ -66,16 +66,16 @@ exports.videosRouter.post('/', (req, res) => {
             "P144"
         ]
     };
-    const validationResult = (0, Video_1.postVideo)(newVideo);
-    if (validationResult.length > 0) {
-        res.status(400).send({ validationResult });
+    const errorsMessages = (0, Video_1.postVideo)(newVideo);
+    if (errorsMessages.length > 0) {
+        res.status(400).send({ errorsMessages });
         return;
     }
-    videos.push(newVideo);
+    exports.videos.push(newVideo);
     res.status(201).send(newVideo);
 });
 exports.videosRouter.get('/:id', (req, res) => {
-    const video = videos.find(x => x.id === +req.params.id);
+    const video = exports.videos.find(x => x.id === +req.params.id);
     if (video) {
         res.status(200).send(video);
     }
@@ -85,14 +85,14 @@ exports.videosRouter.get('/:id', (req, res) => {
 });
 exports.videosRouter.put('/:id', (req, res) => {
     var _a, _b, _c, _d;
-    const video = videos.find(x => x.id === +req.params.id);
+    const video = exports.videos.find(x => x.id === +req.params.id);
     if (!video) {
         res.status(404).send('Video not found');
         return;
     }
-    const validationResult = (0, Video_1.putVideo)(req.body);
-    if (validationResult.length > 0) {
-        res.status(400).send({ validationResult });
+    const errorsMessages = (0, Video_1.putVideo)(req.body);
+    if (errorsMessages.length > 0) {
+        res.status(400).send({ errorsMessages });
         return;
     }
     video.title = req.body.title;
@@ -104,7 +104,7 @@ exports.videosRouter.put('/:id', (req, res) => {
     res.status(204).send(video);
 });
 exports.videosRouter.get('/:id', (req, res) => {
-    const video = videos.find(x => x.id === +req.params.id);
+    const video = exports.videos.find(x => x.id === +req.params.id);
     if (video) {
         res.status(200).send(video);
     }
@@ -113,9 +113,9 @@ exports.videosRouter.get('/:id', (req, res) => {
     }
 });
 exports.videosRouter.delete('/:id', (req, res) => {
-    const video = videos.filter(x => x.id !== +req.params.id);
-    if (video.length < videos.length) {
-        videos = video;
+    const video = exports.videos.filter(x => x.id !== +req.params.id);
+    if (video.length < exports.videos.length) {
+        exports.videos = video;
         res.status(204).send(video);
     }
     else {

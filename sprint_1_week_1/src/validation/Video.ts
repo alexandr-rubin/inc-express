@@ -30,13 +30,13 @@ export const putVideo = (video: {
     canBeDownloaded(video.canBeDownloaded)
     minAgeRestriction(video.minAgeRestriction)
     publicationValidation(video.publicationDate, video.createdAt)
-    resolutionsValidation(video.availableResolutions)
+    !video.availableResolutions ?? resolutionsValidation(video.availableResolutions)
 
     return errorsMessages
 }
 
 const strValidation = (str: string, field: string, len: number) => {
-    if(typeof str !== 'string' || str.length > len){
+    if(typeof str !== 'string' || str.length > len || str.length == 0){
         errorsMessages.push({
             message: `Incorrect ${field}`,
             field: `${field}`
