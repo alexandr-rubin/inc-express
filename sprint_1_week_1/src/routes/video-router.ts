@@ -54,6 +54,12 @@ videosRouter.get('/', (req: Request, res: Response) => {
 })
 
 videosRouter.post('/', (req: Request, res: Response) => {
+    const errorsMessages = postVideo(req.body)
+    if(errorsMessages.length > 0){
+        res.status(400).send({errorsMessages})
+        return
+    }
+
     const createdDate = new Date().toISOString()
     const publication = new Date(createdDate)
     publication.setDate(publication.getDate() + 1)
@@ -68,12 +74,6 @@ videosRouter.post('/', (req: Request, res: Response) => {
         availableResolutions: req.body.availableResolutions || [
         "P144"
         ]
-    }
-
-    const errorsMessages = postVideo(newVideo)
-    if(errorsMessages.length > 0){
-        res.status(400).send({errorsMessages})
-        return
     }
     
     videos.push(newVideo)
@@ -90,7 +90,7 @@ videosRouter.get('/:id', (req: Request, res: Response) => {
     }
 })
 
-videosRouter.put('/:id', (req: Request, res: Response) => {
+videosRouter.put('/:id', (req: Request<{id: string}, {}>, res: Response) => {
     const video = videos.find(x => x.id === +req.params.id)
     if(!video){
         res.status(404).send('Video not found')
@@ -107,7 +107,7 @@ videosRouter.put('/:id', (req: Request, res: Response) => {
     video.author = req.body.author
     video.availableResolutions = req.body.availableResolutions ?? video.availableResolutions
     video.canBeDownloaded = req.body.canBeDownloaded ?? video.canBeDownloaded
-    video.minAgeRestriction = req.body.minAgeRestriction ?? video.minAgeRestriction
+    video.minAgeRestriction = req.body.minAgeRestriction
     video.publicationDate = req.body.publicationDate ?? video.publicationDate
     res.status(204).send(video)
 })

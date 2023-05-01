@@ -14,10 +14,11 @@ var VideoResolutions;
 })(VideoResolutions || (VideoResolutions = {}));
 let errorsMessages = [];
 const postVideo = (video) => {
+    var _a;
     errorsMessages = [];
     strValidation(video.title, 'title', 40);
     strValidation(video.author, 'author', 20);
-    resolutionsValidation(video.availableResolutions);
+    (_a = !video.availableResolutions) !== null && _a !== void 0 ? _a : resolutionsValidation(video.availableResolutions);
     return errorsMessages;
 };
 exports.postVideo = postVideo;
@@ -58,7 +59,7 @@ const publicationValidation = (publicationDate, createdAt) => {
     }
 };
 const canBeDownloaded = (canBeDownloaded) => {
-    if (typeof canBeDownloaded !== 'boolean' && canBeDownloaded) {
+    if (canBeDownloaded !== undefined && typeof canBeDownloaded !== 'boolean') {
         errorsMessages.push({
             message: 'Field must be a boolean',
             field: 'canBeDownloaded'

@@ -51,6 +51,11 @@ exports.videosRouter.get('/', (req, res) => {
     res.status(200).send(exports.videos);
 });
 exports.videosRouter.post('/', (req, res) => {
+    const errorsMessages = (0, Video_1.postVideo)(req.body);
+    if (errorsMessages.length > 0) {
+        res.status(400).send({ errorsMessages });
+        return;
+    }
     const createdDate = new Date().toISOString();
     const publication = new Date(createdDate);
     publication.setDate(publication.getDate() + 1);
@@ -66,11 +71,6 @@ exports.videosRouter.post('/', (req, res) => {
             "P144"
         ]
     };
-    const errorsMessages = (0, Video_1.postVideo)(newVideo);
-    if (errorsMessages.length > 0) {
-        res.status(400).send({ errorsMessages });
-        return;
-    }
     exports.videos.push(newVideo);
     res.status(201).send(newVideo);
 });
@@ -84,7 +84,7 @@ exports.videosRouter.get('/:id', (req, res) => {
     }
 });
 exports.videosRouter.put('/:id', (req, res) => {
-    var _a, _b, _c, _d;
+    var _a, _b, _c;
     const video = exports.videos.find(x => x.id === +req.params.id);
     if (!video) {
         res.status(404).send('Video not found');
@@ -99,8 +99,8 @@ exports.videosRouter.put('/:id', (req, res) => {
     video.author = req.body.author;
     video.availableResolutions = (_a = req.body.availableResolutions) !== null && _a !== void 0 ? _a : video.availableResolutions;
     video.canBeDownloaded = (_b = req.body.canBeDownloaded) !== null && _b !== void 0 ? _b : video.canBeDownloaded;
-    video.minAgeRestriction = (_c = req.body.minAgeRestriction) !== null && _c !== void 0 ? _c : video.minAgeRestriction;
-    video.publicationDate = (_d = req.body.publicationDate) !== null && _d !== void 0 ? _d : video.publicationDate;
+    video.minAgeRestriction = req.body.minAgeRestriction;
+    video.publicationDate = (_c = req.body.publicationDate) !== null && _c !== void 0 ? _c : video.publicationDate;
     res.status(204).send(video);
 });
 exports.videosRouter.get('/:id', (req, res) => {

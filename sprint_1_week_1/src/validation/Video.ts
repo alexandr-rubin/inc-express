@@ -8,7 +8,7 @@ export const postVideo = (video: Video) => {
     errorsMessages = []
     strValidation(video.title, 'title', 40)
     strValidation(video.author, 'author', 20)
-    resolutionsValidation(video.availableResolutions)
+    !video.availableResolutions ?? resolutionsValidation(video.availableResolutions)
 
     return errorsMessages
 }
@@ -50,7 +50,7 @@ const publicationValidation = (publicationDate: string, createdAt: string) => {
     }
 }
 const canBeDownloaded = (canBeDownloaded: boolean) => {
-    if(typeof canBeDownloaded !== 'boolean' && canBeDownloaded){
+    if(canBeDownloaded !== undefined && typeof canBeDownloaded !== 'boolean'){
         errorsMessages.push({
             message: 'Field must be a boolean',
             field: 'canBeDownloaded'
