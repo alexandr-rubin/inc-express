@@ -8,7 +8,7 @@ export const postVideo = (video: Video) => {
     errorsMessages = []
     strValidation(video.title, 'title', 40)
     strValidation(video.author, 'author', 20)
-    !video.availableResolutions ?? resolutionsValidation(video.availableResolutions)
+    video.availableResolutions !== undefined ? resolutionsValidation(video.availableResolutions) : video.availableResolutions
 
     return errorsMessages
 }

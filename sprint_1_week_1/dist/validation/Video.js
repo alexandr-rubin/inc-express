@@ -14,11 +14,10 @@ var VideoResolutions;
 })(VideoResolutions || (VideoResolutions = {}));
 let errorsMessages = [];
 const postVideo = (video) => {
-    var _a;
     errorsMessages = [];
     strValidation(video.title, 'title', 40);
     strValidation(video.author, 'author', 20);
-    (_a = !video.availableResolutions) !== null && _a !== void 0 ? _a : resolutionsValidation(video.availableResolutions);
+    video.availableResolutions !== undefined ? resolutionsValidation(video.availableResolutions) : video.availableResolutions;
     return errorsMessages;
 };
 exports.postVideo = postVideo;
