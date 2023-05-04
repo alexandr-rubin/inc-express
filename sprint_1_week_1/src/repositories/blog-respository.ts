@@ -3,13 +3,13 @@ import { Blog } from '../models/Blog'
 let blogs: Blog[] = [
     {
         "id": "123",
-        "name": "string",
+        "name": "blog123",
         "description": "string",
         "websiteUrl": "string"
     },
     {
         "id": "321",
-        "name": "string",
+        "name": "blog321",
         "description": "string",
         "websiteUrl": "string"
     }
@@ -50,5 +50,8 @@ export const blogRepository = {
         else {
             return false
         }
+    },
+    testingDeleteAllBlogs() {
+        blogs = []
     }
 }

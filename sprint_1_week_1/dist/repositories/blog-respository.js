@@ -4,13 +4,13 @@ exports.blogRepository = void 0;
 let blogs = [
     {
         "id": "123",
-        "name": "string",
+        "name": "blog123",
         "description": "string",
         "websiteUrl": "string"
     },
     {
         "id": "321",
-        "name": "string",
+        "name": "blog321",
         "description": "string",
         "websiteUrl": "string"
     }
@@ -50,5 +50,8 @@ exports.blogRepository = {
         else {
             return false;
         }
+    },
+    testingDeleteAllBlogs() {
+        blogs = [];
     }
 };

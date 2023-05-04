@@ -8,6 +8,7 @@ export const blogsRouter = Router({})
 blogsRouter.get('/', (req: Request, res: Response) => {
     res.status(200).send(blogRepository.getBlogs())
 })
+
 blogsRouter.post('/', validateBlog, validationErrorsHandler, (req: Request, res: Response) => {
     return res.status(201).send(blogRepository.addBlog(req.body))
 })

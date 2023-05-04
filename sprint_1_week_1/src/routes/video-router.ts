@@ -3,7 +3,6 @@ import { postVideo, putVideo } from "../validation/Video"
 import { Video } from "../models/Video"
 
 export const videosRouter = Router({})
-export const testingVideosRouter = Router({})
 
 export let videos: Video[] = [
     {
@@ -44,10 +43,9 @@ export let videos: Video[] = [
     }
 ]
 
-testingVideosRouter.delete('/', (req: Request, res: Response) => {
+export const testingDeleteAllVideos = () => {
     videos = []
-    res.status(204).send('All data is deleted') 
-})
+}
 
 videosRouter.get('/', (req: Request, res: Response) => {
     res.status(200).send(videos)
