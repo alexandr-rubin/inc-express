@@ -45,7 +45,7 @@ exports.postRepository = {
     updatePostByid(id, newPost) {
         const blog = blog_respository_1.blogRepository.getBlogById(newPost.blogId);
         if (!blog) {
-            throw new Error(`Blog with id ${newPost.blogId} not found`);
+            throw new Error(`Post with id ${newPost.blogId} not found`);
         }
         const post = posts.find(post => post.id === id);
         if (!post) {
