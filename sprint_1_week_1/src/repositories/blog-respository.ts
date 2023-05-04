@@ -27,6 +27,7 @@ export const blogRepository = {
             websiteUrl: blog.websiteUrl
         }
         blogs.push(newBlog)
+        return newBlog
     },
     getBlogById(id: string){
         return blogs.find(blog => blog.id === id)

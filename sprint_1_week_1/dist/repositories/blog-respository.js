@@ -27,6 +27,7 @@ exports.blogRepository = {
             websiteUrl: blog.websiteUrl
         };
         blogs.push(newBlog);
+        return newBlog;
     },
     getBlogById(id) {
         return blogs.find(blog => blog.id === id);

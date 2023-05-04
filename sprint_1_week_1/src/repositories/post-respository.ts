@@ -39,6 +39,7 @@ export const postRepository = {
             blogName: blog.name
         }
         posts.push(newPost)
+        return newPost
     },
     getPostById(id: string){
         return posts.find(post => post.id === id)
