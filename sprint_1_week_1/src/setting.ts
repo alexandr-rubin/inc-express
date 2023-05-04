@@ -7,9 +7,9 @@ import { basicAuthMiddleware } from './middlewares/basicAuth'
 
 export const app = express()
 
-app.use(basicAuthMiddleware)
 app.use(express.json())
-app.use('/videos', videosRouter)
 app.use('/testing/all-data', testingRouter)
+app.use(basicAuthMiddleware)
+app.use('/videos', videosRouter)
 app.use('/posts', postsRouter)
 app.use('/blogs', blogsRouter)
