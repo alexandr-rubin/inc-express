@@ -22,7 +22,11 @@ exports.postsRouter.get('/:id', (req, res) => {
     }
 });
 exports.postsRouter.put('/:id', Post_1.validatePost, validation_errors_handler_1.validationErrorsHandler, (req, res) => {
-    return res.status(204).send(post_respository_1.postRepository.updatePostByid(req.params.id, req.body));
+    const post = post_respository_1.postRepository.updatePostByid(req.params.id, req.body);
+    if (post) {
+        return res.status(204).send(post);
+    }
+    return res.status(404).send('Not found');
 });
 exports.postsRouter.delete('/:id', (req, res) => {
     if (post_respository_1.postRepository.deletePostById(req.params.id)) {

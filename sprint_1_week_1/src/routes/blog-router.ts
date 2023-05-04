@@ -24,7 +24,11 @@ blogsRouter.get('/:id', (req: Request, res: Response) => {
 })
 
 blogsRouter.put('/:id', validateBlog, validationErrorsHandler, (req: Request, res: Response) => {
-    return res.status(204).send(blogRepository.updateBlogById(req.params.id, req.body))
+    const blog = blogRepository.updateBlogById(req.params.id, req.body)
+    if(blog){
+        return res.status(204).send()
+    }
+    return res.status(404).send('Not found')
 })
 
 blogsRouter.delete('/:id', (req: Request, res: Response) => {

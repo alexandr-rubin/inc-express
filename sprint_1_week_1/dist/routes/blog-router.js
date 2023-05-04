@@ -22,7 +22,11 @@ exports.blogsRouter.get('/:id', (req, res) => {
     }
 });
 exports.blogsRouter.put('/:id', Blog_1.validateBlog, validation_errors_handler_1.validationErrorsHandler, (req, res) => {
-    return res.status(204).send(blog_respository_1.blogRepository.updateBlogById(req.params.id, req.body));
+    const blog = blog_respository_1.blogRepository.updateBlogById(req.params.id, req.body);
+    if (blog) {
+        return res.status(204).send();
+    }
+    return res.status(404).send('Not found');
 });
 exports.blogsRouter.delete('/:id', (req, res) => {
     if (blog_respository_1.blogRepository.deleteBlogById(req.params.id)) {

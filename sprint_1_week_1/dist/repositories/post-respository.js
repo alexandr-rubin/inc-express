@@ -46,17 +46,18 @@ exports.postRepository = {
     updatePostByid(id, newPost) {
         const blog = blog_respository_1.blogRepository.getBlogById(newPost.blogId);
         if (!blog) {
-            throw new Error(`Post with id ${newPost.blogId} not found`);
+            return false;
         }
         const post = posts.find(post => post.id === id);
         if (!post) {
-            throw new Error(`Post with id ${id} not found`);
+            return false;
         }
         post.title = newPost.title;
         post.shortDescription = newPost.shortDescription;
         post.content = newPost.content;
         post.blogId = newPost.blogId;
         post.blogName = blog.name;
+        return true;
     },
     deletePostById(id) {
         const newPosts = posts.filter(post => post.id !== id);

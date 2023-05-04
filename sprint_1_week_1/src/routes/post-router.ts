@@ -24,7 +24,11 @@ postsRouter.get('/:id', (req: Request, res: Response) => {
 })
 
 postsRouter.put('/:id', validatePost, validationErrorsHandler, (req: Request, res: Response) => {
-    return res.status(204).send(postRepository.updatePostByid(req.params.id, req.body))
+    const post = postRepository.updatePostByid(req.params.id, req.body)
+    if (post){
+        return res.status(204).send(post)
+    }
+    return res.status(404).send('Not found')
 })
 
 postsRouter.delete('/:id', (req: Request, res: Response) => {

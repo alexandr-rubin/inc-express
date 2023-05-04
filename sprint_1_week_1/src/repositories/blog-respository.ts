@@ -33,14 +33,16 @@ export const blogRepository = {
         return blogs.find(blog => blog.id === id)
     },
     updateBlogById(id: string, newblog: Blog) {
-        blogs = blogs.map(blog => {
-            if (blog.id === id) {
-                blog.name = newblog.name
-                blog.description = newblog.description
-                blog.websiteUrl = newblog.websiteUrl
-            }
-            return blog
-        })
+        const blog = blogs.find(x => x.id === id)
+        if(!blog){
+            return false
+        }
+        
+        blog.name = newblog.name
+        blog.description = newblog.description
+        blog.websiteUrl = newblog.websiteUrl
+
+        return true
     },
     deleteBlogById(id: string) {
         const newblogs = blogs.filter(blog => blog.id !== id)

@@ -33,14 +33,14 @@ exports.blogRepository = {
         return blogs.find(blog => blog.id === id);
     },
     updateBlogById(id, newblog) {
-        blogs = blogs.map(blog => {
-            if (blog.id === id) {
-                blog.name = newblog.name;
-                blog.description = newblog.description;
-                blog.websiteUrl = newblog.websiteUrl;
-            }
-            return blog;
-        });
+        const blog = blogs.find(x => x.id === id);
+        if (!blog) {
+            return false;
+        }
+        blog.name = newblog.name;
+        blog.description = newblog.description;
+        blog.websiteUrl = newblog.websiteUrl;
+        return true;
     },
     deleteBlogById(id) {
         const newblogs = blogs.filter(blog => blog.id !== id);
