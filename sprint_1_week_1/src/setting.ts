@@ -9,7 +9,7 @@ export const app = express()
 
 app.use(express.json())
 app.use('/testing/all-data', testingRouter)
-app.use(basicAuthMiddleware)
+//app.use(basicAuthMiddleware)
 app.use('/videos', videosRouter)
 app.use('/posts', postsRouter)
 app.use('/blogs', blogsRouter)
