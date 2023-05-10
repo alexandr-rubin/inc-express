@@ -46,7 +46,7 @@ exports.postRepository = {
     },
     updatePostByid(id, newPost) {
         return __awaiter(this, void 0, void 0, function* () {
-            const result = yield db_1.postsCollection.updateOne({ id: id }, { $Set: { title: newPost.title, shortDescription: newPost.shortDescription, content: newPost, blogId: newPost.blogId } });
+            const result = yield db_1.postsCollection.updateOne({ id: id }, { $Set: { title: newPost.title, shortDescription: newPost.shortDescription, content: newPost.content, blogId: newPost.blogId } });
             return result.matchedCount === 1;
         });
     },
