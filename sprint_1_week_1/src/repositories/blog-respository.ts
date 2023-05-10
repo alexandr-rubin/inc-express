@@ -8,6 +8,7 @@ export const blogRepository = {
     },
     async addBlog(blog: Blog): Promise<Blog> {
         const newBlog: Blog = {
+            id: (+new Date()).toString(),
             name: blog.name,
             description: blog.description,
             websiteUrl: blog.websiteUrl,

@@ -26,6 +26,7 @@ exports.postRepository = {
                 throw new Error(`Blog with id ${post.blogId} not found`);
             }
             const newPost = {
+                id: (+new Date()).toString(),
                 title: post.title,
                 shortDescription: post.shortDescription,
                 content: post.content,

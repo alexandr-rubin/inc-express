@@ -20,6 +20,7 @@ exports.blogRepository = {
     addBlog(blog) {
         return __awaiter(this, void 0, void 0, function* () {
             const newBlog = {
+                id: (+new Date()).toString(),
                 name: blog.name,
                 description: blog.description,
                 websiteUrl: blog.websiteUrl,
