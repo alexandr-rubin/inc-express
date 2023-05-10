@@ -4,11 +4,11 @@ import { ObjectId } from 'mongodb'
 
 export const blogRepository = {
     async getBlogs(): Promise<Blog[]> {
-        return await blogsCollection.find({}).toArray()
+        return await blogsCollection.find({}, {projection: {_id: false}}).toArray()
     },
     async addBlog(blog: Blog): Promise<Blog> {
         const newBlog: Blog = {
-            id: (+new Date()).toString(),
+            id: new ObjectId().toString(),
             name: blog.name,
             description: blog.description,
             websiteUrl: blog.websiteUrl,
@@ -19,7 +19,7 @@ export const blogRepository = {
         return newBlog
     },
     async getBlogById(id: ObjectId): Promise<Blog | null> {
-        return await blogsCollection.findOne({_id: id})
+        return await blogsCollection.findOne({_id: id}, {projection: {_id: false}})
     },
     async updateBlogById(id: ObjectId, newBlog: Blog): Promise<boolean> {
         const result = await blogsCollection.updateOne({_id: id}, { $set: {newBlog}})

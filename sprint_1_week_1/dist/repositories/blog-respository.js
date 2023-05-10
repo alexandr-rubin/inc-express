@@ -11,16 +11,17 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.blogRepository = void 0;
 const db_1 = require("./db");
+const mongodb_1 = require("mongodb");
 exports.blogRepository = {
     getBlogs() {
         return __awaiter(this, void 0, void 0, function* () {
-            return yield db_1.blogsCollection.find({}).toArray();
+            return yield db_1.blogsCollection.find({}, { projection: { _id: false } }).toArray();
         });
     },
     addBlog(blog) {
         return __awaiter(this, void 0, void 0, function* () {
             const newBlog = {
-                id: (+new Date()).toString(),
+                id: new mongodb_1.ObjectId().toString(),
                 name: blog.name,
                 description: blog.description,
                 websiteUrl: blog.websiteUrl,
@@ -33,7 +34,7 @@ exports.blogRepository = {
     },
     getBlogById(id) {
         return __awaiter(this, void 0, void 0, function* () {
-            return yield db_1.blogsCollection.findOne({ _id: id });
+            return yield db_1.blogsCollection.findOne({ _id: id }, { projection: { _id: false } });
         });
     },
     updateBlogById(id, newBlog) {

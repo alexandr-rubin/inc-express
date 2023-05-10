@@ -16,7 +16,7 @@ const mongodb_1 = require("mongodb");
 exports.postRepository = {
     getPosts() {
         return __awaiter(this, void 0, void 0, function* () {
-            return yield db_1.postsCollection.find({}).toArray();
+            return yield db_1.postsCollection.find({}, { projection: { _id: false } }).toArray();
         });
     },
     addPost(post) {
@@ -26,7 +26,7 @@ exports.postRepository = {
                 throw new Error(`Blog with id ${post.blogId} not found`);
             }
             const newPost = {
-                id: (+new Date()).toString(),
+                id: new mongodb_1.ObjectId().toString(),
                 title: post.title,
                 shortDescription: post.shortDescription,
                 content: post.content,
@@ -40,7 +40,7 @@ exports.postRepository = {
     },
     getPostById(id) {
         return __awaiter(this, void 0, void 0, function* () {
-            return yield db_1.postsCollection.findOne({ _id: id });
+            return yield db_1.postsCollection.findOne({ _id: id }, { projection: { _id: false } });
         });
     },
     updatePostByid(id, newPost) {
