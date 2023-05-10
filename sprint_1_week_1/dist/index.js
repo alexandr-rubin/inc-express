@@ -9,13 +9,15 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.server = void 0;
 const setting_1 = require("./setting");
 const db_1 = require("./repositories/db");
 const port = process.env.PORT || 3000;
-const startApp = () => __awaiter(void 0, void 0, void 0, function* () {
+const server = () => __awaiter(void 0, void 0, void 0, function* () {
     yield (0, db_1.runDb)();
     setting_1.app.listen(port, () => {
         console.log(`App listening on port ${port}`);
     });
 });
-startApp();
+exports.server = server;
+(0, exports.server)();
