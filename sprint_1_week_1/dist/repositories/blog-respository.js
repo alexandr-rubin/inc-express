@@ -28,24 +28,25 @@ exports.blogRepository = {
                 createdAt: new Date().toISOString(),
                 isMembership: false
             };
+            const result = Object.assign({}, newBlog);
             yield db_1.blogsCollection.insertOne(newBlog);
-            return newBlog;
+            return result;
         });
     },
     getBlogById(id) {
         return __awaiter(this, void 0, void 0, function* () {
-            return yield db_1.blogsCollection.findOne({ _id: id }, { projection: { _id: false } });
+            return yield db_1.blogsCollection.findOne({ id: id }, { projection: { _id: false } });
         });
     },
     updateBlogById(id, newBlog) {
         return __awaiter(this, void 0, void 0, function* () {
-            const result = yield db_1.blogsCollection.updateOne({ _id: id }, { $set: { newBlog } });
+            const result = yield db_1.blogsCollection.updateOne({ id: id }, { $set: { newBlog } });
             return result.matchedCount === 1;
         });
     },
     deleteBlogById(id) {
         return __awaiter(this, void 0, void 0, function* () {
-            const result = yield db_1.blogsCollection.deleteOne({ _id: id });
+            const result = yield db_1.blogsCollection.deleteOne({ id: id });
             return result.deletedCount === 1;
         });
     },

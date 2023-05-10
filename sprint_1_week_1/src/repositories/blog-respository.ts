@@ -15,18 +15,19 @@ export const blogRepository = {
             createdAt: new Date().toISOString(),
             isMembership: false
         }
+        const result = {...newBlog}
         await blogsCollection.insertOne(newBlog)
-        return newBlog
+        return result
     },
-    async getBlogById(id: ObjectId): Promise<Blog | null> {
-        return await blogsCollection.findOne({_id: id}, {projection: {_id: false}})
+    async getBlogById(id: string): Promise<Blog | null> {
+        return await blogsCollection.findOne({id: id}, {projection: {_id: false}})
     },
-    async updateBlogById(id: ObjectId, newBlog: Blog): Promise<boolean> {
-        const result = await blogsCollection.updateOne({_id: id}, { $set: {newBlog}})
+    async updateBlogById(id: string, newBlog: Blog): Promise<boolean> {
+        const result = await blogsCollection.updateOne({id: id}, { $set: {newBlog}})
         return result.matchedCount === 1
     },
-    async deleteBlogById(id: ObjectId): Promise<boolean> {
-        const result = await blogsCollection.deleteOne({_id: id})
+    async deleteBlogById(id: string): Promise<boolean> {
+        const result = await blogsCollection.deleteOne({id: id})
         return result.deletedCount === 1
     },
     testingDeleteAllBlogs() {

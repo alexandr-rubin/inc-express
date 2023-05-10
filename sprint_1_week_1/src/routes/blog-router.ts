@@ -2,7 +2,6 @@ import { Router, Request, Response } from "express"
 import { blogRepository } from "../repositories/blog-respository"
 import { validateBlog } from "../validation/Blog"
 import { validationErrorsHandler } from "../middlewares/validation-errors-handler"
-import { ObjectId } from 'mongodb'
 
 export const blogsRouter = Router({})
 
@@ -15,7 +14,7 @@ blogsRouter.post('/', validateBlog, validationErrorsHandler, async (req: Request
 })
 
 blogsRouter.get('/:id', async (req: Request, res: Response) => {
-    const blog = await blogRepository.getBlogById(new ObjectId(req.params.id))
+    const blog = await blogRepository.getBlogById(req.params.id)
     if(blog) {
         res.status(200).send(blog)
     }
@@ -25,7 +24,7 @@ blogsRouter.get('/:id', async (req: Request, res: Response) => {
 })
 
 blogsRouter.put('/:id', validateBlog, validationErrorsHandler, async (req: Request, res: Response) => {
-    const blog = await blogRepository.updateBlogById(new ObjectId(req.params.id), req.body)
+    const blog = await blogRepository.updateBlogById(req.params.id, req.body)
     if(blog){
         return res.sendStatus(204)
     }
@@ -33,7 +32,7 @@ blogsRouter.put('/:id', validateBlog, validationErrorsHandler, async (req: Reque
 })
 
 blogsRouter.delete('/:id', async (req: Request, res: Response) => {
-    if(await blogRepository.deleteBlogById(new ObjectId(req.params.id)  )) {
+    if(await blogRepository.deleteBlogById(req.params.id)) {
         res.status(204).send('Blog deleted')
     }
     else{

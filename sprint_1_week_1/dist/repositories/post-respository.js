@@ -21,7 +21,7 @@ exports.postRepository = {
     },
     addPost(post) {
         return __awaiter(this, void 0, void 0, function* () {
-            const blog = yield blog_respository_1.blogRepository.getBlogById(new mongodb_1.ObjectId(post.blogId));
+            const blog = yield blog_respository_1.blogRepository.getBlogById(post.blogId);
             if (!blog) {
                 throw new Error(`Blog with id ${post.blogId} not found`);
             }
@@ -34,24 +34,25 @@ exports.postRepository = {
                 blogName: blog.name,
                 createdAt: new Date().toISOString()
             };
+            const result = Object.assign({}, newPost);
             yield db_1.postsCollection.insertOne(newPost);
-            return newPost;
+            return result;
         });
     },
     getPostById(id) {
         return __awaiter(this, void 0, void 0, function* () {
-            return yield db_1.postsCollection.findOne({ _id: id }, { projection: { _id: false } });
+            return yield db_1.postsCollection.findOne({ id: id }, { projection: { _id: false } });
         });
     },
     updatePostByid(id, newPost) {
         return __awaiter(this, void 0, void 0, function* () {
-            const result = yield db_1.postsCollection.updateOne({ _id: id }, newPost);
+            const result = yield db_1.postsCollection.updateOne({ id: id }, newPost);
             return result.matchedCount === 1;
         });
     },
     deletePostById(id) {
         return __awaiter(this, void 0, void 0, function* () {
-            const result = yield db_1.postsCollection.deleteOne({ _id: id });
+            const result = yield db_1.postsCollection.deleteOne({ id: id });
             return result.deletedCount === 1;
         });
     },
