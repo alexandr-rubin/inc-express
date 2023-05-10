@@ -18,7 +18,7 @@ export const postRepository = {
             title: post.title,
             shortDescription: post.shortDescription,
             content: post.content,
-            blogId: post.blogId,
+            blogId: blog.id,
             blogName: blog.name,
             createdAt: new Date().toISOString()
         }
