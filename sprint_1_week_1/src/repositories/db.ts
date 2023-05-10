@@ -5,11 +5,7 @@ import { Post } from '../models/Post'
 
 dotenv.config()
 
-const MONGODB_URI = process.env.MONGODB_URI
-
-if(!MONGODB_URI){
-    throw new Error('MONGODB_URI not defined')
-}
+const MONGODB_URI = process.env.MONGODB_URI || 'mongodb://localhost:27017/testDb'
 
 const client = new MongoClient(MONGODB_URI)
 

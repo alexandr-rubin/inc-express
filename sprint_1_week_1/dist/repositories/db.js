@@ -16,10 +16,7 @@ exports.runDb = exports.postsCollection = exports.blogsCollection = void 0;
 const dotenv_1 = __importDefault(require("dotenv"));
 const mongodb_1 = require("mongodb");
 dotenv_1.default.config();
-const MONGODB_URI = process.env.MONGODB_URI;
-if (!MONGODB_URI) {
-    throw new Error('MONGODB_URI not defined');
-}
+const MONGODB_URI = process.env.MONGODB_URI || 'mongodb://localhost:27017/testDb';
 const client = new mongodb_1.MongoClient(MONGODB_URI);
 exports.blogsCollection = client.db().collection('Blogs');
 exports.postsCollection = client.db().collection('Posts');
