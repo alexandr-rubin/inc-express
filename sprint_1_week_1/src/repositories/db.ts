@@ -5,9 +5,9 @@ import { Post } from '../models/Post'
 
 dotenv.config()
 
-const mobgoUrl = process.env.MONGO_URL || 'mongodb://localhost:27017/testDb'
+const MONGODB_URI = process.env.MONGODB_URI || 'mongodb://localhost:27017/testDb'
 
-const client = new MongoClient(mobgoUrl)
+const client = new MongoClient(MONGODB_URI)
 
 export const blogsCollection = client.db().collection<Blog>('Blogs')
 export const postsCollection = client.db().collection<Post>('Posts')
