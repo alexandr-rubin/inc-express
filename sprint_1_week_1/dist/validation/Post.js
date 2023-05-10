@@ -12,12 +12,13 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.validatePost = void 0;
 const express_validator_1 = require("express-validator");
 const blog_respository_1 = require("../repositories/blog-respository");
+const mongodb_1 = require("mongodb");
 exports.validatePost = [
-    (0, express_validator_1.body)('title').isString().trim().isLength({ min: 1, max: 30 }),
-    (0, express_validator_1.body)('shortDescription').isString().trim().isLength({ min: 1, max: 100 }),
-    (0, express_validator_1.body)('content').isString().trim().isLength({ min: 1, max: 1000 }),
-    (0, express_validator_1.body)('blogId').isString().custom((id) => __awaiter(void 0, void 0, void 0, function* () {
-        const blog = yield blog_respository_1.blogRepository.getBlogById(id);
+    (0, express_validator_1.body)('title').notEmpty().isString().trim().isLength({ min: 1, max: 30 }),
+    (0, express_validator_1.body)('shortDescription').notEmpty().isString().trim().isLength({ min: 1, max: 100 }),
+    (0, express_validator_1.body)('content').notEmpty().isString().trim().isLength({ min: 1, max: 1000 }),
+    (0, express_validator_1.body)('blogId').notEmpty().isString().custom((id) => __awaiter(void 0, void 0, void 0, function* () {
+        const blog = yield blog_respository_1.blogRepository.getBlogById(new mongodb_1.ObjectId(id));
         if (!blog) {
             throw new Error('Blog not found');
         }

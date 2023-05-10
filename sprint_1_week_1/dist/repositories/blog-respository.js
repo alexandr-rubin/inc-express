@@ -1,58 +1,53 @@
 "use strict";
+var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.blogRepository = void 0;
-let blogs = [
-    {
-        "id": "123",
-        "name": "blog123",
-        "description": "string",
-        "websiteUrl": "string"
-    },
-    {
-        "id": "321",
-        "name": "blog321",
-        "description": "string",
-        "websiteUrl": "string"
-    }
-];
+const db_1 = require("./db");
 exports.blogRepository = {
     getBlogs() {
-        return blogs;
+        return __awaiter(this, void 0, void 0, function* () {
+            return yield db_1.blogsCollection.find({}).toArray();
+        });
     },
     addBlog(blog) {
-        const newBlog = {
-            id: (+new Date()).toString(),
-            name: blog.name,
-            description: blog.description,
-            websiteUrl: blog.websiteUrl
-        };
-        blogs.push(newBlog);
-        return newBlog;
+        return __awaiter(this, void 0, void 0, function* () {
+            const newBlog = {
+                name: blog.name,
+                description: blog.description,
+                websiteUrl: blog.websiteUrl,
+                createdAt: new Date().toISOString(),
+                isMembership: false
+            };
+            yield db_1.blogsCollection.insertOne(newBlog);
+            return newBlog;
+        });
     },
     getBlogById(id) {
-        return blogs.find(blog => blog.id === id);
+        return __awaiter(this, void 0, void 0, function* () {
+            return yield db_1.blogsCollection.findOne({ _id: id });
+        });
     },
-    updateBlogById(id, newblog) {
-        const blog = blogs.find(x => x.id === id);
-        if (!blog) {
-            return false;
-        }
-        blog.name = newblog.name;
-        blog.description = newblog.description;
-        blog.websiteUrl = newblog.websiteUrl;
-        return true;
+    updateBlogById(id, newBlog) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const result = yield db_1.blogsCollection.updateOne({ _id: id }, { $set: { newBlog } });
+            return result.matchedCount === 1;
+        });
     },
     deleteBlogById(id) {
-        const newblogs = blogs.filter(blog => blog.id !== id);
-        if (newblogs.length < blogs.length) {
-            blogs = newblogs;
-            return true;
-        }
-        else {
-            return false;
-        }
+        return __awaiter(this, void 0, void 0, function* () {
+            const result = yield db_1.blogsCollection.deleteOne({ _id: id });
+            return result.deletedCount === 1;
+        });
     },
     testingDeleteAllBlogs() {
-        blogs = [];
+        db_1.blogsCollection.deleteMany({});
     }
 };
