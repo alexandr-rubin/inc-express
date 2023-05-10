@@ -40,7 +40,7 @@ exports.blogRepository = {
     },
     updateBlogById(id, newBlog) {
         return __awaiter(this, void 0, void 0, function* () {
-            const result = yield db_1.blogsCollection.updateOne({ id: id }, { $set: { newBlog } });
+            const result = yield db_1.blogsCollection.updateOne({ id: id }, { $set: { name: newBlog.name, description: newBlog.description, websiteUrl: newBlog.websiteUrl } });
             return result.matchedCount === 1;
         });
     },

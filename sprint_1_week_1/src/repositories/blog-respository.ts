@@ -23,7 +23,7 @@ export const blogRepository = {
         return await blogsCollection.findOne({id: id}, {projection: {_id: false}})
     },
     async updateBlogById(id: string, newBlog: Blog): Promise<boolean> {
-        const result = await blogsCollection.updateOne({id: id}, { $set: {newBlog}})
+        const result = await blogsCollection.updateOne({id: id}, { $set: {name: newBlog.name, description: newBlog.description, websiteUrl: newBlog.websiteUrl}})
         return result.matchedCount === 1
     },
     async deleteBlogById(id: string): Promise<boolean> {
