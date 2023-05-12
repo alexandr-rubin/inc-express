@@ -11,18 +11,18 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.postsRouter = void 0;
 const express_1 = require("express");
-const post_respository_1 = require("../repositories/post-respository");
 const validation_errors_handler_1 = require("../middlewares/validation-errors-handler");
 const Post_1 = require("../validation/Post");
+const posts_service_1 = require("../domain/posts-service");
 exports.postsRouter = (0, express_1.Router)({});
 exports.postsRouter.get('/', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    res.status(200).send(yield post_respository_1.postRepository.getPosts());
+    res.status(200).send(yield posts_service_1.postService.getPosts());
 }));
 exports.postsRouter.post('/', Post_1.validatePost, validation_errors_handler_1.validationErrorsHandler, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    return res.status(201).send(yield post_respository_1.postRepository.addPost(req.body));
+    return res.status(201).send(yield posts_service_1.postService.addPost(req.body));
 }));
 exports.postsRouter.get('/:id', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const blog = yield post_respository_1.postRepository.getPostById(req.params.id);
+    const blog = yield posts_service_1.postService.getPostById(req.params.id);
     if (blog) {
         res.status(200).send(blog);
     }
@@ -31,14 +31,14 @@ exports.postsRouter.get('/:id', (req, res) => __awaiter(void 0, void 0, void 0, 
     }
 }));
 exports.postsRouter.put('/:id', Post_1.validatePost, validation_errors_handler_1.validationErrorsHandler, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const post = yield post_respository_1.postRepository.updatePostByid(req.params.id, req.body);
+    const post = yield posts_service_1.postService.updatePostByid(req.params.id, req.body);
     if (post) {
         return res.status(204).send(post);
     }
     return res.status(404).send('Not found');
 }));
 exports.postsRouter.delete('/:id', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    if (yield post_respository_1.postRepository.deletePostById(req.params.id)) {
+    if (yield posts_service_1.postService.deletePostById(req.params.id)) {
         res.status(204).send('Post deleted');
     }
     else {

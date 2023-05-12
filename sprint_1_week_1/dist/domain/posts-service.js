@@ -9,40 +9,54 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.postRepository = void 0;
-const db_1 = require("./db");
-exports.postRepository = {
+exports.postService = void 0;
+const mongodb_1 = require("mongodb");
+const blogs_service_1 = require("./blogs-service");
+const post_respository_1 = require("../repositories/post-respository");
+exports.postService = {
     getPosts() {
         return __awaiter(this, void 0, void 0, function* () {
-            return yield db_1.postsCollection.find({}, { projection: { _id: false } }).toArray();
+            return yield post_respository_1.postRepository.getPosts();
         });
     },
     addPost(post) {
         return __awaiter(this, void 0, void 0, function* () {
-            // TODO: return
-            return (yield db_1.postsCollection.insertOne(post)).acknowledged === true;
+            const blog = yield blogs_service_1.blogService.getBlogById(post.blogId);
+            if (!blog) {
+                throw new Error(`Blog with id ${post.blogId} not found`);
+            }
+            const newPost = {
+                id: new mongodb_1.ObjectId().toString(),
+                title: post.title,
+                shortDescription: post.shortDescription,
+                content: post.content,
+                blogId: blog.id,
+                blogName: blog.name,
+                createdAt: new Date().toISOString()
+            };
+            const result = Object.assign({}, newPost);
+            yield post_respository_1.postRepository.addPost(newPost);
+            return result;
         });
     },
     getPostById(id) {
         return __awaiter(this, void 0, void 0, function* () {
-            return yield db_1.postsCollection.findOne({ id: id }, { projection: { _id: false } });
+            return yield post_respository_1.postRepository.getPostById(id);
         });
     },
     updatePostByid(id, newPost) {
         return __awaiter(this, void 0, void 0, function* () {
-            const result = yield db_1.postsCollection.updateOne({ id: id }, { $set: { title: newPost.title, shortDescription: newPost.shortDescription, content: newPost.content, blogId: newPost.blogId } });
-            return result.matchedCount === 1;
+            return yield post_respository_1.postRepository.updatePostByid(id, newPost);
         });
     },
     deletePostById(id) {
         return __awaiter(this, void 0, void 0, function* () {
-            const result = yield db_1.postsCollection.deleteOne({ id: id });
-            return result.deletedCount === 1;
+            return yield post_respository_1.postRepository.deletePostById(id);
         });
     },
     testingDeleteAllPosts() {
         return __awaiter(this, void 0, void 0, function* () {
-            db_1.postsCollection.deleteMany({});
+            post_respository_1.postRepository.testingDeleteAllPosts();
         });
     }
 };
