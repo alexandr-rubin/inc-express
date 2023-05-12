@@ -7,24 +7,9 @@ export const postRepository = {
     async getPosts(): Promise<Post[]> {
         return await postsCollection.find({}, {projection: {_id: false}}).toArray()
     },
-    async addPost(post: Post): Promise<Post> {
-        const blog = await blogRepository.getBlogById(post.blogId)
-        if (!blog) {
-            throw new Error(`Blog with id ${post.blogId} not found`)
-        }
-
-        const newPost: Post = {
-            id: new ObjectId().toString(),
-            title: post.title,
-            shortDescription: post.shortDescription,
-            content: post.content,
-            blogId: blog.id,
-            blogName: blog.name,
-            createdAt: new Date().toISOString()
-        }
-        const result = {...newPost}
-        await postsCollection.insertOne(newPost)
-        return result
+    async addPost(post: Post): Promise<boolean> {
+        // TODO: return
+        return (await postsCollection.insertOne(post)).acknowledged === true
     },
     async getPostById(id: string): Promise<Post | null> {
         return await postsCollection.findOne({id: id}, {projection: {_id: false}})

@@ -6,18 +6,9 @@ export const blogRepository = {
     async getBlogs(): Promise<Blog[]> {
         return await blogsCollection.find({}, {projection: {_id: false}}).toArray()
     },
-    async addBlog(blog: Blog): Promise<Blog> {
-        const newBlog: Blog = {
-            id: new ObjectId().toString(),
-            name: blog.name,
-            description: blog.description,
-            websiteUrl: blog.websiteUrl,
-            createdAt: new Date().toISOString(),
-            isMembership: false
-        }
-        const result = {...newBlog}
-        await blogsCollection.insertOne(newBlog)
-        return result
+    async addBlog(blog: Blog): Promise<boolean> {
+        // TODO: return
+        return (await blogsCollection.insertOne(blog)).acknowledged === true
     },
     async getBlogById(id: string): Promise<Blog | null> {
         return await blogsCollection.findOne({id: id}, {projection: {_id: false}})

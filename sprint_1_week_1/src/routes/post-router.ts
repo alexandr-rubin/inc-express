@@ -1,20 +1,20 @@
 import { Router, Request, Response } from "express"
-import { postRepository } from "../repositories/post-respository"
 import { validationErrorsHandler } from "../middlewares/validation-errors-handler"
 import { validatePost } from "../validation/Post"
+import { postService } from "../domain/posts-service"
 
 export const postsRouter = Router({})
 
 postsRouter.get('/', async (req: Request, res: Response) => {
-    res.status(200).send(await postRepository.getPosts())
+    res.status(200).send(await postService.getPosts())
 })
 
 postsRouter.post('/', validatePost, validationErrorsHandler, async (req: Request, res: Response) => {
-    return res.status(201).send(await postRepository.addPost(req.body))
+    return res.status(201).send(await postService.addPost(req.body))
 })
 
 postsRouter.get('/:id', async (req: Request, res: Response) => {
-    const blog = await postRepository.getPostById(req.params.id)
+    const blog = await postService.getPostById(req.params.id)
     if(blog) {
         res.status(200).send(blog)
     }
@@ -24,7 +24,7 @@ postsRouter.get('/:id', async (req: Request, res: Response) => {
 })
 
 postsRouter.put('/:id', validatePost, validationErrorsHandler, async (req: Request, res: Response) => {
-    const post = await postRepository.updatePostByid(req.params.id, req.body)
+    const post = await postService.updatePostByid(req.params.id, req.body)
     if (post){
         return res.status(204).send(post)
     }
@@ -32,7 +32,7 @@ postsRouter.put('/:id', validatePost, validationErrorsHandler, async (req: Reque
 })
 
 postsRouter.delete('/:id', async (req: Request, res: Response) => {
-    if(await postRepository.deletePostById(req.params.id)) {
+    if(await postService.deletePostById(req.params.id)) {
         res.status(204).send('Post deleted')
     }
     else{

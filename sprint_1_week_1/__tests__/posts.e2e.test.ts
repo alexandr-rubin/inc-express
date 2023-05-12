@@ -17,7 +17,8 @@ const post = {
 const newPost = {
     "title": "123",
     "shortDescription": "321",
-    "content": "zxc"
+    "content": "zxc",
+    "createdAt": new Date().toISOString()
 }
 const badValuesPost = {
     "title": "",
@@ -28,7 +29,8 @@ const badValuesPost = {
 const newBlog = {
     "name": "111",
     "description": "111",
-    "websiteUrl": "https://translate.google.com/"
+    "websiteUrl": "https://translate.google.com/",
+    "createdAt": new Date().toISOString()
 }
 
     beforeAll(async () => {
@@ -111,7 +113,7 @@ const newBlog = {
             .expect(CodeResponsesEnum.Not_content_204)
         
             const res = await request(app).get('/posts/')
-            expect(res.body[0]).toEqual({id: posts[0].id, ...newPost, blogId: blogs[0].id, blogName: blogs[0].name})
+            expect(res.body[0]).toEqual({id: posts[0].id, ...newPost, blogId: blogs[0].id, blogName: blogs[0].name, createdAt: posts[0].createdAt})
     })
     it('- DELETE product unauthorized', async () => {
         await request(app)

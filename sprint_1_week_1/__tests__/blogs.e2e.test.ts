@@ -12,12 +12,14 @@ describe('/blogs', () => {
 const blog = {
     "name": "111",
     "description": "111",
-    "websiteUrl": "https://translate.google.com/"
+    "websiteUrl": "https://translate.google.com/",
+    "createdAt": new Date().toISOString(),
+    "isMembership": false
 }
 const newBlog = {
     "name": "321",
     "description": "321",
-    "websiteUrl": "https://translatezxc.google.com/"
+    "websiteUrl": "https://translatezxc.google.com/",
 }
 const badValuesBlog = {
     "name": "   ",
@@ -100,7 +102,7 @@ const badValuesBlog = {
             .expect(CodeResponsesEnum.Not_content_204)
         
             const res = await request(app).get('/blogs/')
-            expect(res.body[0]).toEqual({id: blogs[0].id, ...newBlog})
+            expect(res.body[0]).toEqual({id: blogs[0].id, createdAt: blogs[0].createdAt, isMembership: blogs[0].isMembership, ...newBlog})
     })
     it('- DELETE product unauthorized', async () => {
         await request(app)
