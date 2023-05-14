@@ -43,7 +43,7 @@ blogsRouter.delete('/:id', async (req: Request, res: Response) => {
 
 blogsRouter.get('/:blogId/posts', async (req: Request, res: Response) => {
     const posts = await blogService.getPostsForSpecifiedBlog(req.params.blogId,req)
-    if(posts) {
+    if(posts === null) {
         res.status(404).send('Blog not found')
     }
     else{

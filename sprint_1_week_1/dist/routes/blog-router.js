@@ -48,7 +48,7 @@ exports.blogsRouter.delete('/:id', (req, res) => __awaiter(void 0, void 0, void 
 }));
 exports.blogsRouter.get('/:blogId/posts', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const posts = yield blogs_service_1.blogService.getPostsForSpecifiedBlog(req.params.blogId, req);
-    if (posts) {
+    if (posts === null) {
         res.status(404).send('Blog not found');
     }
     else {
