@@ -12,8 +12,8 @@ export const blogRepository = {
         .sort({[query.sortBy]: query.sortDirection === 'asc' ? 1 : -1})
         .skip(skip).limit(query.pageSize)
         .toArray()
-
-        const result = createPaginationResult(query, blogs)
+        const count = await blogsCollection.countDocuments({})
+        const result = createPaginationResult(count, query, blogs)
         
         return result
     },
@@ -41,9 +41,8 @@ export const blogRepository = {
         .sort({[query.sortBy]: query.sortDirection === 'asc' ? 1 : -1})
         .skip(skip).limit(query.pageSize)
         .toArray()
-        const count = postsCollection.countDocuments({blogId: blogId})
-        const result = createPaginationResult(query, posts)
-        result.pageCount = +count
+        const count = await postsCollection.countDocuments({blogId: blogId})
+        const result = createPaginationResult(count, query, posts)
         return result
     }
 }

@@ -11,8 +11,8 @@ export const postRepository = {
         .sort({[query.sortBy]: query.sortDirection === 'asc' ? 1 : -1})
         .skip(skip).limit(query.pageSize)
         .toArray()
-
-        const result = createPaginationResult(query, posts)
+        const count = await postsCollection.countDocuments({})
+        const result = createPaginationResult(count, query, posts)
         
         return result
     },

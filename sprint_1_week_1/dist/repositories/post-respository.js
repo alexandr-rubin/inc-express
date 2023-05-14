@@ -20,7 +20,8 @@ exports.postRepository = {
                 .sort({ [query.sortBy]: query.sortDirection === 'asc' ? 1 : -1 })
                 .skip(skip).limit(query.pageSize)
                 .toArray();
-            const result = (0, pagination_1.createPaginationResult)(query, posts);
+            const count = yield db_1.postsCollection.countDocuments({});
+            const result = (0, pagination_1.createPaginationResult)(count, query, posts);
             return result;
         });
     },
