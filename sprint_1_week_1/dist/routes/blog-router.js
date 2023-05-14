@@ -17,7 +17,7 @@ const blogs_service_1 = require("../domain/blogs-service");
 const Post_1 = require("../validation/Post");
 exports.blogsRouter = (0, express_1.Router)({});
 exports.blogsRouter.get('/', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    res.status(200).send(yield blogs_service_1.blogService.getBlogs(req));
+    return res.status(200).send(yield blogs_service_1.blogService.getBlogs(req));
 }));
 exports.blogsRouter.post('/', Blog_1.validateBlog, validation_errors_handler_1.validationErrorsHandler, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     return res.status(201).send(yield blogs_service_1.blogService.addBlog(req.body));
@@ -25,10 +25,10 @@ exports.blogsRouter.post('/', Blog_1.validateBlog, validation_errors_handler_1.v
 exports.blogsRouter.get('/:id', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const blog = yield blogs_service_1.blogService.getBlogById(req.params.id);
     if (blog) {
-        res.status(200).send(blog);
+        return res.status(200).send(blog);
     }
     else {
-        res.status(404).send('Blog not found');
+        return res.status(404).send('Blog not found');
     }
 }));
 exports.blogsRouter.put('/:id', Blog_1.validateBlog, validation_errors_handler_1.validationErrorsHandler, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
@@ -40,19 +40,19 @@ exports.blogsRouter.put('/:id', Blog_1.validateBlog, validation_errors_handler_1
 }));
 exports.blogsRouter.delete('/:id', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     if (yield blogs_service_1.blogService.deleteBlogById(req.params.id)) {
-        res.status(204).send('Blog deleted');
+        return res.status(204).send('Blog deleted');
     }
     else {
-        res.status(404).send('Blog not found');
+        return res.status(404).send('Blog not found');
     }
 }));
 exports.blogsRouter.get('/:blogId/posts', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const posts = yield blogs_service_1.blogService.getPostsForSpecifiedBlog(req.params.blogId, req);
     if (posts === null) {
-        res.status(404).send('Blog not found');
+        return res.status(404).send('Blog not found');
     }
     else {
-        res.status(200).send(posts);
+        return res.status(200).send(posts);
     }
 }));
 exports.blogsRouter.post('/:blogId/posts', Post_1.validatePostForBlog, validation_errors_handler_1.validationErrorsHandler, (req, res) => __awaiter(void 0, void 0, void 0, function* () {

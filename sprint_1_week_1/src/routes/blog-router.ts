@@ -7,7 +7,7 @@ import { validatePost, validatePostForBlog } from "../validation/Post"
 export const blogsRouter = Router({})
 
 blogsRouter.get('/', async (req: Request, res: Response) => {
-    res.status(200).send(await blogService.getBlogs(req))
+    return res.status(200).send(await blogService.getBlogs(req))
 })
 
 blogsRouter.post('/', validateBlog, validationErrorsHandler, async (req: Request, res: Response) => {
@@ -17,10 +17,10 @@ blogsRouter.post('/', validateBlog, validationErrorsHandler, async (req: Request
 blogsRouter.get('/:id', async (req: Request, res: Response) => {
     const blog = await blogService.getBlogById(req.params.id)
     if(blog) {
-        res.status(200).send(blog)
+        return res.status(200).send(blog)
     }
     else{
-        res.status(404).send('Blog not found')
+        return res.status(404).send('Blog not found')
     }
 })
 
@@ -34,20 +34,20 @@ blogsRouter.put('/:id', validateBlog, validationErrorsHandler, async (req: Reque
 
 blogsRouter.delete('/:id', async (req: Request, res: Response) => {
     if(await blogService.deleteBlogById(req.params.id)) {
-        res.status(204).send('Blog deleted')
+        return res.status(204).send('Blog deleted')
     }
     else{
-        res.status(404).send('Blog not found')
+        return res.status(404).send('Blog not found')
     }
 })
 
 blogsRouter.get('/:blogId/posts', async (req: Request, res: Response) => {
     const posts = await blogService.getPostsForSpecifiedBlog(req.params.blogId,req)
     if(posts === null) {
-        res.status(404).send('Blog not found')
+        return res.status(404).send('Blog not found')
     }
     else{
-        res.status(200).send(posts)
+        return res.status(200).send(posts)
     }
 })
 
