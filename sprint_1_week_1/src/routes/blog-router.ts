@@ -46,11 +46,15 @@ blogsRouter.get('/:blogId/posts', async (req: Request, res: Response) => {
     if(posts === null) {
         return res.status(404).send('Blog not found')
     }
-    else{
-        return res.status(200).send(posts)
-    }
+    
+    return res.status(200).send(posts)
 })
 
 blogsRouter.post('/:blogId/posts', validatePostForBlog, validationErrorsHandler, async (req: Request, res: Response) => {
-    return res.status(201).send(await blogService.addPostForSpecificBlog(req.params.blogId, req.body))
+    const post = await blogService.addPostForSpecificBlog(req.params.blogId, req.body)
+    if(post === null) {
+        return res.status(404).send('Blog not found')
+    }
+
+    return res.status(201).send(post)
 })

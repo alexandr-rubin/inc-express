@@ -51,10 +51,12 @@ exports.blogsRouter.get('/:blogId/posts', (req, res) => __awaiter(void 0, void 0
     if (posts === null) {
         return res.status(404).send('Blog not found');
     }
-    else {
-        return res.status(200).send(posts);
-    }
+    return res.status(200).send(posts);
 }));
 exports.blogsRouter.post('/:blogId/posts', Post_1.validatePostForBlog, validation_errors_handler_1.validationErrorsHandler, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    return res.status(201).send(yield blogs_service_1.blogService.addPostForSpecificBlog(req.params.blogId, req.body));
+    const post = yield blogs_service_1.blogService.addPostForSpecificBlog(req.params.blogId, req.body);
+    if (post === null) {
+        return res.status(404).send('Blog not found');
+    }
+    return res.status(201).send(post);
 }));
