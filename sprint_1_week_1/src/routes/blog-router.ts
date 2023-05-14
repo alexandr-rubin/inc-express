@@ -42,7 +42,13 @@ blogsRouter.delete('/:id', async (req: Request, res: Response) => {
 })
 
 blogsRouter.get('/:blogId/posts', async (req: Request, res: Response) => {
-    res.status(200).send(await blogService.getPostsForSpecifiedBlog(req.params.blogId,req))
+    const posts = await blogService.getPostsForSpecifiedBlog(req.params.blogId,req)
+    if(posts) {
+        res.status(404).send('Blog not found')
+    }
+    else{
+        res.status(200).send(posts)
+    }
 })
 
 blogsRouter.post('/:blogId/posts', validatePostForBlog, validationErrorsHandler, async (req: Request, res: Response) => {

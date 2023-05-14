@@ -55,8 +55,13 @@ exports.blogService = {
         blog_respository_1.blogRepository.testingDeleteAllBlogs();
     },
     getPostsForSpecifiedBlog(blogId, req) {
-        const postQuery = (0, pagination_1.createPaginationQuery)(req);
-        return blog_respository_1.blogRepository.getPostsForSpecifiedBlog(blogId, postQuery);
+        return __awaiter(this, void 0, void 0, function* () {
+            const postQuery = (0, pagination_1.createPaginationQuery)(req);
+            if ((yield blog_respository_1.blogRepository.getBlogById(blogId)) === null) {
+                return null;
+            }
+            return yield blog_respository_1.blogRepository.getPostsForSpecifiedBlog(blogId, postQuery);
+        });
     },
     addPostForSpecificBlog(blogId, post) {
         post.blogId = blogId;
