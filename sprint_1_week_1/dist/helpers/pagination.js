@@ -15,7 +15,7 @@ const createPaginationQuery = (req) => {
 exports.createPaginationQuery = createPaginationQuery;
 const createPaginationResult = (count, query, items) => {
     const result = {
-        pageCount: Math.ceil(count / query.pageSize),
+        pagesCount: Math.ceil(count / query.pageSize),
         page: query.pageNumber,
         pageSize: query.pageSize,
         totalCount: count,
