@@ -12,7 +12,7 @@ export const blogRepository = {
         .sort({[query.sortBy]: query.sortDirection === 'asc' ? 1 : -1})
         .skip(skip).limit(query.pageSize)
         .toArray()
-        const count = await blogsCollection.countDocuments({})
+        const count = await blogsCollection.countDocuments(query.searchNameTerm === null ? {} : {name: {$regex: query.searchNameTerm, $options: 'i'}})
         const result = createPaginationResult(count, query, blogs)
         
         return result

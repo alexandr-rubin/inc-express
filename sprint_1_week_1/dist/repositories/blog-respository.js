@@ -21,7 +21,7 @@ exports.blogRepository = {
                 .sort({ [query.sortBy]: query.sortDirection === 'asc' ? 1 : -1 })
                 .skip(skip).limit(query.pageSize)
                 .toArray();
-            const count = yield db_1.blogsCollection.countDocuments({});
+            const count = yield db_1.blogsCollection.countDocuments(query.searchNameTerm === null ? {} : { name: { $regex: query.searchNameTerm, $options: 'i' } });
             const result = (0, pagination_1.createPaginationResult)(count, query, blogs);
             return result;
         });
