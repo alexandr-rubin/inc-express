@@ -58,7 +58,9 @@ exports.blogRepository = {
                 .sort({ [query.sortBy]: query.sortDirection === 'asc' ? 1 : -1 })
                 .skip(skip).limit(query.pageSize)
                 .toArray();
+            const count = db_2.postsCollection.countDocuments({ blogId: blogId });
             const result = (0, pagination_1.createPaginationResult)(query, posts);
+            result.pageCount = +count;
             return result;
         });
     }

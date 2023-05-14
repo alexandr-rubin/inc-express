@@ -41,9 +41,9 @@ export const blogRepository = {
         .sort({[query.sortBy]: query.sortDirection === 'asc' ? 1 : -1})
         .skip(skip).limit(query.pageSize)
         .toArray()
-
+        const count = postsCollection.countDocuments({blogId: blogId})
         const result = createPaginationResult(query, posts)
-
+        result.pageCount = +count
         return result
     }
 }
