@@ -26,11 +26,5 @@ exports.validatePost = [
 exports.validatePostForBlog = [
     (0, express_validator_1.body)('title').notEmpty().isString().trim().isLength({ min: 1, max: 30 }),
     (0, express_validator_1.body)('shortDescription').notEmpty().isString().trim().isLength({ min: 1, max: 100 }),
-    (0, express_validator_1.body)('content').notEmpty().isString().trim().isLength({ min: 1, max: 1000 }),
-    (0, express_validator_1.param)('blogId').notEmpty().isString().custom((id) => __awaiter(void 0, void 0, void 0, function* () {
-        const blog = yield blog_respository_1.blogRepository.getBlogById(id);
-        if (!blog) {
-            throw new Error('Blog not found');
-        }
-    }))
+    (0, express_validator_1.body)('content').notEmpty().isString().trim().isLength({ min: 1, max: 1000 })
 ];
