@@ -2,10 +2,14 @@ import { Post } from '../models/Post'
 import { ObjectId } from 'mongodb'
 import { blogService } from './blogs-service'
 import { postRepository } from '../repositories/post-respository'
+import { Request } from "express"
+import { Paginator } from '../models/Paginator'
+import { createPaginationQuery } from '../helpers/pagination'
 
 export const postService = {
-    async getPosts(): Promise<Post[]> {
-        return await postRepository.getPosts()
+    async getPosts(req: Request): Promise<Paginator> {
+        const postQuery = createPaginationQuery(req)
+        return await postRepository.getPosts(postQuery)
     },
     async addPost(post: Post): Promise<Post> {
         const blog = await blogService.getBlogById(post.blogId)

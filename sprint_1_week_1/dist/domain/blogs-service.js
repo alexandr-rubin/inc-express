@@ -12,10 +12,13 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.blogService = void 0;
 const mongodb_1 = require("mongodb");
 const blog_respository_1 = require("../repositories/blog-respository");
+const pagination_1 = require("../helpers/pagination");
+const posts_service_1 = require("./posts-service");
 exports.blogService = {
-    getBlogs() {
+    getBlogs(req) {
         return __awaiter(this, void 0, void 0, function* () {
-            return yield blog_respository_1.blogRepository.getBlogs();
+            const blogQuery = (0, pagination_1.createPaginationQuery)(req);
+            return yield blog_respository_1.blogRepository.getBlogs(blogQuery);
         });
     },
     addBlog(blog) {
@@ -50,5 +53,13 @@ exports.blogService = {
     },
     testingDeleteAllBlogs() {
         blog_respository_1.blogRepository.testingDeleteAllBlogs();
+    },
+    getPostsForSpecifiedBlog(blogId, req) {
+        const postQuery = (0, pagination_1.createPaginationQuery)(req);
+        return blog_respository_1.blogRepository.getPostsForSpecifiedBlog(blogId, postQuery);
+    },
+    addPostForSpecificBlog(blogId, post) {
+        post.blogId = blogId;
+        return posts_service_1.postService.addPost(post);
     }
 };

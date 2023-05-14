@@ -13,10 +13,12 @@ exports.postService = void 0;
 const mongodb_1 = require("mongodb");
 const blogs_service_1 = require("./blogs-service");
 const post_respository_1 = require("../repositories/post-respository");
+const pagination_1 = require("../helpers/pagination");
 exports.postService = {
-    getPosts() {
+    getPosts(req) {
         return __awaiter(this, void 0, void 0, function* () {
-            return yield post_respository_1.postRepository.getPosts();
+            const postQuery = (0, pagination_1.createPaginationQuery)(req);
+            return yield post_respository_1.postRepository.getPosts(postQuery);
         });
     },
     addPost(post) {

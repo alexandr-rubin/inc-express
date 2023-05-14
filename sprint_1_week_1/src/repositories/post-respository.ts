@@ -1,11 +1,20 @@
 import { Post } from '../models/Post'
-import { blogRepository } from './blog-respository'
 import { postsCollection } from './db'
-import { ObjectId } from 'mongodb'
+import { PaginationQuery } from '../models/PaginationQuery'
+import { Paginator } from '../models/Paginator'
+import { createPaginationResult } from '../helpers/pagination'
 
 export const postRepository = {
-    async getPosts(): Promise<Post[]> {
-        return await postsCollection.find({}, {projection: {_id: false}}).toArray()
+    async getPosts(query: PaginationQuery): Promise<Paginator> {
+        const skip = (query.pageNumber - 1) * query.pageSize
+        const posts = await postsCollection.find(query.searchNameTerm === null ? {} : {name: {$regex: query.searchNameTerm, $options: 'i'}}, {projection: {_id: false}})
+        .sort({[query.sortBy]: query.sortDirection === 'asc' ? 1 : -1})
+        .skip(skip).limit(query.pageSize)
+        .toArray()
+
+        const result = createPaginationResult(query, posts)
+        
+        return result
     },
     async addPost(post: Post): Promise<boolean> {
         // TODO: return

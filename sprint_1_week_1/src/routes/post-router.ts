@@ -6,7 +6,7 @@ import { postService } from "../domain/posts-service"
 export const postsRouter = Router({})
 
 postsRouter.get('/', async (req: Request, res: Response) => {
-    res.status(200).send(await postService.getPosts())
+    res.status(200).send(await postService.getPosts(req))
 })
 
 postsRouter.post('/', validatePost, validationErrorsHandler, async (req: Request, res: Response) => {

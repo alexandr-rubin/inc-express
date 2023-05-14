@@ -1,10 +1,21 @@
 import { Blog } from '../models/Blog'
 import { blogsCollection } from './db'
-import { ObjectId } from 'mongodb'
+import { Paginator } from '../models/Paginator'
+import { PaginationQuery } from '../models/PaginationQuery'
+import { createPaginationResult } from '../helpers/pagination'
+import { postsCollection } from './db'
 
 export const blogRepository = {
-    async getBlogs(): Promise<Blog[]> {
-        return await blogsCollection.find({}, {projection: {_id: false}}).toArray()
+    async getBlogs(query: PaginationQuery): Promise<Paginator> {
+        const skip = (query.pageNumber - 1) * query.pageSize
+        const blogs = await blogsCollection.find(query.searchNameTerm === null ? {} : {name: {$regex: query.searchNameTerm, $options: 'i'}}, {projection: {_id: false}})
+        .sort({[query.sortBy]: query.sortDirection === 'asc' ? 1 : -1})
+        .skip(skip).limit(query.pageSize)
+        .toArray()
+
+        const result = createPaginationResult(query, blogs)
+        
+        return result
     },
     async addBlog(blog: Blog): Promise<boolean> {
         // TODO: return
@@ -23,5 +34,16 @@ export const blogRepository = {
     },
     testingDeleteAllBlogs() {
         blogsCollection.deleteMany({})
+    },
+    async getPostsForSpecifiedBlog(blogId: string, query: PaginationQuery): Promise<Paginator>{
+        const skip = (query.pageNumber - 1) * query.pageSize
+        const posts = await postsCollection.find(query.searchNameTerm === null ? {blogId: blogId} : {blogId: blogId, name: {$regex: query.searchNameTerm, $options: 'i'}}, {projection: {_id: false}})
+        .sort({[query.sortBy]: query.sortDirection === 'asc' ? 1 : -1})
+        .skip(skip).limit(query.pageSize)
+        .toArray()
+
+        const result = createPaginationResult(query, posts)
+
+        return result
     }
 }

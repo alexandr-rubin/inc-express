@@ -11,10 +11,17 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.postRepository = void 0;
 const db_1 = require("./db");
+const pagination_1 = require("../helpers/pagination");
 exports.postRepository = {
-    getPosts() {
+    getPosts(query) {
         return __awaiter(this, void 0, void 0, function* () {
-            return yield db_1.postsCollection.find({}, { projection: { _id: false } }).toArray();
+            const skip = (query.pageNumber - 1) * query.pageSize;
+            const posts = yield db_1.postsCollection.find(query.searchNameTerm === null ? {} : { name: { $regex: query.searchNameTerm, $options: 'i' } }, { projection: { _id: false } })
+                .sort({ [query.sortBy]: query.sortDirection === 'asc' ? 1 : -1 })
+                .skip(skip).limit(query.pageSize)
+                .toArray();
+            const result = (0, pagination_1.createPaginationResult)(query, posts);
+            return result;
         });
     },
     addPost(post) {

@@ -16,7 +16,7 @@ const Post_1 = require("../validation/Post");
 const posts_service_1 = require("../domain/posts-service");
 exports.postsRouter = (0, express_1.Router)({});
 exports.postsRouter.get('/', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    res.status(200).send(yield posts_service_1.postService.getPosts());
+    res.status(200).send(yield posts_service_1.postService.getPosts(req));
 }));
 exports.postsRouter.post('/', Post_1.validatePost, validation_errors_handler_1.validationErrorsHandler, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     return res.status(201).send(yield posts_service_1.postService.addPost(req.body));
