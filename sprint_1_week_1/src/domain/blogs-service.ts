@@ -44,7 +44,10 @@ export const blogService = {
         }
         return await blogRepository.getPostsForSpecifiedBlog(blogId, postQuery)
     },
-    addPostForSpecificBlog(blogId: string, post: Post): Promise<Post> {
+    async addPostForSpecificBlog(blogId: string, post: Post): Promise<Post | null> {
+        if(await blogRepository.getBlogById(blogId) === null){
+            return null
+        }
         post.blogId = blogId
         return postService.addPost(post)
     }

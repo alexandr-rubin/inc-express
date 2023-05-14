@@ -64,7 +64,12 @@ exports.blogService = {
         });
     },
     addPostForSpecificBlog(blogId, post) {
-        post.blogId = blogId;
-        return posts_service_1.postService.addPost(post);
+        return __awaiter(this, void 0, void 0, function* () {
+            if ((yield blog_respository_1.blogRepository.getBlogById(blogId)) === null) {
+                return null;
+            }
+            post.blogId = blogId;
+            return posts_service_1.postService.addPost(post);
+        });
     }
 };
