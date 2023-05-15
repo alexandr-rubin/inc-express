@@ -18,9 +18,7 @@ postsRouter.get('/:id', async (req: Request, res: Response) => {
     if(blog) {
         res.status(200).send(blog)
     }
-    else{
-        res.status(404).send('Post not found')
-    }
+    res.status(404).send('Post not found')
 })
 
 postsRouter.put('/:id', validatePost, validationErrorsHandler, async (req: Request, res: Response) => {
@@ -35,7 +33,5 @@ postsRouter.delete('/:id', async (req: Request, res: Response) => {
     if(await postService.deletePostById(req.params.id)) {
         res.status(204).send('Post deleted')
     }
-    else{
-        res.status(404).send('Post not found')
-    }
+    res.status(404).send('Post not found')
 })

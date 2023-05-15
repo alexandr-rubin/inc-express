@@ -19,9 +19,7 @@ blogsRouter.get('/:id', async (req: Request, res: Response) => {
     if(blog) {
         return res.status(200).send(blog)
     }
-    else{
-        return res.status(404).send('Blog not found')
-    }
+    return res.status(404).send('Blog not found')
 })
 
 blogsRouter.put('/:id', validateBlog, validationErrorsHandler, async (req: Request, res: Response) => {
@@ -36,9 +34,7 @@ blogsRouter.delete('/:id', async (req: Request, res: Response) => {
     if(await blogService.deleteBlogById(req.params.id)) {
         return res.status(204).send('Blog deleted')
     }
-    else{
-        return res.status(404).send('Blog not found')
-    }
+    return res.status(404).send('Blog not found')
 })
 
 blogsRouter.get('/:blogId/posts', async (req: Request, res: Response) => {
