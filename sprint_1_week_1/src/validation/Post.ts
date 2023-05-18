@@ -1,5 +1,5 @@
 import { body, param } from "express-validator"
-import { blogRepository } from "../repositories/blog-respository"
+import { blogRepository } from "../repositories/blogRespository"
 
 export const validatePost = [
     body('title').notEmpty().isString().trim().isLength({min: 1, max: 30}),

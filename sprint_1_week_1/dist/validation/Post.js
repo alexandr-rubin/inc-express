@@ -11,13 +11,13 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.validatePostForBlog = exports.validatePost = void 0;
 const express_validator_1 = require("express-validator");
-const blog_respository_1 = require("../repositories/blog-respository");
+const blogRespository_1 = require("../repositories/blogRespository");
 exports.validatePost = [
     (0, express_validator_1.body)('title').notEmpty().isString().trim().isLength({ min: 1, max: 30 }),
     (0, express_validator_1.body)('shortDescription').notEmpty().isString().trim().isLength({ min: 1, max: 100 }),
     (0, express_validator_1.body)('content').notEmpty().isString().trim().isLength({ min: 1, max: 1000 }),
     (0, express_validator_1.body)('blogId').notEmpty().isString().custom((id) => __awaiter(void 0, void 0, void 0, function* () {
-        const blog = yield blog_respository_1.blogRepository.getBlogById(id);
+        const blog = yield blogRespository_1.blogRepository.getBlogById(id);
         if (!blog) {
             throw new Error('Blog not found');
         }

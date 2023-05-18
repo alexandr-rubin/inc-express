@@ -3,5 +3,7 @@ export type PaginationQuery = {
     sortBy: string,
     sortDirection: string,
     pageNumber: number,
-    pageSize: number
+    pageSize: number,
+    searchLoginTerm: string | null,
+    searchEmailTerm: string | null
 }
