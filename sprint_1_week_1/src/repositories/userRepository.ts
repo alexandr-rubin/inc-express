@@ -20,7 +20,7 @@ export const userRepository = {
         .sort({[query.sortBy]: query.sortDirection === 'asc' ? 1 : -1})
         .skip(skip).limit(query.pageSize)
         .toArray()
-        const count = await usersCollection.countDocuments(search)
+        const count = await usersCollection.countDocuments({$or: searchTermsArray.length === 0 ? [{}] : searchTermsArray})
         const result = createPaginationResult(count, query, users)
         
         return result
