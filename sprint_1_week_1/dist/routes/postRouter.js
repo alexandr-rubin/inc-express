@@ -37,7 +37,7 @@ exports.postsRouter.put('/:id', Post_1.validatePost, validation_errors_handler_1
 }));
 exports.postsRouter.delete('/:id', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     if (yield postsService_1.postService.deletePostById(req.params.id)) {
-        res.status(204).send('Post deleted');
+        return res.status(204).send('Post deleted');
     }
-    res.status(404).send('Post not found');
+    return res.status(404).send('Post not found');
 }));
