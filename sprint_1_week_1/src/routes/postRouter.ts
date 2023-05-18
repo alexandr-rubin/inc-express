@@ -16,9 +16,9 @@ postsRouter.post('/', validatePost, validationErrorsHandler, async (req: Request
 postsRouter.get('/:id', async (req: Request, res: Response) => {
     const blog = await postService.getPostById(req.params.id)
     if(blog) {
-        res.status(200).send(blog)
+        return res.status(200).send(blog)
     }
-    res.status(404).send('Post not found')
+    return res.status(404).send('Post not found')
 })
 
 postsRouter.put('/:id', validatePost, validationErrorsHandler, async (req: Request, res: Response) => {

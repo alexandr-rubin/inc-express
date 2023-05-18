@@ -24,9 +24,9 @@ exports.postsRouter.post('/', Post_1.validatePost, validation_errors_handler_1.v
 exports.postsRouter.get('/:id', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const blog = yield postsService_1.postService.getPostById(req.params.id);
     if (blog) {
-        res.status(200).send(blog);
+        return res.status(200).send(blog);
     }
-    res.status(404).send('Post not found');
+    return res.status(404).send('Post not found');
 }));
 exports.postsRouter.put('/:id', Post_1.validatePost, validation_errors_handler_1.validationErrorsHandler, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const post = yield postsService_1.postService.updatePostByid(req.params.id, req.body);
