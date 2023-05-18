@@ -1,4 +1,4 @@
-import { User } from '../models/User'
+import { User, UserViewModel } from '../models/User'
 import { ObjectId } from 'mongodb'
 import { userRepository } from '../repositories/userRepository'
 import { Paginator } from '../models/Paginator'
@@ -11,18 +11,18 @@ export const userService = {
         const userQuery = createPaginationQuery(req)
         return await userRepository.getUsers(userQuery)
     },
-    async addUser(user: User): Promise<User> {
-        const passwordSalt = await bcrypt.genSalt(10)
-        const passwordHash = await this._generateHash(user.password, passwordSalt)
+    async addUser(user: User): Promise<UserViewModel> {
+        const passSalt = await bcrypt.genSalt(10)
+        const passwordHash = await this._generateHash(user.password, passSalt)
         const newUser: User = {
             id: new ObjectId().toString(),
             login: user.login,
             password: passwordHash,
-            passwordSalt: passwordSalt,
+            passwordSalt: passSalt,
             email: user.email,
             createdAt: new Date().toISOString()
         }
-        const result = {...newUser}
+        const {password, passwordSalt, ...result} = newUser
         await userRepository.addUser(newUser)
         return result
     },

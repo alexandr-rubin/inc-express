@@ -20,7 +20,6 @@ exports.usersRouter.get('/', (req, res) => __awaiter(void 0, void 0, void 0, fun
 }));
 exports.usersRouter.post('/', User_1.validateUser, validation_errors_handler_1.validationErrorsHandler, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const user = yield userService_1.userService.addUser(req.body);
-    Reflect.deleteProperty(user, 'passwordSalt');
     return res.status(201).send(user);
 }));
 exports.usersRouter.delete('/:id', (req, res) => __awaiter(void 0, void 0, void 0, function* () {

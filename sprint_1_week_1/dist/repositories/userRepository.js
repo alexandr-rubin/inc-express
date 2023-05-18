@@ -25,7 +25,7 @@ exports.userRepository = {
                 search.email = { $regex: query.searchEmailTerm, $options: 'i' };
             }
             const searchTermsArray = Object.keys(search).map(key => ({ [key]: search[key] }));
-            const users = yield db_1.usersCollection.find({ $or: searchTermsArray.length === 0 ? [{}] : searchTermsArray }, { projection: { _id: false, passwordSalt: false } })
+            const users = yield db_1.usersCollection.find({ $or: searchTermsArray.length === 0 ? [{}] : searchTermsArray }, { projection: { _id: false, password: false, passwordSalt: false } })
                 .sort({ [query.sortBy]: query.sortDirection === 'asc' ? 1 : -1 })
                 .skip(skip).limit(query.pageSize)
                 .toArray();

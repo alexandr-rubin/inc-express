@@ -11,7 +11,6 @@ usersRouter.get('/', async (req: Request, res: Response) => {
 
 usersRouter.post('/', validateUser, validationErrorsHandler, async (req: Request, res: Response) => {
     const user = await userService.addUser(req.body)
-    Reflect.deleteProperty(user, 'passwordSalt')
     return res.status(201).send(user)
 })
 
