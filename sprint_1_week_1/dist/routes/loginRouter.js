@@ -14,10 +14,20 @@ const express_1 = require("express");
 const Login_1 = require("../validation/Login");
 const validation_errors_handler_1 = require("../middlewares/validation-errors-handler");
 const loginService_1 = require("../domain/loginService");
+const jwtService_1 = require("../application/jwtService");
+const jwtAuth_1 = require("../middlewares/jwtAuth");
 exports.loginRouter = (0, express_1.Router)({});
 exports.loginRouter.post('/login', Login_1.validateLogin, validation_errors_handler_1.validationErrorsHandler, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const isLogin = yield loginService_1.loginService.login(req.body);
-    if (isLogin)
-        return res.sendStatus(204);
-    return res.sendStatus(401);
+    const user = yield loginService_1.loginService.login(req.body);
+    if (user !== null) {
+        const token = yield jwtService_1.jwtService.createJWT(user);
+        res.status(200).send({ accessToken: token });
+    }
+    else {
+        res.sendStatus(401);
+    }
+}));
+exports.loginRouter.get('/me', jwtAuth_1.authMiddleware, validation_errors_handler_1.validationErrorsHandler, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const user = req.body.user;
+    return res.status(200).send(user);
 }));

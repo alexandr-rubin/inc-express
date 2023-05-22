@@ -19,10 +19,10 @@ exports.loginRepository = {
             if (user) {
                 const password = yield userService_1.userService._generateHash(login.password, user.passwordSalt);
                 if (user.password === password) {
-                    return true;
+                    return user;
                 }
             }
-            return false;
+            return null;
         });
     },
 };
