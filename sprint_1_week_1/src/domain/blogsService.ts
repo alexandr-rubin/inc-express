@@ -8,7 +8,7 @@ import { Post } from '../models/Post'
 import { postService } from './postsService'
 
 export const blogService = {
-    async getBlogs(req: Request): Promise<Paginator> {
+    async getBlogs(req: Request): Promise<Paginator<Blog>> {
         const blogQuery = createPaginationQuery(req)
         return await blogRepository.getBlogs(blogQuery)
     },
@@ -37,7 +37,7 @@ export const blogService = {
     testingDeleteAllBlogs() {
         blogRepository.testingDeleteAllBlogs()
     },
-    async getPostsForSpecifiedBlog(blogId: string, req: Request): Promise<Paginator | null>{
+    async getPostsForSpecifiedBlog(blogId: string, req: Request): Promise<Paginator<Post> | null>{
         const postQuery = createPaginationQuery(req)
         if(await blogRepository.getBlogById(blogId) === null){
             return null

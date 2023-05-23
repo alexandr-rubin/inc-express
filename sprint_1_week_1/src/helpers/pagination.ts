@@ -19,8 +19,8 @@ export const createPaginationQuery = (req: Request): PaginationQuery => {
         return resultQuery
 }
 
-export const createPaginationResult = (count: number, query: PaginationQuery, items: Blog[] | Post[] | User[]): Paginator => {
-    const result: Paginator = {
+export const createPaginationResult = <T>(count: number, query: PaginationQuery, items: T[]): Paginator<T> => {
+    const result: Paginator<T> = {
         pagesCount: Math.ceil(count / query.pageSize),
         page: query.pageNumber,
         pageSize: query.pageSize,

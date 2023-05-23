@@ -18,7 +18,7 @@ const secretKey = process.env.JWT_SECRET_KEY || '123';
 exports.jwtService = {
     createJWT(user) {
         return __awaiter(this, void 0, void 0, function* () {
-            const token = jsonwebtoken_1.default.sign({ userId: user.id, email: user.email, login: user.login }, secretKey, { expiresIn: '1h' });
+            const token = jsonwebtoken_1.default.sign({ userId: user.id }, secretKey, { expiresIn: '1h' });
             return token;
         });
     },
@@ -26,12 +26,7 @@ exports.jwtService = {
         return __awaiter(this, void 0, void 0, function* () {
             try {
                 const result = jsonwebtoken_1.default.verify(token, secretKey);
-                const user = {
-                    email: result.email,
-                    login: result.login,
-                    userId: result.userId
-                };
-                return user;
+                return result.userId;
             }
             catch (err) {
                 return null;

@@ -14,6 +14,8 @@ const express_1 = require("express");
 const validation_errors_handler_1 = require("../middlewares/validation-errors-handler");
 const Post_1 = require("../validation/Post");
 const postsService_1 = require("../domain/postsService");
+const jwtAuth_1 = require("../middlewares/jwtAuth");
+const Comment_1 = require("../validation/Comment");
 exports.postsRouter = (0, express_1.Router)({});
 exports.postsRouter.get('/', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     res.status(200).send(yield postsService_1.postService.getPosts(req));
@@ -40,4 +42,13 @@ exports.postsRouter.delete('/:id', (req, res) => __awaiter(void 0, void 0, void 
         return res.status(204).send('Post deleted');
     }
     return res.status(404).send('Post not found');
+}));
+exports.postsRouter.post('/:postId/comments', jwtAuth_1.authMiddleware, Comment_1.validateComment, validation_errors_handler_1.validationErrorsHandler, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const comment = yield postsService_1.postService.createComment(req.user, req.body.content, req.params.postId);
+    if (comment !== null) {
+        return res.status(201).send(comment);
+    }
+    else {
+        return res.sendStatus(404);
+    }
 }));

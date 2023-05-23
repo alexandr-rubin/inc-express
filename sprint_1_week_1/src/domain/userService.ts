@@ -7,7 +7,7 @@ import { createPaginationQuery } from '../helpers/pagination'
 import bcrypt from 'bcrypt'
 
 export const userService = {
-    async getUsers(req: Request): Promise<Paginator> {
+    async getUsers(req: Request): Promise<Paginator<User>> {
         const userQuery = createPaginationQuery(req)
         return await userRepository.getUsers(userQuery)
     },

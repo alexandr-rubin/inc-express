@@ -5,7 +5,7 @@ import { PaginationQuery } from '../models/PaginationQuery'
 import { createPaginationResult } from '../helpers/pagination'
 
 export const userRepository = {
-    async getUsers(query: PaginationQuery): Promise<Paginator> {
+    async getUsers(query: PaginationQuery): Promise<Paginator<User>> {
         const skip = (query.pageNumber - 1) * query.pageSize
         // fix any
         const search : any = {}

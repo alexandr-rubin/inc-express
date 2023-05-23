@@ -5,9 +5,11 @@ import { postRepository } from '../repositories/postRespository'
 import { Request } from "express"
 import { Paginator } from '../models/Paginator'
 import { createPaginationQuery } from '../helpers/pagination'
+import { Comment } from '../models/Comment'
+import { User } from '../models/User'
 
 export const postService = {
-    async getPosts(req: Request): Promise<Paginator> {
+    async getPosts(req: Request): Promise<Paginator<Post>> {
         const postQuery = createPaginationQuery(req)
         return await postRepository.getPosts(postQuery)
     },
@@ -42,5 +44,8 @@ export const postService = {
     },
     async testingDeleteAllPosts() {
         postRepository.testingDeleteAllPosts()
+    },
+    async createComment(user: User, content: string, id: string): Promise<Comment | null> {
+        return await postRepository.createComment(user, content, id)
     }
 }

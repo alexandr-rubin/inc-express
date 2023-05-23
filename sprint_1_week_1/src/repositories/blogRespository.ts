@@ -4,9 +4,10 @@ import { Paginator } from '../models/Paginator'
 import { PaginationQuery } from '../models/PaginationQuery'
 import { createPaginationResult } from '../helpers/pagination'
 import { postsCollection } from './db'
+import { Post } from '../models/Post'
 
 export const blogRepository = {
-    async getBlogs(query: PaginationQuery): Promise<Paginator> {
+    async getBlogs(query: PaginationQuery): Promise<Paginator<Blog>> {
         const skip = (query.pageNumber - 1) * query.pageSize
         const blogs = await blogsCollection.find(query.searchNameTerm === null ? {} : {name: {$regex: query.searchNameTerm, $options: 'i'}}, {projection: {_id: false}})
         .sort({[query.sortBy]: query.sortDirection === 'asc' ? 1 : -1})
@@ -35,7 +36,7 @@ export const blogRepository = {
     testingDeleteAllBlogs() {
         blogsCollection.deleteMany({})
     },
-    async getPostsForSpecifiedBlog(blogId: string, query: PaginationQuery): Promise<Paginator>{
+    async getPostsForSpecifiedBlog(blogId: string, query: PaginationQuery): Promise<Paginator<Post>>{
         const skip = (query.pageNumber - 1) * query.pageSize
         const posts = await postsCollection.find(query.searchNameTerm === null ? {blogId: blogId} : {blogId: blogId, name: {$regex: query.searchNameTerm, $options: 'i'}}, {projection: {_id: false}})
         .sort({[query.sortBy]: query.sortDirection === 'asc' ? 1 : -1})

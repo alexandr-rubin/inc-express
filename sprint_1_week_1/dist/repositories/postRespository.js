@@ -12,6 +12,8 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.postRepository = void 0;
 const db_1 = require("./db");
 const pagination_1 = require("../helpers/pagination");
+const mongodb_1 = require("mongodb");
+const postsService_1 = require("../domain/postsService");
 exports.postRepository = {
     getPosts(query) {
         return __awaiter(this, void 0, void 0, function* () {
@@ -52,5 +54,23 @@ exports.postRepository = {
         return __awaiter(this, void 0, void 0, function* () {
             db_1.postsCollection.deleteMany({});
         });
-    }
+    },
+    createComment(user, content, id) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const post = yield postsService_1.postService.getPostById(id);
+            if (!post) {
+                return null;
+            }
+            const comment = {
+                id: new mongodb_1.ObjectId().toString(),
+                content: content,
+                commentatorInfo: {
+                    userId: user.id,
+                    userLogin: user.login
+                },
+                createdAt: new Date().toISOString()
+            };
+            return comment;
+        });
+    },
 };

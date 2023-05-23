@@ -11,14 +11,16 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.authMiddleware = void 0;
 const jwtService_1 = require("../application/jwtService");
+const userService_1 = require("../domain/userService");
 const authMiddleware = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     if (!req.headers.authorization) {
         return res.status(401).json({ message: "Unauthorized" });
     }
     const token = req.headers.authorization.split(' ')[1];
-    const user = yield jwtService_1.jwtService.getUserByIdToken(token);
-    if (user) {
-        req.body.user = user;
+    const userId = yield jwtService_1.jwtService.getUserByIdToken(token);
+    if (userId) {
+        const user = (yield userService_1.userService.getUsers(req)).items.find(item => item.id === userId);
+        req.user = user;
         return next();
     }
     return res.sendStatus(401);
