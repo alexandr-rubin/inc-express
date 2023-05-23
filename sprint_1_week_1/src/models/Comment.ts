@@ -5,5 +5,6 @@ export type Comment ={
         userId: string,
         userLogin: string
     },
-    createdAt: string
+    createdAt: string,
+    postId: string
   }

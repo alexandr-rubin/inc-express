@@ -1,5 +1,5 @@
 import { Post } from '../models/Post'
-import { postsCollection, usersCollection } from './db'
+import { commentsCollection, postsCollection, usersCollection } from './db'
 import { PaginationQuery } from '../models/PaginationQuery'
 import { Paginator } from '../models/Paginator'
 import { createPaginationResult } from '../helpers/pagination'
@@ -38,12 +38,12 @@ export const postRepository = {
     async testingDeleteAllPosts() {
         postsCollection.deleteMany({})
     },
-    async createComment(user: User, content: string, id: string): Promise<Comment | null> {
-        const post = await postService.getPostById(id)
+    async createComment(user: User, content: string, postId: string): Promise<Comment | null> {
+        const post = await postService.getPostById(postId)
         if(!post){
             return null
         }
-        
+
         const comment: Comment = {
             id: new ObjectId().toString(),
             content: content,
@@ -51,9 +51,25 @@ export const postRepository = {
                 userId: user.id,
                 userLogin: user.login
             },
-            createdAt: new Date().toISOString()
+            createdAt: new Date().toISOString(),
+            postId: postId
         }
 
-        return comment
+        const result = {...comment}
+
+        commentsCollection.insertOne(comment)
+
+        return result
     },
+    async getCommentsForSpecifiedPost(postId: string, query: PaginationQuery): Promise<Paginator<Comment>>{
+        const skip = (query.pageNumber - 1) * query.pageSize
+        const comments = await commentsCollection.find({postId: postId}, {projection: {_id: false, postId: false}})
+        .sort({[query.sortBy]: query.sortDirection === 'asc' ? 1 : -1})
+        .skip(skip)
+        .limit(query.pageSize)
+        .toArray()
+        const count = await postsCollection.countDocuments({postId: postId})
+        const result = createPaginationResult(count, query, comments)
+        return result
+    }
 }

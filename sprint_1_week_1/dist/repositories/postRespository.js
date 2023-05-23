@@ -55,9 +55,9 @@ exports.postRepository = {
             db_1.postsCollection.deleteMany({});
         });
     },
-    createComment(user, content, id) {
+    createComment(user, content, postId) {
         return __awaiter(this, void 0, void 0, function* () {
-            const post = yield postsService_1.postService.getPostById(id);
+            const post = yield postsService_1.postService.getPostById(postId);
             if (!post) {
                 return null;
             }
@@ -68,9 +68,25 @@ exports.postRepository = {
                     userId: user.id,
                     userLogin: user.login
                 },
-                createdAt: new Date().toISOString()
+                createdAt: new Date().toISOString(),
+                postId: postId
             };
-            return comment;
+            const result = Object.assign({}, comment);
+            db_1.commentsCollection.insertOne(comment);
+            return result;
         });
     },
+    getCommentsForSpecifiedPost(postId, query) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const skip = (query.pageNumber - 1) * query.pageSize;
+            const comments = yield db_1.commentsCollection.find({ postId: postId }, { projection: { _id: false, postId: false } })
+                .sort({ [query.sortBy]: query.sortDirection === 'asc' ? 1 : -1 })
+                .skip(skip)
+                .limit(query.pageSize)
+                .toArray();
+            const count = yield db_1.postsCollection.countDocuments({ postId: postId });
+            const result = (0, pagination_1.createPaginationResult)(count, query, comments);
+            return result;
+        });
+    }
 };

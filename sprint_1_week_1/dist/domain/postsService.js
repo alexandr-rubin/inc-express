@@ -62,9 +62,18 @@ exports.postService = {
             postRespository_1.postRepository.testingDeleteAllPosts();
         });
     },
-    createComment(user, content, id) {
+    createComment(user, content, postId) {
         return __awaiter(this, void 0, void 0, function* () {
-            return yield postRespository_1.postRepository.createComment(user, content, id);
+            return yield postRespository_1.postRepository.createComment(user, content, postId);
         });
-    }
+    },
+    getCommentsForSpecifiedPost(postId, req) {
+        return __awaiter(this, void 0, void 0, function* () {
+            if ((yield postRespository_1.postRepository.getPostById(postId)) === null) {
+                return null;
+            }
+            const postQuery = (0, pagination_1.createPaginationQuery)(req);
+            return yield postRespository_1.postRepository.getCommentsForSpecifiedPost(postId, postQuery);
+        });
+    },
 };

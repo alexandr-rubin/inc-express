@@ -56,10 +56,10 @@ exports.blogService = {
     },
     getPostsForSpecifiedBlog(blogId, req) {
         return __awaiter(this, void 0, void 0, function* () {
-            const postQuery = (0, pagination_1.createPaginationQuery)(req);
             if ((yield blogRespository_1.blogRepository.getBlogById(blogId)) === null) {
                 return null;
             }
+            const postQuery = (0, pagination_1.createPaginationQuery)(req);
             return yield blogRespository_1.blogRepository.getPostsForSpecifiedBlog(blogId, postQuery);
         });
     },

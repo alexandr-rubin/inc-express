@@ -8,6 +8,17 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
+var __rest = (this && this.__rest) || function (s, e) {
+    var t = {};
+    for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p) && e.indexOf(p) < 0)
+        t[p] = s[p];
+    if (s != null && typeof Object.getOwnPropertySymbols === "function")
+        for (var i = 0, p = Object.getOwnPropertySymbols(s); i < p.length; i++) {
+            if (e.indexOf(p[i]) < 0 && Object.prototype.propertyIsEnumerable.call(s, p[i]))
+                t[p[i]] = s[p[i]];
+        }
+    return t;
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.postsRouter = void 0;
 const express_1 = require("express");
@@ -46,9 +57,17 @@ exports.postsRouter.delete('/:id', (req, res) => __awaiter(void 0, void 0, void 
 exports.postsRouter.post('/:postId/comments', jwtAuth_1.authMiddleware, Comment_1.validateComment, validation_errors_handler_1.validationErrorsHandler, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const comment = yield postsService_1.postService.createComment(req.user, req.body.content, req.params.postId);
     if (comment !== null) {
-        return res.status(201).send(comment);
+        const { postId } = comment, result = __rest(comment, ["postId"]);
+        return res.status(201).send(result);
     }
     else {
         return res.sendStatus(404);
     }
+}));
+exports.postsRouter.get('/:postId/comments', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const comments = yield postsService_1.postService.getCommentsForSpecifiedPost(req.params.postId, req);
+    if (comments === null) {
+        return res.status(404).send('Post not found');
+    }
+    return res.status(200).send(comments);
 }));

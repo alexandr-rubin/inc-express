@@ -38,10 +38,10 @@ export const blogService = {
         blogRepository.testingDeleteAllBlogs()
     },
     async getPostsForSpecifiedBlog(blogId: string, req: Request): Promise<Paginator<Post> | null>{
-        const postQuery = createPaginationQuery(req)
         if(await blogRepository.getBlogById(blogId) === null){
             return null
         }
+        const postQuery = createPaginationQuery(req)
         return await blogRepository.getPostsForSpecifiedBlog(blogId, postQuery)
     },
     async addPostForSpecificBlog(blogId: string, post: Post): Promise<Post | null> {

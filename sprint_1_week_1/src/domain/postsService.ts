@@ -45,7 +45,14 @@ export const postService = {
     async testingDeleteAllPosts() {
         postRepository.testingDeleteAllPosts()
     },
-    async createComment(user: User, content: string, id: string): Promise<Comment | null> {
-        return await postRepository.createComment(user, content, id)
-    }
+    async createComment(user: User, content: string, postId: string): Promise<Comment | null> {
+        return await postRepository.createComment(user, content, postId)
+    },
+    async getCommentsForSpecifiedPost(postId: string, req: Request): Promise<Paginator<Comment> | null> {
+        if(await postRepository.getPostById(postId) === null){
+            return null
+        }
+        const postQuery = createPaginationQuery(req)
+        return await postRepository.getCommentsForSpecifiedPost(postId, postQuery)
+    },
 }

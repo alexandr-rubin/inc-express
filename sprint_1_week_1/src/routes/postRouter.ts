@@ -41,9 +41,18 @@ postsRouter.delete('/:id', async (req: Request, res: Response) => {
 postsRouter.post('/:postId/comments', authMiddleware, validateComment, validationErrorsHandler, async (req: Request, res: Response) => {
     const comment = await postService.createComment(req.user!, req.body.content, req.params.postId)
     if(comment !== null){
-        return res.status(201).send(comment)
+        const {postId, ...result} = comment
+        return res.status(201).send(result)
     }
     else{
         return res.sendStatus(404)
     }
+})
+
+postsRouter.get('/:postId/comments', async (req: Request, res: Response) => {
+    const comments = await postService.getCommentsForSpecifiedPost(req.params.postId, req)
+    if(comments === null) {
+        return res.status(404).send('Post not found')
+    }
+    return res.status(200).send(comments)
 })
