@@ -14,15 +14,16 @@ const express_1 = require("express");
 const User_1 = require("../validation/User");
 const validation_errors_handler_1 = require("../middlewares/validation-errors-handler");
 const userService_1 = require("../domain/userService");
+const basicAuth_1 = require("../middlewares/basicAuth");
 exports.usersRouter = (0, express_1.Router)({});
 exports.usersRouter.get('/', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     return res.status(200).send(yield userService_1.userService.getUsers(req));
 }));
-exports.usersRouter.post('/', User_1.validateUser, validation_errors_handler_1.validationErrorsHandler, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+exports.usersRouter.post('/', basicAuth_1.basicAuthMiddleware, User_1.validateUser, validation_errors_handler_1.validationErrorsHandler, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const user = yield userService_1.userService.addUser(req.body);
     return res.status(201).send(user);
 }));
-exports.usersRouter.delete('/:id', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+exports.usersRouter.delete('/:id', basicAuth_1.basicAuthMiddleware, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     if (yield userService_1.userService.deleteUserById(req.params.id)) {
         return res.status(204).send('User deleted');
     }

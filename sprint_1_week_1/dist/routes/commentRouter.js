@@ -26,7 +26,7 @@ exports.commentsRouter.put('/:commentId', jwtAuth_1.authMiddleware, Comment_1.va
     }
     return res.sendStatus(204);
 }));
-exports.commentsRouter.delete('/:id', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+exports.commentsRouter.delete('/:id', jwtAuth_1.authMiddleware, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const result = yield commentService_1.commentService.deleteCommentById(req.params.id, req.user.id);
     if (result === null) {
         return res.sendStatus(403);

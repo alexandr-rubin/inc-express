@@ -37,4 +37,7 @@ exports.commentRepository = {
             return yield db_1.commentsCollection.findOne({ id: id }, { projection: { _id: false, postId: false } });
         });
     },
+    testingDeleteAllComments() {
+        db_1.commentsCollection.deleteMany({});
+    },
 };

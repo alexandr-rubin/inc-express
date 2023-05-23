@@ -27,11 +27,12 @@ const Post_1 = require("../validation/Post");
 const postsService_1 = require("../domain/postsService");
 const jwtAuth_1 = require("../middlewares/jwtAuth");
 const Comment_1 = require("../validation/Comment");
+const basicAuth_1 = require("../middlewares/basicAuth");
 exports.postsRouter = (0, express_1.Router)({});
 exports.postsRouter.get('/', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     res.status(200).send(yield postsService_1.postService.getPosts(req));
 }));
-exports.postsRouter.post('/', Post_1.validatePost, validation_errors_handler_1.validationErrorsHandler, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+exports.postsRouter.post('/', basicAuth_1.basicAuthMiddleware, Post_1.validatePost, validation_errors_handler_1.validationErrorsHandler, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     return res.status(201).send(yield postsService_1.postService.addPost(req.body));
 }));
 exports.postsRouter.get('/:id', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
@@ -41,14 +42,14 @@ exports.postsRouter.get('/:id', (req, res) => __awaiter(void 0, void 0, void 0, 
     }
     return res.status(404).send('Post not found');
 }));
-exports.postsRouter.put('/:id', Post_1.validatePost, validation_errors_handler_1.validationErrorsHandler, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+exports.postsRouter.put('/:id', basicAuth_1.basicAuthMiddleware, Post_1.validatePost, validation_errors_handler_1.validationErrorsHandler, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const post = yield postsService_1.postService.updatePostByid(req.params.id, req.body);
     if (post) {
         return res.status(204).send(post);
     }
     return res.status(404).send('Not found');
 }));
-exports.postsRouter.delete('/:id', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+exports.postsRouter.delete('/:id', basicAuth_1.basicAuthMiddleware, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     if (yield postsService_1.postService.deletePostById(req.params.id)) {
         return res.status(204).send('Post deleted');
     }

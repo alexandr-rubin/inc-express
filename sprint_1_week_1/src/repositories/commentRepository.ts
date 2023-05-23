@@ -22,4 +22,7 @@ export const commentRepository = {
     async getCommentById(id: string): Promise<Comment | null> {
         return await commentsCollection.findOne({id: id}, {projection: {_id: false, postId: false}})
     },
+    testingDeleteAllComments() {
+        commentsCollection.deleteMany({})
+    },
 }
