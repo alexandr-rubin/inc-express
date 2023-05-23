@@ -68,7 +68,7 @@ export const postRepository = {
         .skip(skip)
         .limit(query.pageSize)
         .toArray()
-        const count = await postsCollection.countDocuments({postId: postId})
+        const count = await commentsCollection.countDocuments({postId: postId})
         const result = createPaginationResult(count, query, comments)
         return result
     }

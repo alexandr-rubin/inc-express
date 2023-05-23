@@ -84,7 +84,7 @@ exports.postRepository = {
                 .skip(skip)
                 .limit(query.pageSize)
                 .toArray();
-            const count = yield db_1.postsCollection.countDocuments({ postId: postId });
+            const count = yield db_1.commentsCollection.countDocuments({ postId: postId });
             const result = (0, pagination_1.createPaginationResult)(count, query, comments);
             return result;
         });
