@@ -7,17 +7,23 @@ import { Paginator } from '../models/Paginator'
 import { createPaginationQuery } from '../helpers/pagination'
 import { Comment } from '../models/Comment'
 import { User } from '../models/User'
+import { Result } from '../models/Result'
+import { ResultCode } from '../helpers/resultCode'
 
 export const postService = {
     async getPosts(req: Request): Promise<Paginator<Post>> {
         const postQuery = createPaginationQuery(req)
         return await postRepository.getPosts(postQuery)
     },
-    async addPost(post: Post): Promise<Post> {
+    async addPost(post: Post): Promise<Result<Post>> {
         const blog = await blogService.getBlogById(post.blogId)
-        // TODO: fix
+
         if (!blog) {
-            throw new Error(`Blog with id ${post.blogId} not found`)
+            return {
+                code: ResultCode.NotFound,
+                data: null,
+                errorMessage: 'incorrect id'
+            }
         }
 
         const newPost: Post = {
@@ -31,7 +37,11 @@ export const postService = {
         }
         const result = {...newPost}
         await postRepository.addPost(newPost)
-        return result
+        return {
+            code: ResultCode.Success,
+            data: result,
+            errorMessage: 'OK'
+        }
     },
     async getPostById(id: string): Promise<Post | null> {
         return await postRepository.getPostById(id)

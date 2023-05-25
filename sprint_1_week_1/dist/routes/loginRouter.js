@@ -28,6 +28,11 @@ exports.loginRouter.post('/login', Login_1.validateLogin, validation_errors_hand
     }
 }));
 exports.loginRouter.get('/me', jwtAuth_1.authMiddleware, validation_errors_handler_1.validationErrorsHandler, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const user = req.body.user;
-    return res.status(200).send(user);
+    var _a, _b, _c;
+    const result = {
+        email: (_a = req.user) === null || _a === void 0 ? void 0 : _a.email,
+        login: (_b = req.user) === null || _b === void 0 ? void 0 : _b.login,
+        userId: (_c = req.user) === null || _c === void 0 ? void 0 : _c.id
+    };
+    return res.status(200).send(result);
 }));

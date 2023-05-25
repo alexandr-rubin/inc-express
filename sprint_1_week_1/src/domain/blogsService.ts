@@ -50,6 +50,6 @@ export const blogService = {
         }
         post.blogId = blogId
         //const result = {...post, blogId}
-        return postService.addPost(post)
+        return (await postService.addPost(post)).data
     }
 }

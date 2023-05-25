@@ -19,6 +19,10 @@ loginRouter.post('/login', validateLogin, validationErrorsHandler, async (req: R
 })
 
 loginRouter.get('/me', authMiddleware, validationErrorsHandler, async (req: Request, res: Response) => {
-    const user = req.body.user
-    return res.status(200).send(user)
+    const result = {
+        email: req.user?.email,
+        login: req.user?.login,
+        userId: req.user?.id
+    }   
+    return res.status(200).send(result)
 })

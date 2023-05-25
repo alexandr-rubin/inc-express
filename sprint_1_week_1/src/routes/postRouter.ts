@@ -13,7 +13,8 @@ postsRouter.get('/', async (req: Request, res: Response) => {
 })
 
 postsRouter.post('/', basicAuthMiddleware, validatePost, validationErrorsHandler, async (req: Request, res: Response) => {
-    return res.status(201).send(await postService.addPost(req.body))
+    const result = await postService.addPost(req.body)
+    return res.status(201).send(result.data)
 })
 
 postsRouter.get('/:id', async (req: Request, res: Response) => {
