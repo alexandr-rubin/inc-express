@@ -1,14 +1,14 @@
 import { Router, Request, Response } from "express"
 import { validateLogin  } from "../validation/Login"
 import { validationErrorsHandler } from "../middlewares/validation-errors-handler"
-import { loginService } from "../domain/loginService"
+import { authorizationService } from "../domain/authorizationService"
 import { jwtService } from "../application/jwtService"
 import { authMiddleware } from "../middlewares/jwtAuth"
 
-export const loginRouter = Router({})
+export const authorizationRouterRouter = Router({})
 
-loginRouter.post('/login', validateLogin, validationErrorsHandler, async (req: Request, res: Response) => {
-    const user = await loginService.login(req.body)
+authorizationRouterRouter.post('/login', validateLogin, validationErrorsHandler, async (req: Request, res: Response) => {
+    const user = await authorizationService.login(req.body)
     if(user !== null){
         const token = await jwtService.createJWT(user)
         res.status(200).send({accessToken: token})
@@ -18,7 +18,7 @@ loginRouter.post('/login', validateLogin, validationErrorsHandler, async (req: R
     }
 })
 
-loginRouter.get('/me', authMiddleware, validationErrorsHandler, async (req: Request, res: Response) => {
+authorizationRouterRouter.get('/me', authMiddleware, validationErrorsHandler, async (req: Request, res: Response) => {
     const result = {
         email: req.user?.email,
         login: req.user?.login,

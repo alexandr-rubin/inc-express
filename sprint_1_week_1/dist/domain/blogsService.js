@@ -70,7 +70,7 @@ exports.blogService = {
             }
             post.blogId = blogId;
             //const result = {...post, blogId}
-            return postsService_1.postService.addPost(post);
+            return (yield postsService_1.postService.addPost(post)).data;
         });
     }
 };

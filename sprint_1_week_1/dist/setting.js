@@ -10,12 +10,12 @@ const postRouter_1 = require("./routes/postRouter");
 const blogRouter_1 = require("./routes/blogRouter");
 const testingRouter_1 = require("./routes/testingRouter");
 const userRouter_1 = require("./routes/userRouter");
-const loginRouter_1 = require("./routes/loginRouter");
+const authorizationRouter_1 = require("./routes/authorizationRouter");
 const commentRouter_1 = require("./routes/commentRouter");
 exports.app = (0, express_1.default)();
 exports.app.use(express_1.default.json());
 exports.app.use('/testing/all-data', testingRouter_1.testingRouter);
-exports.app.use('/auth', loginRouter_1.loginRouter);
+exports.app.use('/auth', authorizationRouter_1.authorizationRouterRouter);
 exports.app.use('/comments', commentRouter_1.commentsRouter);
 //app.use(basicAuthMiddleware)
 exports.app.use('/videos', video_router_1.videosRouter);

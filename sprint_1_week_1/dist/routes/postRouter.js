@@ -33,7 +33,8 @@ exports.postsRouter.get('/', (req, res) => __awaiter(void 0, void 0, void 0, fun
     res.status(200).send(yield postsService_1.postService.getPosts(req));
 }));
 exports.postsRouter.post('/', basicAuth_1.basicAuthMiddleware, Post_1.validatePost, validation_errors_handler_1.validationErrorsHandler, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    return res.status(201).send(yield postsService_1.postService.addPost(req.body));
+    const result = yield postsService_1.postService.addPost(req.body);
+    return res.status(201).send(result.data);
 }));
 exports.postsRouter.get('/:id', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const blog = yield postsService_1.postService.getPostById(req.params.id);

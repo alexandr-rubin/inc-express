@@ -9,20 +9,16 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.loginRepository = void 0;
-const db_1 = require("./db");
-const userService_1 = require("../domain/userService");
-exports.loginRepository = {
-    login(login) {
+exports.authorizationService = void 0;
+const authorizationRepository_1 = require("../repositories/authorizationRepository");
+exports.authorizationService = {
+    login(body) {
         return __awaiter(this, void 0, void 0, function* () {
-            const user = yield db_1.usersCollection.findOne({ $or: [{ login: login.loginOrEmail }, { email: login.loginOrEmail }] });
-            if (user) {
-                const password = yield userService_1.userService._generateHash(login.password, user.passwordSalt);
-                if (user.password === password) {
-                    return user;
-                }
-            }
-            return null;
+            const login = {
+                loginOrEmail: body.loginOrEmail,
+                password: body.password
+            };
+            return authorizationRepository_1.authorizationRepository.login(login);
         });
     },
 };

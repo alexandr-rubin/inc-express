@@ -14,6 +14,7 @@ const mongodb_1 = require("mongodb");
 const blogsService_1 = require("./blogsService");
 const postRespository_1 = require("../repositories/postRespository");
 const pagination_1 = require("../helpers/pagination");
+const resultCode_1 = require("../helpers/resultCode");
 exports.postService = {
     getPosts(req) {
         return __awaiter(this, void 0, void 0, function* () {
@@ -24,9 +25,12 @@ exports.postService = {
     addPost(post) {
         return __awaiter(this, void 0, void 0, function* () {
             const blog = yield blogsService_1.blogService.getBlogById(post.blogId);
-            // TODO: fix
             if (!blog) {
-                throw new Error(`Blog with id ${post.blogId} not found`);
+                return {
+                    code: resultCode_1.ResultCode.NotFound,
+                    data: null,
+                    errorMessage: 'incorrect id'
+                };
             }
             const newPost = {
                 id: new mongodb_1.ObjectId().toString(),
@@ -39,7 +43,11 @@ exports.postService = {
             };
             const result = Object.assign({}, newPost);
             yield postRespository_1.postRepository.addPost(newPost);
-            return result;
+            return {
+                code: resultCode_1.ResultCode.Success,
+                data: result,
+                errorMessage: 'OK'
+            };
         });
     },
     getPostById(id) {

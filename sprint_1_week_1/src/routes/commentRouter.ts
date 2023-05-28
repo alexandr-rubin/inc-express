@@ -1,7 +1,7 @@
 import { Router, Request, Response } from "express"
 import { validateLogin  } from "../validation/Login"
 import { validationErrorsHandler } from "../middlewares/validation-errors-handler"
-import { loginService } from "../domain/loginService"
+import { authorizationService } from "../domain/authorizationService"
 import { jwtService } from "../application/jwtService"
 import { authMiddleware } from "../middlewares/jwtAuth"
 import { validateComment } from "../validation/Comment"

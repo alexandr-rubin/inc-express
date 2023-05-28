@@ -11,25 +11,56 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.commentRepository = void 0;
 const db_1 = require("./db");
+const resultCode_1 = require("../helpers/resultCode");
 exports.commentRepository = {
     updateCommentById(id, content, userId) {
         return __awaiter(this, void 0, void 0, function* () {
             const comment = yield this.getCommentById(id);
             if (comment && comment.commentatorInfo.userId !== userId) {
-                return null;
+                return {
+                    code: resultCode_1.ResultCode.Forbidden,
+                    data: null,
+                    errorMessage: "Forbidden"
+                };
             }
             const result = yield db_1.commentsCollection.updateOne({ id: id }, { $set: { content: content } });
-            return result.matchedCount === 1;
+            if (result.matchedCount === 1) {
+                return {
+                    code: resultCode_1.ResultCode.NoContent,
+                    data: true,
+                    errorMessage: "Updated"
+                };
+            }
+            return {
+                code: resultCode_1.ResultCode.NotFound,
+                data: false,
+                errorMessage: "Not Found"
+            };
         });
     },
     deleteCommentById(id, userId) {
         return __awaiter(this, void 0, void 0, function* () {
             const comment = yield this.getCommentById(id);
             if (comment && comment.commentatorInfo.userId !== userId) {
-                return null;
+                return {
+                    code: resultCode_1.ResultCode.Forbidden,
+                    data: null,
+                    errorMessage: "Forbidden"
+                };
             }
             const result = yield db_1.commentsCollection.deleteOne({ id: id });
-            return result.deletedCount === 1;
+            if (result.deletedCount === 1) {
+                return {
+                    code: resultCode_1.ResultCode.NoContent,
+                    data: true,
+                    errorMessage: "Deleted"
+                };
+            }
+            return {
+                code: resultCode_1.ResultCode.NotFound,
+                data: false,
+                errorMessage: "Not Found"
+            };
         });
     },
     getCommentById(id) {

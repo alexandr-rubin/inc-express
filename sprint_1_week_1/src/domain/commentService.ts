@@ -1,7 +1,7 @@
 import { Login } from "../models/Login"
 import { User } from "../models/User"
 import { commentRepository } from "../repositories/commentRepository"
-import { loginRepository } from "../repositories/loginRepository"
+import { authorizationRepository } from "../repositories/authorizationRepository"
 import { Comment } from '../models/Comment'
 import { Result } from "../models/Result"
 
