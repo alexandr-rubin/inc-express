@@ -3,6 +3,7 @@ import { usersCollection } from './db'
 import { Paginator } from '../models/Paginator'
 import { PaginationQuery } from '../models/PaginationQuery'
 import { createPaginationResult } from '../helpers/pagination'
+import { add } from 'date-fns'  
 
 export const userRepository = {
     async getUsers(query: PaginationQuery): Promise<Paginator<User>> {
@@ -49,6 +50,10 @@ export const userRepository = {
     },
     async updateConfirmation(id: string) {
         let result = await usersCollection.updateOne({id}, {$set: {'confirmationEmail.isConfirmed': true}})
+        return result.modifiedCount === 1
+    },
+    async updateConfirmationCode(id: string, code: string) {
+        let result = await usersCollection.updateOne({id}, {$set: {'confirmationEmail.confirmationCode': code, 'confirmationEmail.expirationDate': add(new Date(), { hours: 1, minutes: 3})}})
         return result.modifiedCount === 1
     }
 }

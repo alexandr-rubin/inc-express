@@ -80,7 +80,9 @@ exports.authorizationService = {
             if (user.confirmationEmail.expirationDate < new Date()) {
                 return false;
             }
-            yield emailService_1.emailService.sendEmail(email, user.confirmationEmail.confirmationCode);
+            const code = (0, uuid_1.v4)();
+            yield userRepository_1.userRepository.updateConfirmationCode(user.id, code);
+            yield emailService_1.emailService.sendEmail(email, code);
             return true;
         });
     }

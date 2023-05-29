@@ -12,6 +12,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.userRepository = void 0;
 const db_1 = require("./db");
 const pagination_1 = require("../helpers/pagination");
+const date_fns_1 = require("date-fns");
 exports.userRepository = {
     getUsers(query) {
         return __awaiter(this, void 0, void 0, function* () {
@@ -71,6 +72,12 @@ exports.userRepository = {
     updateConfirmation(id) {
         return __awaiter(this, void 0, void 0, function* () {
             let result = yield db_1.usersCollection.updateOne({ id }, { $set: { 'confirmationEmail.isConfirmed': true } });
+            return result.modifiedCount === 1;
+        });
+    },
+    updateConfirmationCode(id, code) {
+        return __awaiter(this, void 0, void 0, function* () {
+            let result = yield db_1.usersCollection.updateOne({ id }, { $set: { 'confirmationEmail.confirmationCode': code, 'confirmationEmail.expirationDate': (0, date_fns_1.add)(new Date(), { hours: 1, minutes: 3 }) } });
             return result.modifiedCount === 1;
         });
     }

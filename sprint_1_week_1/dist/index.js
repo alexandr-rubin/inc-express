@@ -11,6 +11,11 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 Object.defineProperty(exports, "__esModule", { value: true });
 const setting_1 = require("./setting");
 const db_1 = require("./repositories/db");
+const ngrok_api_1 = require("@ngrok/ngrok-api");
+const ngrok = new ngrok_api_1.Ngrok({
+    apiToken: 'ak_2QTH6TUiAwu7ko0rJrWmRh3aS8h',
+    baseUrl: 'https://api.ngrok.com'
+});
 const port = process.env.PORT || 3000;
 const startApp = () => __awaiter(void 0, void 0, void 0, function* () {
     yield (0, db_1.runDb)();

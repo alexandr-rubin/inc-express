@@ -63,8 +63,9 @@ export const authorizationService = {
         if(user.confirmationEmail.expirationDate < new Date()){
             return false
         }
-
-        await emailService.sendEmail(email, user.confirmationEmail.confirmationCode)
+        const code = uuidv4()
+        await userRepository.updateConfirmationCode(user.id, code)
+        await emailService.sendEmail(email, code)
         return true
     }
 }
