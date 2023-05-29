@@ -5,6 +5,8 @@ import { Paginator } from '../models/Paginator'
 import { Request } from "express"
 import { createPaginationQuery } from '../helpers/pagination'
 import bcrypt from 'bcrypt'
+import { v4 as uuidv4 } from 'uuid'
+import { add } from 'date-fns'
 
 export const userService = {
     async getUsers(req: Request): Promise<Paginator<User>> {
@@ -20,9 +22,17 @@ export const userService = {
             password: passwordHash,
             passwordSalt: passSalt,
             email: user.email,
-            createdAt: new Date().toISOString()
+            createdAt: new Date().toISOString(),
+            confirmationEmail: {
+                confirmationCode: uuidv4(),
+                expirationDate: add(new Date(), {
+                    hours: 1,
+                    minutes: 3
+                }),
+                isConfirmed: true
+            }
         }
-        const {password, passwordSalt, ...result} = newUser
+        const {password, passwordSalt, confirmationEmail, ...result} = newUser
         await userRepository.addUser(newUser)
         return result
     },

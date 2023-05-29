@@ -28,6 +28,8 @@ const mongodb_1 = require("mongodb");
 const userRepository_1 = require("../repositories/userRepository");
 const pagination_1 = require("../helpers/pagination");
 const bcrypt_1 = __importDefault(require("bcrypt"));
+const uuid_1 = require("uuid");
+const date_fns_1 = require("date-fns");
 exports.userService = {
     getUsers(req) {
         return __awaiter(this, void 0, void 0, function* () {
@@ -45,9 +47,17 @@ exports.userService = {
                 password: passwordHash,
                 passwordSalt: passSalt,
                 email: user.email,
-                createdAt: new Date().toISOString()
+                createdAt: new Date().toISOString(),
+                confirmationEmail: {
+                    confirmationCode: (0, uuid_1.v4)(),
+                    expirationDate: (0, date_fns_1.add)(new Date(), {
+                        hours: 1,
+                        minutes: 3
+                    }),
+                    isConfirmed: true
+                }
             };
-            const { password, passwordSalt } = newUser, result = __rest(newUser, ["password", "passwordSalt"]);
+            const { password, passwordSalt, confirmationEmail } = newUser, result = __rest(newUser, ["password", "passwordSalt", "confirmationEmail"]);
             yield userRepository_1.userRepository.addUser(newUser);
             return result;
         });

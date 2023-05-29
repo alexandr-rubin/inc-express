@@ -25,7 +25,7 @@ exports.userRepository = {
                 search.email = { $regex: query.searchEmailTerm, $options: 'i' };
             }
             const searchTermsArray = Object.keys(search).map(key => ({ [key]: search[key] }));
-            const users = yield db_1.usersCollection.find({ $or: searchTermsArray.length === 0 ? [{}] : searchTermsArray }, { projection: { _id: false, password: false, passwordSalt: false } })
+            const users = yield db_1.usersCollection.find({ $or: searchTermsArray.length === 0 ? [{}] : searchTermsArray }, { projection: { _id: false, password: false, passwordSalt: false, confirmationEmail: false } })
                 .sort({ [query.sortBy]: query.sortDirection === 'asc' ? 1 : -1 })
                 .skip(skip).limit(query.pageSize)
                 .toArray();
@@ -36,7 +36,6 @@ exports.userRepository = {
     },
     addUser(user) {
         return __awaiter(this, void 0, void 0, function* () {
-            // TODO: return
             return (yield db_1.usersCollection.insertOne(user)).acknowledged === true;
         });
     },
@@ -49,6 +48,30 @@ exports.userRepository = {
     testingDeleteAllUsers() {
         return __awaiter(this, void 0, void 0, function* () {
             db_1.usersCollection.deleteMany({});
+        });
+    },
+    getUserByEmail(email) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const user = yield db_1.usersCollection.findOne({ email: email });
+            return user;
+        });
+    },
+    getUserBylogin(login) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const user = yield db_1.usersCollection.findOne({ login: login });
+            return user;
+        });
+    },
+    findUserByConfirmationCode(code) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const user = db_1.usersCollection.findOne({ 'confirmationEmail.confirmationCode': code });
+            return user;
+        });
+    },
+    updateConfirmation(id) {
+        return __awaiter(this, void 0, void 0, function* () {
+            let result = yield db_1.usersCollection.updateOne({ id }, { $set: { 'confirmationEmail.isConfirmed': true } });
+            return result.modifiedCount === 1;
         });
     }
 };

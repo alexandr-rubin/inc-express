@@ -4,7 +4,12 @@ export type User = {
     password: string,
     passwordSalt: string,
     email: string,
-    createdAt: string
+    createdAt: string,
+    confirmationEmail: {
+        confirmationCode: string,
+        expirationDate: Date,
+        isConfirmed: boolean
+    }
 }
 
 export type UserViewModel ={
