@@ -25,7 +25,7 @@ exports.emailAdapter = {
                 from: 'homework <rubinyourhead@gmail.com>',
                 to: email,
                 subject: 'registration',
-                html: `<a href='https://somesite.com/confirm-email?code=${code}'>complete registration</a>`,
+                html: `<a href='https://incubator-homework-1jd6.vercel.app/confirm-email?code=${code}'>complete registration</a>`,
             });
             console.log("Message sent: %s", info.messageId);
             return info;
