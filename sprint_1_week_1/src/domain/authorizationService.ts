@@ -7,6 +7,7 @@ import bcrypt from 'bcrypt'
 import { userService } from "./userService"
 import { userRepository } from "../repositories/userRepository"
 import { emailService } from "./emailService"
+import { ObjectId } from "mongodb"
 
 export const authorizationService = {
     async login(body: Login): Promise<User | null> {
@@ -20,7 +21,7 @@ export const authorizationService = {
         const passSalt = await bcrypt.genSalt(10)
         const passwordHash = await userService._generateHash(user.password, passSalt)
         const newUser: User = {
-            id: user.id,
+            id: new ObjectId().toString(),
             login: user.login,
             password: passwordHash,
             passwordSalt: passSalt,

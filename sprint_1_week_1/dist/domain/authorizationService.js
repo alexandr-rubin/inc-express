@@ -20,6 +20,7 @@ const bcrypt_1 = __importDefault(require("bcrypt"));
 const userService_1 = require("./userService");
 const userRepository_1 = require("../repositories/userRepository");
 const emailService_1 = require("./emailService");
+const mongodb_1 = require("mongodb");
 exports.authorizationService = {
     login(body) {
         return __awaiter(this, void 0, void 0, function* () {
@@ -35,7 +36,7 @@ exports.authorizationService = {
             const passSalt = yield bcrypt_1.default.genSalt(10);
             const passwordHash = yield userService_1.userService._generateHash(user.password, passSalt);
             const newUser = {
-                id: user.id,
+                id: new mongodb_1.ObjectId().toString(),
                 login: user.login,
                 password: passwordHash,
                 passwordSalt: passSalt,
