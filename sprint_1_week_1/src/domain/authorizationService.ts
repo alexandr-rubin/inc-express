@@ -65,7 +65,10 @@ export const authorizationService = {
             return false
         }
         const code = uuidv4()
-        await userRepository.updateConfirmationCode(user.id, code)
+        const isUpdated = await userRepository.updateConfirmationCode(user.id, code)
+        if(!isUpdated){
+            return false
+        }
         await emailService.sendEmail(email, code)
         return true
     }

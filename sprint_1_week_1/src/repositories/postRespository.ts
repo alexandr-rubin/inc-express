@@ -1,18 +1,15 @@
 import { Post } from '../models/Post'
 import { commentsCollection, postsCollection, usersCollection } from './db'
-import { PaginationQuery } from '../models/PaginationQuery'
-import { Paginator } from '../models/Paginator'
-import { createPaginationResult } from '../helpers/pagination'
 import { ObjectId } from 'mongodb'
 import { Comment } from '../models/Comment'
 import { User } from '../models/User'
-import { postService } from '../domain/postsService'
 import { postQueryRepository } from '../queryRepositories/postQueryRepository'
 
 export const postRepository = {
     async addPost(post: Post): Promise<boolean> {
         // TODO: return
-        return (await postsCollection.insertOne(post)).acknowledged === true
+        const isAdded = (await postsCollection.insertOne(post)).acknowledged === true
+        return isAdded
     },
     async updatePostByid(id: string, newPost: Post): Promise<boolean> {
         const result = await postsCollection.updateOne({id: id}, { $set: {title: newPost.title, shortDescription: newPost.shortDescription, content: newPost.content, blogId: newPost.blogId}})
@@ -44,7 +41,10 @@ export const postRepository = {
 
         const result = {...comment}
 
-        commentsCollection.insertOne(comment)
+        const isAdded = await commentsCollection.insertOne(comment)
+        if(isAdded.acknowledged === false){
+            return null
+        }
 
         return result
     }

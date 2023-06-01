@@ -4,6 +4,7 @@ import { blogRepository } from "../repositories/blogRespository"
 import { postRepository } from "../repositories/postRespository"
 import { userRepository } from "../repositories/userRepository"
 import { commentRepository } from "../repositories/commentRepository"
+import { HttpStatusCode } from "../helpers/httpStatusCode"
 
 export const testingRouter = Router({})
 
@@ -13,5 +14,5 @@ testingRouter.delete('/', (req: Request, res: Response) => {
     postRepository.testingDeleteAllPosts()
     userRepository.testingDeleteAllUsers()
     commentRepository.testingDeleteAllComments()
-    res.status(204).send('All data is deleted') 
+    res.status(HttpStatusCode.NO_CONTENT_204).send('All data is deleted') 
 })

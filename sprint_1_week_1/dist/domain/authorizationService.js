@@ -82,7 +82,10 @@ exports.authorizationService = {
                 return false;
             }
             const code = (0, uuid_1.v4)();
-            yield userRepository_1.userRepository.updateConfirmationCode(user.id, code);
+            const isUpdated = yield userRepository_1.userRepository.updateConfirmationCode(user.id, code);
+            if (!isUpdated) {
+                return false;
+            }
             yield emailService_1.emailService.sendEmail(email, code);
             return true;
         });

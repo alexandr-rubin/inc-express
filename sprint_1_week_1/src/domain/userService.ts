@@ -1,9 +1,6 @@
 import { User, UserViewModel } from '../models/User'
 import { ObjectId } from 'mongodb'
 import { userRepository } from '../repositories/userRepository'
-import { Paginator } from '../models/Paginator'
-import { Request } from "express"
-import { createPaginationQuery } from '../helpers/pagination'
 import bcrypt from 'bcrypt'
 import { v4 as uuidv4 } from 'uuid'
 import { add } from 'date-fns'

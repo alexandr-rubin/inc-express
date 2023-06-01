@@ -29,48 +29,48 @@ const jwtAuth_1 = require("../middlewares/jwtAuth");
 const Comment_1 = require("../validation/Comment");
 const basicAuth_1 = require("../middlewares/basicAuth");
 const postQueryRepository_1 = require("../queryRepositories/postQueryRepository");
+const httpStatusCode_1 = require("../helpers/httpStatusCode");
 exports.postsRouter = (0, express_1.Router)({});
 exports.postsRouter.get('/', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    res.status(200).send(yield postQueryRepository_1.postQueryRepository.getPosts(req));
+    res.status(httpStatusCode_1.HttpStatusCode.OK_200).send(yield postQueryRepository_1.postQueryRepository.getPosts(req));
 }));
 exports.postsRouter.post('/', basicAuth_1.basicAuthMiddleware, Post_1.validatePost, validation_errors_handler_1.validationErrorsHandler, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const result = yield postsService_1.postService.addPost(req.body);
-    return res.status(201).send(result.data);
+    return res.status(httpStatusCode_1.HttpStatusCode.CREATED_201).send(result.data);
 }));
 exports.postsRouter.get('/:id', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const blog = yield postQueryRepository_1.postQueryRepository.getPostById(req.params.id);
-    if (blog) {
-        return res.status(200).send(blog);
+    if (!blog) {
+        return res.status(httpStatusCode_1.HttpStatusCode.NOT_FOUND_404).send('Post not found');
     }
-    return res.status(404).send('Post not found');
+    return res.status(httpStatusCode_1.HttpStatusCode.OK_200).send(blog);
 }));
 exports.postsRouter.put('/:id', basicAuth_1.basicAuthMiddleware, Post_1.validatePost, validation_errors_handler_1.validationErrorsHandler, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const post = yield postsService_1.postService.updatePostByid(req.params.id, req.body);
-    if (post) {
-        return res.status(204).send(post);
+    if (!post) {
+        return res.status(httpStatusCode_1.HttpStatusCode.NOT_FOUND_404).send('Not found');
     }
-    return res.status(404).send('Not found');
+    return res.status(httpStatusCode_1.HttpStatusCode.NO_CONTENT_204).send(post);
 }));
 exports.postsRouter.delete('/:id', basicAuth_1.basicAuthMiddleware, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    if (yield postsService_1.postService.deletePostById(req.params.id)) {
-        return res.status(204).send('Post deleted');
+    const isDeleted = yield postsService_1.postService.deletePostById(req.params.id);
+    if (!isDeleted) {
+        return res.status(httpStatusCode_1.HttpStatusCode.NOT_FOUND_404).send('Post not found');
     }
-    return res.status(404).send('Post not found');
+    return res.status(httpStatusCode_1.HttpStatusCode.NO_CONTENT_204).send('Post deleted');
 }));
 exports.postsRouter.post('/:postId/comments', jwtAuth_1.authMiddleware, Comment_1.validateComment, validation_errors_handler_1.validationErrorsHandler, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const comment = yield postsService_1.postService.createComment(req.user, req.body.content, req.params.postId);
-    if (comment !== null) {
-        const { postId } = comment, result = __rest(comment, ["postId"]);
-        return res.status(201).send(result);
+    if (comment === null) {
+        return res.sendStatus(httpStatusCode_1.HttpStatusCode.NOT_FOUND_404);
     }
-    else {
-        return res.sendStatus(404);
-    }
+    const { postId } = comment, result = __rest(comment, ["postId"]);
+    return res.status(httpStatusCode_1.HttpStatusCode.CREATED_201).send(result);
 }));
 exports.postsRouter.get('/:postId/comments', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const comments = yield postQueryRepository_1.postQueryRepository.getCommentsForSpecifiedPost(req.params.postId, req);
     if (comments === null) {
-        return res.status(404).send('Post not found');
+        return res.status(httpStatusCode_1.HttpStatusCode.NOT_FOUND_404).send('Post not found');
     }
-    return res.status(200).send(comments);
+    return res.status(httpStatusCode_1.HttpStatusCode.OK_200).send(comments);
 }));

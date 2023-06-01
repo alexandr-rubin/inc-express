@@ -1,5 +1,4 @@
 import { commentsCollection } from './db'
-import { Comment } from '../models/Comment'
 import { Result } from '../models/Result'
 import { ResultCode } from '../helpers/resultCode'
 import { commentQueryRepository } from '../queryRepositories/commentQueryRepository'

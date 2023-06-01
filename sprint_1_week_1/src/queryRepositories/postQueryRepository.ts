@@ -1,6 +1,5 @@
 import { Post } from '../models/Post'
-import { commentsCollection, postsCollection, usersCollection } from '../repositories/db'
-import { PaginationQuery } from '../models/PaginationQuery'
+import { commentsCollection, postsCollection } from '../repositories/db'
 import { Paginator } from '../models/Paginator'
 import { createPaginationQuery, createPaginationResult } from '../helpers/pagination'
 import { Comment } from '../models/Comment'
@@ -20,10 +19,12 @@ export const postQueryRepository = {
         return result
     },
     async getPostById(id: string): Promise<Post | null> {
-        return await postsCollection.findOne({id: id}, {projection: {_id: false}})
+        const post = await postsCollection.findOne({id: id}, {projection: {_id: false}})
+        return post
     },
     async getCommentsForSpecifiedPost(postId: string, req: Request): Promise<Paginator<Comment> | null>{
-        if(await this.getPostById(postId) === null){
+        const isFinded = await this.getPostById(postId) === null
+        if(isFinded){
             return null
         }
         const query = createPaginationQuery(req)

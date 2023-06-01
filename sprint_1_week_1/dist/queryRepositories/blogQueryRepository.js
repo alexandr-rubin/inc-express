@@ -29,12 +29,14 @@ exports.blogQueryRepository = {
     },
     getBlogById(id) {
         return __awaiter(this, void 0, void 0, function* () {
-            return yield db_1.blogsCollection.findOne({ id: id }, { projection: { _id: false } });
+            const blog = yield db_1.blogsCollection.findOne({ id: id }, { projection: { _id: false } });
+            return blog;
         });
     },
     getPostsForSpecifiedBlog(blogId, req) {
         return __awaiter(this, void 0, void 0, function* () {
-            if ((yield this.getBlogById(blogId)) === null) {
+            const isFinded = (yield this.getBlogById(blogId)) === null;
+            if (isFinded) {
                 return null;
             }
             const query = (0, pagination_1.createPaginationQuery)(req);

@@ -28,12 +28,14 @@ exports.postQueryRepository = {
     },
     getPostById(id) {
         return __awaiter(this, void 0, void 0, function* () {
-            return yield db_1.postsCollection.findOne({ id: id }, { projection: { _id: false } });
+            const post = yield db_1.postsCollection.findOne({ id: id }, { projection: { _id: false } });
+            return post;
         });
     },
     getCommentsForSpecifiedPost(postId, req) {
         return __awaiter(this, void 0, void 0, function* () {
-            if ((yield this.getPostById(postId)) === null) {
+            const isFinded = (yield this.getPostById(postId)) === null;
+            if (isFinded) {
                 return null;
             }
             const query = (0, pagination_1.createPaginationQuery)(req);

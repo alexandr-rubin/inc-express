@@ -19,14 +19,15 @@ const jwtAuth_1 = require("../middlewares/jwtAuth");
 const User_1 = require("../validation/User");
 const Email_1 = require("../validation/Email");
 const ConfirmationCode_1 = require("../validation/ConfirmationCode");
+const httpStatusCode_1 = require("../helpers/httpStatusCode");
 exports.authorizationRouterRouter = (0, express_1.Router)({});
 exports.authorizationRouterRouter.post('/login', Login_1.validateLogin, validation_errors_handler_1.validationErrorsHandler, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const user = yield authorizationService_1.authorizationService.login(req.body);
     if (!user) {
-        return res.sendStatus(401);
+        return res.sendStatus(httpStatusCode_1.HttpStatusCode.UNAUTHORIZED_401);
     }
     const token = yield jwtService_1.jwtService.createJWT(user);
-    return res.status(200).send({ accessToken: token });
+    return res.status(httpStatusCode_1.HttpStatusCode.OK_200).send({ accessToken: token });
 }));
 // !!0, 
 exports.authorizationRouterRouter.get('/me', jwtAuth_1.authMiddleware, validation_errors_handler_1.validationErrorsHandler, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
@@ -39,26 +40,26 @@ exports.authorizationRouterRouter.get('/me', jwtAuth_1.authMiddleware, validatio
         login: (_b = req.user) === null || _b === void 0 ? void 0 : _b.login,
         userId: (_c = req.user) === null || _c === void 0 ? void 0 : _c.id
     };
-    return res.status(200).send(result);
+    return res.status(httpStatusCode_1.HttpStatusCode.OK_200).send(result);
 }));
 exports.authorizationRouterRouter.post('/registration', User_1.validateUser, validation_errors_handler_1.validationErrorsHandler, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const result = authorizationService_1.authorizationService.createUser(req.body);
-    if (!result) {
-        return res.sendStatus(400);
+    const isCreated = authorizationService_1.authorizationService.createUser(req.body);
+    if (!isCreated) {
+        return res.sendStatus(httpStatusCode_1.HttpStatusCode.BAD_REQUEST_400);
     }
-    return res.status(204).send('Input data is accepted. Email with confirmation code will be send to passed email address');
+    return res.status(httpStatusCode_1.HttpStatusCode.NO_CONTENT_204).send('Input data is accepted. Email with confirmation code will be send to passed email address');
 }));
 exports.authorizationRouterRouter.post('/registration-confirmation', ConfirmationCode_1.validateConfirmationCode, validation_errors_handler_1.validationErrorsHandler, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const result = yield authorizationService_1.authorizationService.confrmEmail(req.body.code);
-    if (!result) {
-        return res.sendStatus(400);
+    const isConfirmed = yield authorizationService_1.authorizationService.confrmEmail(req.body.code);
+    if (!isConfirmed) {
+        return res.sendStatus(httpStatusCode_1.HttpStatusCode.BAD_REQUEST_400);
     }
-    return res.status(204).send('Email was verified. Account was activated');
+    return res.status(httpStatusCode_1.HttpStatusCode.NO_CONTENT_204).send('Email was verified. Account was activated');
 }));
 exports.authorizationRouterRouter.post('/registration-email-resending', Email_1.validateEmail, validation_errors_handler_1.validationErrorsHandler, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const result = yield authorizationService_1.authorizationService.resendEmail(req.body.email);
-    if (!result) {
-        return res.sendStatus(400);
+    const isResended = yield authorizationService_1.authorizationService.resendEmail(req.body.email);
+    if (!isResended) {
+        return res.sendStatus(httpStatusCode_1.HttpStatusCode.BAD_REQUEST_400);
     }
-    return res.status(204).send('Input data is accepted. Email with confirmation code will be send to passed email address');
+    return res.status(httpStatusCode_1.HttpStatusCode.NO_CONTENT_204).send('Input data is accepted. Email with confirmation code will be send to passed email address');
 }));

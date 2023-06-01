@@ -1,9 +1,6 @@
 import { PaginationQuery } from '../models/PaginationQuery'
 import { Request } from "express"
 import { Paginator } from '../models/Paginator'
-import { Blog } from '../models/Blog'
-import { Post } from '../models/Post'
-import { User } from '../models/User'
 
 export const createPaginationQuery = (req: Request): PaginationQuery => {
     const query = req.query

@@ -29,7 +29,8 @@ export const blogService = {
         blogRepository.testingDeleteAllBlogs()
     },
     async addPostForSpecificBlog(blogId: string, post: Post): Promise<Post | null> {
-        if(await blogQueryRepository.getBlogById(blogId) === null){
+        const isAdded = await blogQueryRepository.getBlogById(blogId) === null
+        if(isAdded){
             return null
         }
         post.blogId = blogId

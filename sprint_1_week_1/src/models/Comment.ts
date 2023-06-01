@@ -7,4 +7,4 @@ export type Comment ={
     },
     createdAt: string,
     postId: string
-  }
+}

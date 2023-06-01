@@ -17,7 +17,8 @@ exports.postRepository = {
     addPost(post) {
         return __awaiter(this, void 0, void 0, function* () {
             // TODO: return
-            return (yield db_1.postsCollection.insertOne(post)).acknowledged === true;
+            const isAdded = (yield db_1.postsCollection.insertOne(post)).acknowledged === true;
+            return isAdded;
         });
     },
     updatePostByid(id, newPost) {
@@ -54,7 +55,10 @@ exports.postRepository = {
                 postId: postId
             };
             const result = Object.assign({}, comment);
-            db_1.commentsCollection.insertOne(comment);
+            const isAdded = yield db_1.commentsCollection.insertOne(comment);
+            if (isAdded.acknowledged === false) {
+                return null;
+            }
             return result;
         });
     }

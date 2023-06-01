@@ -45,7 +45,8 @@ exports.blogService = {
     },
     addPostForSpecificBlog(blogId, post) {
         return __awaiter(this, void 0, void 0, function* () {
-            if ((yield blogQueryRepository_1.blogQueryRepository.getBlogById(blogId)) === null) {
+            const isAdded = (yield blogQueryRepository_1.blogQueryRepository.getBlogById(blogId)) === null;
+            if (isAdded) {
                 return null;
             }
             post.blogId = blogId;

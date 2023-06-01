@@ -1,8 +1,5 @@
 import { User } from '../models/User'
 import { usersCollection } from './db'
-import { Paginator } from '../models/Paginator'
-import { PaginationQuery } from '../models/PaginationQuery'
-import { createPaginationResult } from '../helpers/pagination'
 import { add } from 'date-fns'  
 
 export const userRepository = {

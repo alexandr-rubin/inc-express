@@ -15,7 +15,8 @@ exports.blogRepository = {
     addBlog(blog) {
         return __awaiter(this, void 0, void 0, function* () {
             // TODO: return
-            return (yield db_1.blogsCollection.insertOne(blog)).acknowledged === true;
+            const isAdded = (yield db_1.blogsCollection.insertOne(blog)).acknowledged === true;
+            return isAdded;
         });
     },
     updateBlogById(id, newBlog) {

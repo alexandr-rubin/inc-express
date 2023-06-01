@@ -1,7 +1,6 @@
 import { Blog } from '../models/Blog'
 import { blogsCollection } from '../repositories/db'
 import { Paginator } from '../models/Paginator'
-import { PaginationQuery } from '../models/PaginationQuery'
 import { createPaginationQuery, createPaginationResult } from '../helpers/pagination'
 import { postsCollection } from '../repositories/db'
 import { Post } from '../models/Post'
@@ -21,10 +20,12 @@ export const blogQueryRepository = {
         return result
     },
     async getBlogById(id: string): Promise<Blog | null> {
-        return await blogsCollection.findOne({id: id}, {projection: {_id: false}})
+        const blog = await blogsCollection.findOne({id: id}, {projection: {_id: false}})
+        return blog
     },
     async getPostsForSpecifiedBlog(blogId: string, req: Request): Promise<Paginator<Post> | null>{
-        if(await this.getBlogById(blogId) === null){
+        const isFinded = await this.getBlogById(blogId) === null
+        if(isFinded){
             return null
         }
         const query = createPaginationQuery(req)

@@ -1,10 +1,11 @@
 import { NextFunction, Request, Response } from "express"
 import { jwtService } from "../application/jwtService"
 import { userQueryRepository } from "../queryRepositories/userQuertyRepository"
+import { HttpStatusCode } from "../helpers/httpStatusCode"
 
 export const authMiddleware = async (req: Request, res: Response, next: NextFunction) => {
     if (!req.headers.authorization) {
-        return res.status(401).json({ message: "Unauthorized" })
+        return res.status(HttpStatusCode.UNAUTHORIZED_401).json({ message: "Unauthorized" })
     }
     
     const token = req.headers.authorization.split(' ')[1]
@@ -15,5 +16,5 @@ export const authMiddleware = async (req: Request, res: Response, next: NextFunc
         return next()
     }
 
-    return res.sendStatus(401)
+    return res.sendStatus(HttpStatusCode.UNAUTHORIZED_401)
 }

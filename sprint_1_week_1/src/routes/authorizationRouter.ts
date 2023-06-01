@@ -7,16 +7,17 @@ import { authMiddleware } from "../middlewares/jwtAuth"
 import { validateUser } from "../validation/User"
 import { validateEmail } from "../validation/Email"
 import { validateConfirmationCode } from "../validation/ConfirmationCode"
+import { HttpStatusCode } from "../helpers/httpStatusCode"
 
 export const authorizationRouterRouter = Router({})
 
 authorizationRouterRouter.post('/login', validateLogin, validationErrorsHandler, async (req: Request, res: Response) => {
     const user = await authorizationService.login(req.body)
     if(!user){
-        return res.sendStatus(401)
+        return res.sendStatus(HttpStatusCode.UNAUTHORIZED_401)
     }
     const token = await jwtService.createJWT(user)
-    return res.status(200).send({accessToken: token})
+    return res.status(HttpStatusCode.OK_200).send({accessToken: token})
 })
 // !!0, 
 authorizationRouterRouter.get('/me', authMiddleware, validationErrorsHandler, async (req: Request, res: Response) => {
@@ -28,29 +29,29 @@ authorizationRouterRouter.get('/me', authMiddleware, validationErrorsHandler, as
         login: req.user?.login,
         userId: req.user?.id
     }   
-    return res.status(200).send(result)
+    return res.status(HttpStatusCode.OK_200).send(result)
 })
 
 authorizationRouterRouter.post('/registration', validateUser, validationErrorsHandler, async (req: Request, res: Response) => {
-    const result = authorizationService.createUser(req.body)
-    if(!result){
-        return res.sendStatus(400)
+    const isCreated = authorizationService.createUser(req.body)
+    if(!isCreated){
+        return res.sendStatus(HttpStatusCode.BAD_REQUEST_400)
     }
-    return  res.status(204).send('Input data is accepted. Email with confirmation code will be send to passed email address')
+    return  res.status(HttpStatusCode.NO_CONTENT_204).send('Input data is accepted. Email with confirmation code will be send to passed email address')
 })
 
 authorizationRouterRouter.post('/registration-confirmation', validateConfirmationCode, validationErrorsHandler, async (req: Request, res: Response) => {
-    const result = await authorizationService.confrmEmail(req.body.code)
-    if(!result){
-        return res.sendStatus(400)
+    const isConfirmed = await authorizationService.confrmEmail(req.body.code)
+    if(!isConfirmed){
+        return res.sendStatus(HttpStatusCode.BAD_REQUEST_400)
     }
-    return res.status(204).send('Email was verified. Account was activated')
+    return res.status(HttpStatusCode.NO_CONTENT_204).send('Email was verified. Account was activated')
 })
 
 authorizationRouterRouter.post('/registration-email-resending', validateEmail, validationErrorsHandler, async (req: Request, res: Response) => {
-    const result = await authorizationService.resendEmail(req.body.email)
-    if(!result){
-        return res.sendStatus(400) 
+    const isResended = await authorizationService.resendEmail(req.body.email)
+    if(!isResended){
+        return res.sendStatus(HttpStatusCode.BAD_REQUEST_400) 
     }
-    return res.status(204).send('Input data is accepted. Email with confirmation code will be send to passed email address')
+    return res.status(HttpStatusCode.NO_CONTENT_204).send('Input data is accepted. Email with confirmation code will be send to passed email address')
 })
