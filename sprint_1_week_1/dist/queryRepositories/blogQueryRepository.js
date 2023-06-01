@@ -34,7 +34,7 @@ exports.blogQueryRepository = {
     },
     getPostsForSpecifiedBlog(blogId, req) {
         return __awaiter(this, void 0, void 0, function* () {
-            if (this.getBlogById(blogId) === null) {
+            if ((yield this.getBlogById(blogId)) === null) {
                 return null;
             }
             const query = (0, pagination_1.createPaginationQuery)(req);

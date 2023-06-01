@@ -24,7 +24,7 @@ export const blogQueryRepository = {
         return await blogsCollection.findOne({id: id}, {projection: {_id: false}})
     },
     async getPostsForSpecifiedBlog(blogId: string, req: Request): Promise<Paginator<Post> | null>{
-        if(this.getBlogById(blogId) === null){
+        if(await this.getBlogById(blogId) === null){
             return null
         }
         const query = createPaginationQuery(req)
