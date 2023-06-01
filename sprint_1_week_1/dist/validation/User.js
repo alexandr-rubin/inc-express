@@ -11,17 +11,17 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.validateUser = void 0;
 const express_validator_1 = require("express-validator");
-const userRepository_1 = require("../repositories/userRepository");
+const userQuertyRepository_1 = require("../queryRepositories/userQuertyRepository");
 exports.validateUser = [
     (0, express_validator_1.body)('login').notEmpty().isString().trim().isLength({ min: 3, max: 10 }).matches('^[a-zA-Z0-9_-]*$').custom((login) => __awaiter(void 0, void 0, void 0, function* () {
-        const user = yield userRepository_1.userRepository.getUserBylogin(login);
+        const user = yield userQuertyRepository_1.userQueryRepository.getUserBylogin(login);
         if (user) {
             throw new Error('User wit login: ' + user.login + ' is already registered');
         }
     })),
     (0, express_validator_1.body)('password').notEmpty().isString().trim().isLength({ min: 6, max: 20 }),
     (0, express_validator_1.body)('email').notEmpty().isString().isEmail().custom((email) => __awaiter(void 0, void 0, void 0, function* () {
-        const user = yield userRepository_1.userRepository.getUserByEmail(email);
+        const user = yield userQuertyRepository_1.userQueryRepository.getUserByEmail(email);
         if (user) {
             throw new Error('User wit email: ' + user.email + ' is already registered');
         }

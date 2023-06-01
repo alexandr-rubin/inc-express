@@ -12,15 +12,9 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.blogService = void 0;
 const mongodb_1 = require("mongodb");
 const blogRespository_1 = require("../repositories/blogRespository");
-const pagination_1 = require("../helpers/pagination");
 const postsService_1 = require("./postsService");
+const blogQueryRepository_1 = require("../queryRepositories/blogQueryRepository");
 exports.blogService = {
-    getBlogs(req) {
-        return __awaiter(this, void 0, void 0, function* () {
-            const blogQuery = (0, pagination_1.createPaginationQuery)(req);
-            return yield blogRespository_1.blogRepository.getBlogs(blogQuery);
-        });
-    },
     addBlog(blog) {
         return __awaiter(this, void 0, void 0, function* () {
             const newBlog = {
@@ -36,11 +30,6 @@ exports.blogService = {
             return result;
         });
     },
-    getBlogById(id) {
-        return __awaiter(this, void 0, void 0, function* () {
-            return yield blogRespository_1.blogRepository.getBlogById(id);
-        });
-    },
     updateBlogById(id, newBlog) {
         return __awaiter(this, void 0, void 0, function* () {
             return yield blogRespository_1.blogRepository.updateBlogById(id, newBlog);
@@ -54,18 +43,9 @@ exports.blogService = {
     testingDeleteAllBlogs() {
         blogRespository_1.blogRepository.testingDeleteAllBlogs();
     },
-    getPostsForSpecifiedBlog(blogId, req) {
-        return __awaiter(this, void 0, void 0, function* () {
-            if ((yield blogRespository_1.blogRepository.getBlogById(blogId)) === null) {
-                return null;
-            }
-            const postQuery = (0, pagination_1.createPaginationQuery)(req);
-            return yield blogRespository_1.blogRepository.getPostsForSpecifiedBlog(blogId, postQuery);
-        });
-    },
     addPostForSpecificBlog(blogId, post) {
         return __awaiter(this, void 0, void 0, function* () {
-            if ((yield blogRespository_1.blogRepository.getBlogById(blogId)) === null) {
+            if ((yield blogQueryRepository_1.blogQueryRepository.getBlogById(blogId)) === null) {
                 return null;
             }
             post.blogId = blogId;

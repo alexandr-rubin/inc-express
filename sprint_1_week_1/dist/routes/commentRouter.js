@@ -16,6 +16,7 @@ const jwtAuth_1 = require("../middlewares/jwtAuth");
 const Comment_1 = require("../validation/Comment");
 const commentService_1 = require("../domain/commentService");
 const resultCode_1 = require("../helpers/resultCode");
+const commentQueryRepository_1 = require("../queryRepositories/commentQueryRepository");
 exports.commentsRouter = (0, express_1.Router)({});
 exports.commentsRouter.put('/:commentId', jwtAuth_1.authMiddleware, Comment_1.validateComment, validation_errors_handler_1.validationErrorsHandler, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const result = yield commentService_1.commentService.updateCommentByid(req.params.commentId, req.body.content, req.user.id);
@@ -38,7 +39,7 @@ exports.commentsRouter.delete('/:id', jwtAuth_1.authMiddleware, (req, res) => __
     return res.status(404).send(result.errorMessage);
 }));
 exports.commentsRouter.get('/:id', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const comment = yield commentService_1.commentService.getCommentById(req.params.id);
+    const comment = yield commentQueryRepository_1.commentQueryRepository.getCommentById(req.params.id);
     if (!comment) {
         return res.status(404).send('Comment not found');
     }

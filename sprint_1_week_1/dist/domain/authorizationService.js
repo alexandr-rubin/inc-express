@@ -21,6 +21,7 @@ const userService_1 = require("./userService");
 const userRepository_1 = require("../repositories/userRepository");
 const emailService_1 = require("./emailService");
 const mongodb_1 = require("mongodb");
+const userQuertyRepository_1 = require("../queryRepositories/userQuertyRepository");
 exports.authorizationService = {
     login(body) {
         return __awaiter(this, void 0, void 0, function* () {
@@ -58,7 +59,7 @@ exports.authorizationService = {
     },
     confrmEmail(code) {
         return __awaiter(this, void 0, void 0, function* () {
-            const user = yield userRepository_1.userRepository.findUserByConfirmationCode(code);
+            const user = yield userQuertyRepository_1.userQueryRepository.findUserByConfirmationCode(code);
             if (!user)
                 return false;
             if (user.confirmationEmail.isConfirmed)
@@ -66,13 +67,13 @@ exports.authorizationService = {
             if (user.confirmationEmail.expirationDate < new Date()) {
                 return false;
             }
-            const result = yield userRepository_1.userRepository.updateConfirmation(user.id);
-            return result;
+            const isUpdated = yield userRepository_1.userRepository.updateConfirmation(user.id);
+            return isUpdated;
         });
     },
     resendEmail(email) {
         return __awaiter(this, void 0, void 0, function* () {
-            const user = yield userRepository_1.userRepository.getUserByEmail(email);
+            const user = yield userQuertyRepository_1.userQueryRepository.getUserByEmail(email);
             if (!user)
                 return false;
             if (user.confirmationEmail.isConfirmed)

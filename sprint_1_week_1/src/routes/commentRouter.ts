@@ -1,13 +1,10 @@
 import { Router, Request, Response } from "express"
-import { validateLogin  } from "../validation/Login"
 import { validationErrorsHandler } from "../middlewares/validation-errors-handler"
-import { authorizationService } from "../domain/authorizationService"
-import { jwtService } from "../application/jwtService"
 import { authMiddleware } from "../middlewares/jwtAuth"
 import { validateComment } from "../validation/Comment"
 import { commentService } from "../domain/commentService"
-import { postService } from "../domain/postsService"
 import { ResultCode } from "../helpers/resultCode"
+import { commentQueryRepository } from "../queryRepositories/commentQueryRepository"
 
 export const commentsRouter = Router({})
 
@@ -34,7 +31,7 @@ commentsRouter.delete('/:id', authMiddleware, async (req: Request, res: Response
 })
 
 commentsRouter.get('/:id', async (req: Request, res: Response) => {
-    const comment = await commentService.getCommentById(req.params.id)
+    const comment = await commentQueryRepository.getCommentById(req.params.id)
     if(!comment) {
         return res.status(404).send('Comment not found')
     }

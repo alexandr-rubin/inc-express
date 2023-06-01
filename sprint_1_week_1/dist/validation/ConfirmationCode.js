@@ -11,16 +11,16 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.validateConfirmationCode = void 0;
 const express_validator_1 = require("express-validator");
-const userRepository_1 = require("../repositories/userRepository");
+const userQuertyRepository_1 = require("../queryRepositories/userQuertyRepository");
 exports.validateConfirmationCode = [
     (0, express_validator_1.body)('code').notEmpty().isString().custom((code) => __awaiter(void 0, void 0, void 0, function* () {
-        const user = yield userRepository_1.userRepository.findUserByConfirmationCode(code);
+        const user = yield userQuertyRepository_1.userQueryRepository.findUserByConfirmationCode(code);
         if (!user) {
             throw new Error('Wrong confirmation code');
         }
     })),
     (0, express_validator_1.body)('code').notEmpty().isString().custom((code) => __awaiter(void 0, void 0, void 0, function* () {
-        const user = yield userRepository_1.userRepository.findUserByConfirmationCode(code);
+        const user = yield userQuertyRepository_1.userQueryRepository.findUserByConfirmationCode(code);
         if (user && user.confirmationEmail.isConfirmed) {
             throw new Error('User wit email: ' + user.email + ' is already registered');
         }

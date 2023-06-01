@@ -5,11 +5,12 @@ import { postService } from "../domain/postsService"
 import { authMiddleware } from "../middlewares/jwtAuth"
 import { validateComment } from "../validation/Comment"
 import { basicAuthMiddleware } from "../middlewares/basicAuth"
+import { postQueryRepository } from "../queryRepositories/postQueryRepository"
 
 export const postsRouter = Router({})
 
 postsRouter.get('/', async (req: Request, res: Response) => {
-    res.status(200).send(await postService.getPosts(req))
+    res.status(200).send(await postQueryRepository.getPosts(req))
 })
 
 postsRouter.post('/', basicAuthMiddleware, validatePost, validationErrorsHandler, async (req: Request, res: Response) => {
@@ -18,7 +19,7 @@ postsRouter.post('/', basicAuthMiddleware, validatePost, validationErrorsHandler
 })
 
 postsRouter.get('/:id', async (req: Request, res: Response) => {
-    const blog = await postService.getPostById(req.params.id)
+    const blog = await postQueryRepository.getPostById(req.params.id)
     if(blog) {
         return res.status(200).send(blog)
     }
@@ -52,7 +53,7 @@ postsRouter.post('/:postId/comments', authMiddleware, validateComment, validatio
 })
 
 postsRouter.get('/:postId/comments', async (req: Request, res: Response) => {
-    const comments = await postService.getCommentsForSpecifiedPost(req.params.postId, req)
+    const comments = await postQueryRepository.getCommentsForSpecifiedPost(req.params.postId, req)
     if(comments === null) {
         return res.status(404).send('Post not found')
     }

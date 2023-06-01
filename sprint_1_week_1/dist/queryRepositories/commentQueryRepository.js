@@ -9,17 +9,12 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.commentService = void 0;
-const commentRepository_1 = require("../repositories/commentRepository");
-exports.commentService = {
-    updateCommentByid(id, content, userId) {
+exports.commentQueryRepository = void 0;
+const db_1 = require("../repositories/db");
+exports.commentQueryRepository = {
+    getCommentById(id) {
         return __awaiter(this, void 0, void 0, function* () {
-            return yield commentRepository_1.commentRepository.updateCommentById(id, content, userId);
-        });
-    },
-    deleteCommentById(id, userId) {
-        return __awaiter(this, void 0, void 0, function* () {
-            return yield commentRepository_1.commentRepository.deleteCommentById(id, userId);
+            return yield db_1.commentsCollection.findOne({ id: id }, { projection: { _id: false, postId: false } });
         });
     }
 };

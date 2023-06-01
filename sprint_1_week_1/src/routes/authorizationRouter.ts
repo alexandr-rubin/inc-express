@@ -12,16 +12,17 @@ export const authorizationRouterRouter = Router({})
 
 authorizationRouterRouter.post('/login', validateLogin, validationErrorsHandler, async (req: Request, res: Response) => {
     const user = await authorizationService.login(req.body)
-    if(user !== null){
-        const token = await jwtService.createJWT(user)
-        res.status(200).send({accessToken: token})
+    if(!user){
+        return res.sendStatus(401)
     }
-    else{
-        res.sendStatus(401)
-    }
+    const token = await jwtService.createJWT(user)
+    return res.status(200).send({accessToken: token})
 })
-
+// !!0, 
 authorizationRouterRouter.get('/me', authMiddleware, validationErrorsHandler, async (req: Request, res: Response) => {
+    // ид
+    // файд by id
+    //
     const result = {
         email: req.user?.email,
         login: req.user?.login,
@@ -40,16 +41,16 @@ authorizationRouterRouter.post('/registration', validateUser, validationErrorsHa
 
 authorizationRouterRouter.post('/registration-confirmation', validateConfirmationCode, validationErrorsHandler, async (req: Request, res: Response) => {
     const result = await authorizationService.confrmEmail(req.body.code)
-    if(result){
-        return res.status(204).send('Email was verified. Account was activated')
+    if(!result){
+        return res.sendStatus(400)
     }
-    return res.sendStatus(400)
+    return res.status(204).send('Email was verified. Account was activated')
 })
 
 authorizationRouterRouter.post('/registration-email-resending', validateEmail, validationErrorsHandler, async (req: Request, res: Response) => {
     const result = await authorizationService.resendEmail(req.body.email)
-    if(result){
-        return res.status(204).send('Input data is accepted. Email with confirmation code will be send to passed email address')
+    if(!result){
+        return res.sendStatus(400) 
     }
-    return res.sendStatus(400)
+    return res.status(204).send('Input data is accepted. Email with confirmation code will be send to passed email address')
 })

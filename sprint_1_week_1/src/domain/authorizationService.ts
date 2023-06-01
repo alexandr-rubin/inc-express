@@ -8,6 +8,7 @@ import { userService } from "./userService"
 import { userRepository } from "../repositories/userRepository"
 import { emailService } from "./emailService"
 import { ObjectId } from "mongodb"
+import { userQueryRepository } from "../queryRepositories/userQuertyRepository"
 
 export const authorizationService = {
     async login(body: Login): Promise<User | null> {
@@ -42,7 +43,7 @@ export const authorizationService = {
         return createResult
     },
     async confrmEmail(code: string): Promise<boolean>{
-        const user = await userRepository.findUserByConfirmationCode(code)
+        const user = await userQueryRepository.findUserByConfirmationCode(code)
         if (!user)
             return false
         if (user.confirmationEmail.isConfirmed)
@@ -51,11 +52,11 @@ export const authorizationService = {
             return false
         }
         
-        const result = await userRepository.updateConfirmation(user.id)
-            return result
+        const isUpdated = await userRepository.updateConfirmation(user.id)
+            return isUpdated
     },
     async resendEmail(email: string): Promise<boolean>{
-        const user = await userRepository.getUserByEmail(email)
+        const user = await userQueryRepository.getUserByEmail(email)
         if (!user)
             return false
         if (user.confirmationEmail.isConfirmed)

@@ -22,16 +22,18 @@ const ConfirmationCode_1 = require("../validation/ConfirmationCode");
 exports.authorizationRouterRouter = (0, express_1.Router)({});
 exports.authorizationRouterRouter.post('/login', Login_1.validateLogin, validation_errors_handler_1.validationErrorsHandler, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const user = yield authorizationService_1.authorizationService.login(req.body);
-    if (user !== null) {
-        const token = yield jwtService_1.jwtService.createJWT(user);
-        res.status(200).send({ accessToken: token });
+    if (!user) {
+        return res.sendStatus(401);
     }
-    else {
-        res.sendStatus(401);
-    }
+    const token = yield jwtService_1.jwtService.createJWT(user);
+    return res.status(200).send({ accessToken: token });
 }));
+// !!0, 
 exports.authorizationRouterRouter.get('/me', jwtAuth_1.authMiddleware, validation_errors_handler_1.validationErrorsHandler, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     var _a, _b, _c;
+    // ид
+    // файд by id
+    //
     const result = {
         email: (_a = req.user) === null || _a === void 0 ? void 0 : _a.email,
         login: (_b = req.user) === null || _b === void 0 ? void 0 : _b.login,
@@ -48,15 +50,15 @@ exports.authorizationRouterRouter.post('/registration', User_1.validateUser, val
 }));
 exports.authorizationRouterRouter.post('/registration-confirmation', ConfirmationCode_1.validateConfirmationCode, validation_errors_handler_1.validationErrorsHandler, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const result = yield authorizationService_1.authorizationService.confrmEmail(req.body.code);
-    if (result) {
-        return res.status(204).send('Email was verified. Account was activated');
+    if (!result) {
+        return res.sendStatus(400);
     }
-    return res.sendStatus(400);
+    return res.status(204).send('Email was verified. Account was activated');
 }));
 exports.authorizationRouterRouter.post('/registration-email-resending', Email_1.validateEmail, validation_errors_handler_1.validationErrorsHandler, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const result = yield authorizationService_1.authorizationService.resendEmail(req.body.email);
-    if (result) {
-        return res.status(204).send('Input data is accepted. Email with confirmation code will be send to passed email address');
+    if (!result) {
+        return res.sendStatus(400);
     }
-    return res.sendStatus(400);
+    return res.status(204).send('Input data is accepted. Email with confirmation code will be send to passed email address');
 }));

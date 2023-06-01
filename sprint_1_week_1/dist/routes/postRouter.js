@@ -28,16 +28,17 @@ const postsService_1 = require("../domain/postsService");
 const jwtAuth_1 = require("../middlewares/jwtAuth");
 const Comment_1 = require("../validation/Comment");
 const basicAuth_1 = require("../middlewares/basicAuth");
+const postQueryRepository_1 = require("../queryRepositories/postQueryRepository");
 exports.postsRouter = (0, express_1.Router)({});
 exports.postsRouter.get('/', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    res.status(200).send(yield postsService_1.postService.getPosts(req));
+    res.status(200).send(yield postQueryRepository_1.postQueryRepository.getPosts(req));
 }));
 exports.postsRouter.post('/', basicAuth_1.basicAuthMiddleware, Post_1.validatePost, validation_errors_handler_1.validationErrorsHandler, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const result = yield postsService_1.postService.addPost(req.body);
     return res.status(201).send(result.data);
 }));
 exports.postsRouter.get('/:id', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const blog = yield postsService_1.postService.getPostById(req.params.id);
+    const blog = yield postQueryRepository_1.postQueryRepository.getPostById(req.params.id);
     if (blog) {
         return res.status(200).send(blog);
     }
@@ -67,7 +68,7 @@ exports.postsRouter.post('/:postId/comments', jwtAuth_1.authMiddleware, Comment_
     }
 }));
 exports.postsRouter.get('/:postId/comments', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const comments = yield postsService_1.postService.getCommentsForSpecifiedPost(req.params.postId, req);
+    const comments = yield postQueryRepository_1.postQueryRepository.getCommentsForSpecifiedPost(req.params.postId, req);
     if (comments === null) {
         return res.status(404).send('Post not found');
     }

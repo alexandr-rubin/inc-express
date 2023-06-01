@@ -26,17 +26,10 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.userService = void 0;
 const mongodb_1 = require("mongodb");
 const userRepository_1 = require("../repositories/userRepository");
-const pagination_1 = require("../helpers/pagination");
 const bcrypt_1 = __importDefault(require("bcrypt"));
 const uuid_1 = require("uuid");
 const date_fns_1 = require("date-fns");
 exports.userService = {
-    getUsers(req) {
-        return __awaiter(this, void 0, void 0, function* () {
-            const userQuery = (0, pagination_1.createPaginationQuery)(req);
-            return yield userRepository_1.userRepository.getUsers(userQuery);
-        });
-    },
     addUser(user) {
         return __awaiter(this, void 0, void 0, function* () {
             const passSalt = yield bcrypt_1.default.genSalt(10);

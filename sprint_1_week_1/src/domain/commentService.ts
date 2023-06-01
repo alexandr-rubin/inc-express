@@ -11,8 +11,5 @@ export const commentService = {
     },
     async deleteCommentById(id: string, userId: string): Promise<Result<boolean>> {
         return await commentRepository.deleteCommentById(id, userId)
-    },
-    async getCommentById(id: string): Promise<Comment | null> {
-        return await commentRepository.getCommentById(id)
-    },
+    }
 }

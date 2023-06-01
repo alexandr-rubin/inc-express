@@ -9,10 +9,6 @@ import { v4 as uuidv4 } from 'uuid'
 import { add } from 'date-fns'
 
 export const userService = {
-    async getUsers(req: Request): Promise<Paginator<User>> {
-        const userQuery = createPaginationQuery(req)
-        return await userRepository.getUsers(userQuery)
-    },
     async addUser(user: User): Promise<UserViewModel> {
         const passSalt = await bcrypt.genSalt(10)
         const passwordHash = await this._generateHash(user.password, passSalt)

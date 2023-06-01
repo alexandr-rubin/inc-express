@@ -7,25 +7,12 @@ import { ObjectId } from 'mongodb'
 import { Comment } from '../models/Comment'
 import { User } from '../models/User'
 import { postService } from '../domain/postsService'
+import { postQueryRepository } from '../queryRepositories/postQueryRepository'
 
 export const postRepository = {
-    async getPosts(query: PaginationQuery): Promise<Paginator<Post>> {
-        const skip = (query.pageNumber - 1) * query.pageSize
-        const posts = await postsCollection.find(query.searchNameTerm === null ? {} : {name: {$regex: query.searchNameTerm, $options: 'i'}}, {projection: {_id: false}})
-        .sort({[query.sortBy]: query.sortDirection === 'asc' ? 1 : -1})
-        .skip(skip).limit(query.pageSize)
-        .toArray()
-        const count = await postsCollection.countDocuments(query.searchNameTerm === null ? {} : {name: {$regex: query.searchNameTerm, $options: 'i'}})
-        const result = createPaginationResult(count, query, posts)
-        
-        return result
-    },
     async addPost(post: Post): Promise<boolean> {
         // TODO: return
         return (await postsCollection.insertOne(post)).acknowledged === true
-    },
-    async getPostById(id: string): Promise<Post | null> {
-        return await postsCollection.findOne({id: id}, {projection: {_id: false}})
     },
     async updatePostByid(id: string, newPost: Post): Promise<boolean> {
         const result = await postsCollection.updateOne({id: id}, { $set: {title: newPost.title, shortDescription: newPost.shortDescription, content: newPost.content, blogId: newPost.blogId}})
@@ -39,7 +26,7 @@ export const postRepository = {
         postsCollection.deleteMany({})
     },
     async createComment(user: User, content: string, postId: string): Promise<Comment | null> {
-        const post = await postService.getPostById(postId)
+        const post = await postQueryRepository.getPostById(postId)
         if(!post){
             return null
         }
@@ -59,17 +46,6 @@ export const postRepository = {
 
         commentsCollection.insertOne(comment)
 
-        return result
-    },
-    async getCommentsForSpecifiedPost(postId: string, query: PaginationQuery): Promise<Paginator<Comment>>{
-        const skip = (query.pageNumber - 1) * query.pageSize
-        const comments = await commentsCollection.find({postId: postId}, {projection: {_id: false, postId: false}})
-        .sort({[query.sortBy]: query.sortDirection === 'asc' ? 1 : -1})
-        .skip(skip)
-        .limit(query.pageSize)
-        .toArray()
-        const count = await commentsCollection.countDocuments({postId: postId})
-        const result = createPaginationResult(count, query, comments)
         return result
     }
 }

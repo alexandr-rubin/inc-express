@@ -11,31 +11,13 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.postRepository = void 0;
 const db_1 = require("./db");
-const pagination_1 = require("../helpers/pagination");
 const mongodb_1 = require("mongodb");
-const postsService_1 = require("../domain/postsService");
+const postQueryRepository_1 = require("../queryRepositories/postQueryRepository");
 exports.postRepository = {
-    getPosts(query) {
-        return __awaiter(this, void 0, void 0, function* () {
-            const skip = (query.pageNumber - 1) * query.pageSize;
-            const posts = yield db_1.postsCollection.find(query.searchNameTerm === null ? {} : { name: { $regex: query.searchNameTerm, $options: 'i' } }, { projection: { _id: false } })
-                .sort({ [query.sortBy]: query.sortDirection === 'asc' ? 1 : -1 })
-                .skip(skip).limit(query.pageSize)
-                .toArray();
-            const count = yield db_1.postsCollection.countDocuments(query.searchNameTerm === null ? {} : { name: { $regex: query.searchNameTerm, $options: 'i' } });
-            const result = (0, pagination_1.createPaginationResult)(count, query, posts);
-            return result;
-        });
-    },
     addPost(post) {
         return __awaiter(this, void 0, void 0, function* () {
             // TODO: return
             return (yield db_1.postsCollection.insertOne(post)).acknowledged === true;
-        });
-    },
-    getPostById(id) {
-        return __awaiter(this, void 0, void 0, function* () {
-            return yield db_1.postsCollection.findOne({ id: id }, { projection: { _id: false } });
         });
     },
     updatePostByid(id, newPost) {
@@ -57,7 +39,7 @@ exports.postRepository = {
     },
     createComment(user, content, postId) {
         return __awaiter(this, void 0, void 0, function* () {
-            const post = yield postsService_1.postService.getPostById(postId);
+            const post = yield postQueryRepository_1.postQueryRepository.getPostById(postId);
             if (!post) {
                 return null;
             }
@@ -73,19 +55,6 @@ exports.postRepository = {
             };
             const result = Object.assign({}, comment);
             db_1.commentsCollection.insertOne(comment);
-            return result;
-        });
-    },
-    getCommentsForSpecifiedPost(postId, query) {
-        return __awaiter(this, void 0, void 0, function* () {
-            const skip = (query.pageNumber - 1) * query.pageSize;
-            const comments = yield db_1.commentsCollection.find({ postId: postId }, { projection: { _id: false, postId: false } })
-                .sort({ [query.sortBy]: query.sortDirection === 'asc' ? 1 : -1 })
-                .skip(skip)
-                .limit(query.pageSize)
-                .toArray();
-            const count = yield db_1.commentsCollection.countDocuments({ postId: postId });
-            const result = (0, pagination_1.createPaginationResult)(count, query, comments);
             return result;
         });
     }

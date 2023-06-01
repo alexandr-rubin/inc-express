@@ -15,9 +15,10 @@ const User_1 = require("../validation/User");
 const validation_errors_handler_1 = require("../middlewares/validation-errors-handler");
 const userService_1 = require("../domain/userService");
 const basicAuth_1 = require("../middlewares/basicAuth");
+const userQuertyRepository_1 = require("../queryRepositories/userQuertyRepository");
 exports.usersRouter = (0, express_1.Router)({});
 exports.usersRouter.get('/', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    return res.status(200).send(yield userService_1.userService.getUsers(req));
+    return res.status(200).send(yield userQuertyRepository_1.userQueryRepository.getUsers(req));
 }));
 exports.usersRouter.post('/', basicAuth_1.basicAuthMiddleware, User_1.validateUser, validation_errors_handler_1.validationErrorsHandler, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const user = yield userService_1.userService.addUser(req.body);

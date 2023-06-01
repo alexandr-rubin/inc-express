@@ -4,11 +4,12 @@ import { validationErrorsHandler } from "../middlewares/validation-errors-handle
 import { blogService } from "../domain/blogsService"
 import { validatePost, validatePostForBlog } from "../validation/Post"
 import { basicAuthMiddleware } from "../middlewares/basicAuth"
+import { blogQueryRepository } from "../queryRepositories/blogQueryRepository"
 
 export const blogsRouter = Router({})
 
 blogsRouter.get('/', async (req: Request, res: Response) => {
-    return res.status(200).send(await blogService.getBlogs(req))
+    return res.status(200).send(await blogQueryRepository.getBlogs(req))
 })
 
 blogsRouter.post('/', basicAuthMiddleware, validateBlog, validationErrorsHandler, async (req: Request, res: Response) => {
@@ -16,7 +17,7 @@ blogsRouter.post('/', basicAuthMiddleware, validateBlog, validationErrorsHandler
 })
 
 blogsRouter.get('/:id', async (req: Request, res: Response) => {
-    const blog = await blogService.getBlogById(req.params.id)
+    const blog = await blogQueryRepository.getBlogById(req.params.id)
     if(blog) {
         return res.status(200).send(blog)
     }
@@ -39,7 +40,7 @@ blogsRouter.delete('/:id', basicAuthMiddleware, async (req: Request, res: Respon
 })
 
 blogsRouter.get('/:blogId/posts', async (req: Request, res: Response) => {
-    const posts = await blogService.getPostsForSpecifiedBlog(req.params.blogId,req)
+    const posts = await blogQueryRepository.getPostsForSpecifiedBlog(req.params.blogId,req)
     if(posts === null) {
         return res.status(404).send('Blog not found')
     }

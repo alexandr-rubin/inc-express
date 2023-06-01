@@ -12,10 +12,11 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.commentRepository = void 0;
 const db_1 = require("./db");
 const resultCode_1 = require("../helpers/resultCode");
+const commentQueryRepository_1 = require("../queryRepositories/commentQueryRepository");
 exports.commentRepository = {
     updateCommentById(id, content, userId) {
         return __awaiter(this, void 0, void 0, function* () {
-            const comment = yield this.getCommentById(id);
+            const comment = yield commentQueryRepository_1.commentQueryRepository.getCommentById(id);
             if (comment && comment.commentatorInfo.userId !== userId) {
                 return {
                     code: resultCode_1.ResultCode.Forbidden,
@@ -40,7 +41,7 @@ exports.commentRepository = {
     },
     deleteCommentById(id, userId) {
         return __awaiter(this, void 0, void 0, function* () {
-            const comment = yield this.getCommentById(id);
+            const comment = yield commentQueryRepository_1.commentQueryRepository.getCommentById(id);
             if (comment && comment.commentatorInfo.userId !== userId) {
                 return {
                     code: resultCode_1.ResultCode.Forbidden,
@@ -61,11 +62,6 @@ exports.commentRepository = {
                 data: false,
                 errorMessage: "Not Found"
             };
-        });
-    },
-    getCommentById(id) {
-        return __awaiter(this, void 0, void 0, function* () {
-            return yield db_1.commentsCollection.findOne({ id: id }, { projection: { _id: false, postId: false } });
         });
     },
     testingDeleteAllComments() {
