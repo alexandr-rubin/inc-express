@@ -15,7 +15,7 @@ export const blogRepository = {
         const result = await blogsCollection.deleteOne({id: id})
         return result.deletedCount === 1
     },
-    testingDeleteAllBlogs() {
-        blogsCollection.deleteMany({})
+    async testingDeleteAllBlogs() {
+        await blogsCollection.deleteMany({})
     }
 }

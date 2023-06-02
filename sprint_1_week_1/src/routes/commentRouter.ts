@@ -38,3 +38,7 @@ commentsRouter.get('/:id', async (req: Request, res: Response) => {
     }
     return res.status(HttpStatusCode.OK_200).send(comment)
 })
+
+commentsRouter.get('/', async (req: Request, res: Response) => {
+    return res.status(HttpStatusCode.OK_200).send(commentQueryRepository.getAllComments())
+})

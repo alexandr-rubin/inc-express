@@ -33,7 +33,7 @@ authorizationRouterRouter.get('/me', authMiddleware, validationErrorsHandler, as
 })
 
 authorizationRouterRouter.post('/registration', validateUser, validationErrorsHandler, async (req: Request, res: Response) => {
-    const isCreated = authorizationService.createUser(req.body)
+    const isCreated = await authorizationService.createUser(req.body)
     if(!isCreated){
         return res.sendStatus(HttpStatusCode.BAD_REQUEST_400)
     }

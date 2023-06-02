@@ -35,7 +35,7 @@ exports.postRepository = {
     },
     testingDeleteAllPosts() {
         return __awaiter(this, void 0, void 0, function* () {
-            db_1.postsCollection.deleteMany({});
+            yield db_1.postsCollection.deleteMany({});
         });
     },
     createComment(user, content, postId) {

@@ -26,7 +26,7 @@ exports.userRepository = {
     },
     testingDeleteAllUsers() {
         return __awaiter(this, void 0, void 0, function* () {
-            db_1.usersCollection.deleteMany({});
+            yield db_1.usersCollection.deleteMany({});
         });
     },
     updateConfirmation(id) {

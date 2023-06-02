@@ -8,7 +8,7 @@ import { HttpStatusCode } from "../helpers/httpStatusCode"
 
 export const usersRouter = Router({})
 
-usersRouter.get('/', async (req: Request, res: Response) => {
+usersRouter.get('/', basicAuthMiddleware, async (req: Request, res: Response) => {
     return res.status(HttpStatusCode.OK_200).send(await userQueryRepository.getUsers(req))
 })
 

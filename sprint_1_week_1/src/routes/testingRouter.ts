@@ -8,11 +8,11 @@ import { HttpStatusCode } from "../helpers/httpStatusCode"
 
 export const testingRouter = Router({})
 
-testingRouter.delete('/', (req: Request, res: Response) => {
+testingRouter.delete('/', async (req: Request, res: Response) => {
     testingDeleteAllVideos()
-    blogRepository.testingDeleteAllBlogs()
-    postRepository.testingDeleteAllPosts()
-    userRepository.testingDeleteAllUsers()
-    commentRepository.testingDeleteAllComments()
+    await blogRepository.testingDeleteAllBlogs()
+    await postRepository.testingDeleteAllPosts()
+    await userRepository.testingDeleteAllUsers()
+    await commentRepository.testingDeleteAllComments()
     res.status(HttpStatusCode.NO_CONTENT_204).send('All data is deleted') 
 })

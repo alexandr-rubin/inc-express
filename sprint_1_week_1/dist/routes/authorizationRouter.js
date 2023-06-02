@@ -43,7 +43,7 @@ exports.authorizationRouterRouter.get('/me', jwtAuth_1.authMiddleware, validatio
     return res.status(httpStatusCode_1.HttpStatusCode.OK_200).send(result);
 }));
 exports.authorizationRouterRouter.post('/registration', User_1.validateUser, validation_errors_handler_1.validationErrorsHandler, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const isCreated = authorizationService_1.authorizationService.createUser(req.body);
+    const isCreated = yield authorizationService_1.authorizationService.createUser(req.body);
     if (!isCreated) {
         return res.sendStatus(httpStatusCode_1.HttpStatusCode.BAD_REQUEST_400);
     }

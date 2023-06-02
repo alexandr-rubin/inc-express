@@ -20,7 +20,7 @@ export const postRepository = {
         return result.deletedCount === 1
     },
     async testingDeleteAllPosts() {
-        postsCollection.deleteMany({})
+        await postsCollection.deleteMany({})
     },
     async createComment(user: User, content: string, postId: string): Promise<Comment | null> {
         const post = await postQueryRepository.getPostById(postId)

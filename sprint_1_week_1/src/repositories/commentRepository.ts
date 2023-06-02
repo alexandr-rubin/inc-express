@@ -53,7 +53,7 @@ export const commentRepository = {
             errorMessage: "Not Found"
         }
     },
-    testingDeleteAllComments() {
-        commentsCollection.deleteMany({})
+    async testingDeleteAllComments() {
+        await commentsCollection.deleteMany({})
     },
 }

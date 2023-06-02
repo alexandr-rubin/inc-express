@@ -53,7 +53,7 @@ export const authorizationService = {
         }
         
         const isUpdated = await userRepository.updateConfirmation(user.id)
-            return isUpdated
+        return isUpdated
     },
     async resendEmail(email: string): Promise<boolean>{
         const user = await userQueryRepository.getUserByEmail(email)

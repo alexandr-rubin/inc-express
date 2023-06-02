@@ -17,5 +17,10 @@ exports.commentQueryRepository = {
             const comment = yield db_1.commentsCollection.findOne({ id: id }, { projection: { _id: false, postId: false } });
             return comment;
         });
+    },
+    getAllComments() {
+        return __awaiter(this, void 0, void 0, function* () {
+            return yield db_1.commentsCollection.find({});
+        });
     }
 };

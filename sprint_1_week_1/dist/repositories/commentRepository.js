@@ -65,6 +65,8 @@ exports.commentRepository = {
         });
     },
     testingDeleteAllComments() {
-        db_1.commentsCollection.deleteMany({});
+        return __awaiter(this, void 0, void 0, function* () {
+            yield db_1.commentsCollection.deleteMany({});
+        });
     },
 };

@@ -46,3 +46,6 @@ exports.commentsRouter.get('/:id', (req, res) => __awaiter(void 0, void 0, void 
     }
     return res.status(httpStatusCode_1.HttpStatusCode.OK_200).send(comment);
 }));
+exports.commentsRouter.get('/', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    return res.status(httpStatusCode_1.HttpStatusCode.OK_200).send(commentQueryRepository_1.commentQueryRepository.getAllComments());
+}));
