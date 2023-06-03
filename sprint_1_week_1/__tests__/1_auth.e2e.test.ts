@@ -35,11 +35,11 @@ const incorrectEmail = 'aaaaaaaa@mail.com'
 
 describe('/auth', () => {
     beforeAll(async () => {
-        await request(app).delete('/testing/all-data').expect(204)
+        await request(app).delete('/testing/all-data').expect(HttpStatusCode.NO_CONTENT_204)
     })
     it('+GET products = []', async () => {
         await request(app).get('/users').set('Authorization', 'Basic YWRtaW46cXdlcnR5').expect({ pagesCount: 0, page: 1, pageSize: 10, totalCount: 0, items: [] })
-        await request(app).get('/comments').expect({})
+        await request(app).get('/comments').expect([])
         await request(app).get('/blogs').expect({ pagesCount: 0, page: 1, pageSize: 10, totalCount: 0, items: [] })
         await request(app).get('/posts').expect({ pagesCount: 0, page: 1, pageSize: 10, totalCount: 0, items: [] })
     })

@@ -20,13 +20,21 @@ const userCorrectData = {
     password: 'zxcvbnmasd'
 }
 
-let accToken = '' 
+const registrationWithCorrectData = {
+    login: 'qwertyas',
+    password: 'zxcvbnmasd',
+    email: 'zxcalex@gmail.com'
+}
 
 describe('/users', () => {
     beforeAll(async () => {
-        const response = await request(app).post('/auth/login').send(userCorrectData).expect(HttpStatusCode.OK_200)
-        const { accessToken } = response.body;
-        accToken = accessToken
+        await request(app).delete('/testing/all-data').expect(HttpStatusCode.NO_CONTENT_204)
+    })
+    it('+GET products = []', async () => {
+        await request(app).get('/users').set('Authorization', 'Basic YWRtaW46cXdlcnR5').expect({ pagesCount: 0, page: 1, pageSize: 10, totalCount: 0, items: [] })
+        await request(app).get('/comments').expect([])
+        await request(app).get('/blogs').expect({ pagesCount: 0, page: 1, pageSize: 10, totalCount: 0, items: [] })
+        await request(app).get('/posts').expect({ pagesCount: 0, page: 1, pageSize: 10, totalCount: 0, items: [] })
     })
     it('-POST create superadmin user with incorrect data', async () => {
         await request(app).post('/users').send(sueradminUserIncorrect).set('Authorization', 'Basic YWRtaW46cXdlcnR5').expect(HttpStatusCode.BAD_REQUEST_400)
@@ -45,6 +53,24 @@ describe('/users', () => {
     })
     it('+GET get users', async () => {
         const response = await request(app).get('/users').set('Authorization', 'Basic YWRtaW46cXdlcnR5').expect(HttpStatusCode.OK_200)
-        expect(response.body.items).toHaveLength(2)
+        expect(response.body.items).toHaveLength(1)
+    })
+    it('-DELETE user by id unauthorized', async () => {
+        let response = await request(app).get('/users').set('Authorization', 'Basic YWRtaW46cXdlcnR5').expect(HttpStatusCode.OK_200)
+        await request(app).delete('/users/' + response.body.items[0].id).expect(HttpStatusCode.UNAUTHORIZED_401)
+        response = await request(app).get('/users').set('Authorization', 'Basic YWRtaW46cXdlcnR5').expect(HttpStatusCode.OK_200)
+        expect(response.body.items).toHaveLength(1)
+    })
+    it('-DELETE user by id user is not exists', async () => {
+        let response = await request(app).get('/users').set('Authorization', 'Basic YWRtaW46cXdlcnR5').expect(HttpStatusCode.OK_200)
+        await request(app).delete('/users/123').set('Authorization', 'Basic YWRtaW46cXdlcnR5').expect(HttpStatusCode.NOT_FOUND_404)
+        response = await request(app).get('/users').set('Authorization', 'Basic YWRtaW46cXdlcnR5').expect(HttpStatusCode.OK_200)
+        expect(response.body.items).toHaveLength(1)
+    })
+    it('+DELETE user by id', async () => {
+        let response = await request(app).get('/users').set('Authorization', 'Basic YWRtaW46cXdlcnR5').expect(HttpStatusCode.OK_200)
+        await request(app).delete('/users/' + response.body.items[0].id).set('Authorization', 'Basic YWRtaW46cXdlcnR5').expect(HttpStatusCode.NO_CONTENT_204)
+        response = await request(app).get('/users').set('Authorization', 'Basic YWRtaW46cXdlcnR5').expect(HttpStatusCode.OK_200)
+        expect(response.body.items).toHaveLength(0)
     })
 })

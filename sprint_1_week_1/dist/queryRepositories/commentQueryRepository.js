@@ -20,7 +20,8 @@ exports.commentQueryRepository = {
     },
     getAllComments() {
         return __awaiter(this, void 0, void 0, function* () {
-            return yield db_1.commentsCollection.find({});
+            const comments = yield db_1.commentsCollection.find({}).toArray();
+            return comments;
         });
     }
 };
