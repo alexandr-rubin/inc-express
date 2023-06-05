@@ -89,5 +89,10 @@ exports.authorizationService = {
             yield emailService_1.emailService.sendEmail(email, code);
             return true;
         });
+    },
+    updateRefreshToken(refreshToken) {
+        return __awaiter(this, void 0, void 0, function* () {
+            return yield authorizationRepository_1.authorizationRepository.updateRefreshToken(refreshToken);
+        });
     }
 };

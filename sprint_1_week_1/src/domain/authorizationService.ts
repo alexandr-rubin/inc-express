@@ -71,5 +71,8 @@ export const authorizationService = {
         }
         await emailService.sendEmail(email, code)
         return true
+    },
+    async updateRefreshToken(refreshToken: string): Promise<boolean>{
+        return await authorizationRepository.updateRefreshToken(refreshToken)
     }
 }

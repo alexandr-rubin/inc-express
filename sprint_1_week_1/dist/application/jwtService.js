@@ -14,12 +14,22 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.jwtService = void 0;
 const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
+const authorizationRepository_1 = require("../repositories/authorizationRepository");
 const secretKey = process.env.JWT_SECRET_KEY || '123';
 exports.jwtService = {
     createJWT(user) {
         return __awaiter(this, void 0, void 0, function* () {
-            const token = jsonwebtoken_1.default.sign({ userId: user.id }, secretKey, { expiresIn: '1h' });
-            return token;
+            const accessToken = jsonwebtoken_1.default.sign({ userId: user.id }, secretKey, { expiresIn: '10s' });
+            const refreshToken = jsonwebtoken_1.default.sign({ userId: user.id }, secretKey, { expiresIn: '20s' });
+            const token = {
+                token: refreshToken,
+                isValid: true
+            };
+            const isAdded = yield authorizationRepository_1.authorizationRepository.addRefreshToken(token);
+            if (!isAdded) {
+                return null;
+            }
+            return { accessToken: accessToken, refreshToken: refreshToken };
         });
     },
     getUserIdByToken(token) {

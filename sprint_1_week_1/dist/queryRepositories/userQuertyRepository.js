@@ -47,6 +47,12 @@ exports.userQueryRepository = {
             return user;
         });
     },
+    getUserById(id) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const user = yield db_1.usersCollection.findOne({ id: id });
+            return user;
+        });
+    },
     findUserByConfirmationCode(code) {
         return __awaiter(this, void 0, void 0, function* () {
             const user = db_1.usersCollection.findOne({ 'confirmationEmail.confirmationCode': code });

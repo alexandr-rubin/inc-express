@@ -20,14 +20,41 @@ const User_1 = require("../validation/User");
 const Email_1 = require("../validation/Email");
 const ConfirmationCode_1 = require("../validation/ConfirmationCode");
 const httpStatusCode_1 = require("../helpers/httpStatusCode");
+const verifyRefreshToken_1 = require("../middlewares/verifyRefreshToken");
 exports.authorizationRouterRouter = (0, express_1.Router)({});
 exports.authorizationRouterRouter.post('/login', Login_1.validateLogin, validation_errors_handler_1.validationErrorsHandler, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const user = yield authorizationService_1.authorizationService.login(req.body);
     if (!user) {
         return res.sendStatus(httpStatusCode_1.HttpStatusCode.UNAUTHORIZED_401);
     }
-    const token = yield jwtService_1.jwtService.createJWT(user);
-    return res.status(httpStatusCode_1.HttpStatusCode.OK_200).send({ accessToken: token });
+    const tokens = yield jwtService_1.jwtService.createJWT(user);
+    if (!tokens) {
+        return res.sendStatus(httpStatusCode_1.HttpStatusCode.BAD_REQUEST_400);
+    }
+    res.cookie('refreshToken', tokens.refreshToken, { httpOnly: true, secure: true });
+    return res.status(httpStatusCode_1.HttpStatusCode.OK_200).send({ accessToken: tokens.accessToken });
+}));
+exports.authorizationRouterRouter.post('/refresh-token', verifyRefreshToken_1.verifyRefreshTokenMiddleware, validation_errors_handler_1.validationErrorsHandler, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const user = req.user;
+    const oldToken = req.cookies.refreshToken;
+    const tokens = yield jwtService_1.jwtService.createJWT(user);
+    if (!tokens) {
+        return res.sendStatus(httpStatusCode_1.HttpStatusCode.BAD_REQUEST_400);
+    }
+    const isUpdated = yield authorizationService_1.authorizationService.updateRefreshToken(oldToken);
+    if (!isUpdated) {
+        return res.sendStatus(httpStatusCode_1.HttpStatusCode.BAD_REQUEST_400);
+    }
+    res.cookie('refreshToken', tokens.refreshToken, { httpOnly: true, secure: true });
+    return res.status(httpStatusCode_1.HttpStatusCode.OK_200).send({ accessToken: tokens.accessToken });
+}));
+exports.authorizationRouterRouter.post('/logout', verifyRefreshToken_1.verifyRefreshTokenMiddleware, validation_errors_handler_1.validationErrorsHandler, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const oldToken = req.cookies.refreshToken;
+    const isUpdated = yield authorizationService_1.authorizationService.updateRefreshToken(oldToken);
+    if (!isUpdated) {
+        return res.sendStatus(httpStatusCode_1.HttpStatusCode.BAD_REQUEST_400);
+    }
+    return res.sendStatus(httpStatusCode_1.HttpStatusCode.NO_CONTENT_204);
 }));
 // !!0, 
 exports.authorizationRouterRouter.get('/me', jwtAuth_1.authMiddleware, validation_errors_handler_1.validationErrorsHandler, (req, res) => __awaiter(void 0, void 0, void 0, function* () {

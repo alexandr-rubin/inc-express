@@ -7,10 +7,12 @@ import { basicAuthMiddleware } from './middlewares/basicAuth'
 import { usersRouter } from './routes/userRouter'
 import { authorizationRouterRouter } from './routes/authorizationRouter'
 import { commentsRouter } from './routes/commentRouter'
+import cookieParser from 'cookie-parser'
 
 export const app = express()
 
 app.use(express.json())
+app.use(cookieParser())
 app.use('/testing/all-data', testingRouter)
 app.use('/auth', authorizationRouterRouter)
 app.use('/comments', commentsRouter)

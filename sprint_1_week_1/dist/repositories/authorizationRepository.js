@@ -25,4 +25,22 @@ exports.authorizationRepository = {
             return null;
         });
     },
+    addRefreshToken(refreshToken) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const isAdded = (yield db_1.refreshTokensCollection.insertOne(refreshToken)).acknowledged;
+            return isAdded;
+        });
+    },
+    getRefreshToken(refreshToken) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const token = yield db_1.refreshTokensCollection.findOne({ token: refreshToken });
+            return token;
+        });
+    },
+    updateRefreshToken(refreshToken) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const isUpdated = (yield db_1.refreshTokensCollection.updateOne({ token: refreshToken }, { $set: { isValid: false } })).acknowledged;
+            return isUpdated;
+        });
+    }
 };

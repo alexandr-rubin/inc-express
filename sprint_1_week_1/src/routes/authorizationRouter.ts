@@ -8,6 +8,7 @@ import { validateUser } from "../validation/User"
 import { validateEmail } from "../validation/Email"
 import { validateConfirmationCode } from "../validation/ConfirmationCode"
 import { HttpStatusCode } from "../helpers/httpStatusCode"
+import { verifyRefreshTokenMiddleware } from "../middlewares/verifyRefreshToken"
 
 export const authorizationRouterRouter = Router({})
 
@@ -16,8 +17,34 @@ authorizationRouterRouter.post('/login', validateLogin, validationErrorsHandler,
     if(!user){
         return res.sendStatus(HttpStatusCode.UNAUTHORIZED_401)
     }
-    const token = await jwtService.createJWT(user)
-    return res.status(HttpStatusCode.OK_200).send({accessToken: token})
+    const tokens = await jwtService.createJWT(user)
+    if(!tokens){
+        return res.sendStatus(HttpStatusCode.BAD_REQUEST_400)
+    }
+    res.cookie('refreshToken', tokens.refreshToken, {httpOnly: true,secure: true})
+    return res.status(HttpStatusCode.OK_200).send({accessToken: tokens.accessToken})
+})
+authorizationRouterRouter.post('/refresh-token', verifyRefreshTokenMiddleware, validationErrorsHandler, async (req: Request, res: Response) => {
+    const user = req.user!
+    const oldToken = req.cookies.refreshToken
+    const tokens = await jwtService.createJWT(user)
+    if(!tokens){
+        return res.sendStatus(HttpStatusCode.BAD_REQUEST_400)
+    }
+    const isUpdated = await authorizationService.updateRefreshToken(oldToken)
+    if(!isUpdated){
+        return res.sendStatus(HttpStatusCode.BAD_REQUEST_400)
+    }
+    res.cookie('refreshToken', tokens.refreshToken, {httpOnly: true,secure: true})
+    return res.status(HttpStatusCode.OK_200).send({accessToken: tokens.accessToken})
+})
+authorizationRouterRouter.post('/logout', verifyRefreshTokenMiddleware, validationErrorsHandler, async (req: Request, res: Response) => {
+    const oldToken = req.cookies.refreshToken
+    const isUpdated = await authorizationService.updateRefreshToken(oldToken)
+    if(!isUpdated){
+        return res.sendStatus(HttpStatusCode.BAD_REQUEST_400)
+    }
+    return res.sendStatus(HttpStatusCode.NO_CONTENT_204)
 })
 // !!0, 
 authorizationRouterRouter.get('/me', authMiddleware, validationErrorsHandler, async (req: Request, res: Response) => {

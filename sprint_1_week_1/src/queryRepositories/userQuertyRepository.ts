@@ -34,6 +34,10 @@ export const userQueryRepository = {
         const user = await usersCollection.findOne({login: login})
         return user
     },
+    async getUserById(id: string): Promise<User | null> {
+        const user = await usersCollection.findOne({id: id})
+        return user
+    },
     async findUserByConfirmationCode(code: string): Promise<User | null>{
         const user = usersCollection.findOne({'confirmationEmail.confirmationCode': code})
         return user
