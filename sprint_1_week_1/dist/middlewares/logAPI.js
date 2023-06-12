@@ -18,18 +18,18 @@ const logAPIMiddleware = (req, res, next) => __awaiter(void 0, void 0, void 0, f
     const tenSecondsAgo = new Date(currentDate.getTime() - 10 * 1000);
     const filter = {
         IP: req.ip,
-        URL: req.baseUrl || req.originalUrl,
+        URL: req.originalUrl,
         date: { $gte: tenSecondsAgo.toISOString() }
     };
+    const count = yield db_1.apiLogsCollection.countDocuments(filter);
+    if (count >= 5) {
+        return res.sendStatus(httpStatusCode_1.HttpStatusCode.TOO_MANY_REQUESTS_429);
+    }
     const logEntry = Object.assign(Object.assign({}, filter), { date: currentDate.toISOString() });
     const isAdded = yield logAPIRepository_1.logAPIRepository.addLog(logEntry);
     if (!isAdded) {
         // какую ошибку
         return res.sendStatus(httpStatusCode_1.HttpStatusCode.INTERNAL_SERVER_ERROR_500);
-    }
-    const count = yield db_1.apiLogsCollection.countDocuments(filter);
-    if (count > 5) {
-        return res.sendStatus(httpStatusCode_1.HttpStatusCode.TOO_MANY_REQUESTS_429);
     }
     return next();
 });
