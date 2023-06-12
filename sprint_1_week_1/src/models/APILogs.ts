@@ -1,5 +1,6 @@
 export type APILog = {
     IP: string,
     URL: string,
-    date: Date
+    method: string,
+    date: number
 }

@@ -14,22 +14,23 @@ const httpStatusCode_1 = require("../helpers/httpStatusCode");
 const db_1 = require("../repositories/db");
 const logAPIRepository_1 = require("../repositories/logAPIRepository");
 const logAPIMiddleware = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
-    const currentDate = new Date();
-    const tenSecondsAgo = new Date(currentDate.getTime() - 10 * 1000);
+    const currentDate = +new Date();
+    const tenSecondsAgo = 10 * 1000;
     const filter = {
         IP: req.ip,
         URL: req.baseUrl || req.originalUrl,
-        date: { $gte: tenSecondsAgo }
+        method: req.method
     };
-    const count = yield db_1.apiLogsCollection.countDocuments(filter);
-    if (count >= 5) {
-        return res.sendStatus(httpStatusCode_1.HttpStatusCode.TOO_MANY_REQUESTS_429);
-    }
     const logEntry = Object.assign(Object.assign({}, filter), { date: currentDate });
     const isAdded = yield logAPIRepository_1.logAPIRepository.addLog(logEntry);
     if (!isAdded) {
         // какую ошибку
         return res.sendStatus(httpStatusCode_1.HttpStatusCode.INTERNAL_SERVER_ERROR_500);
+    }
+    const logs = yield db_1.apiLogsCollection.find(filter).toArray();
+    const count = logs.filter(log => (currentDate - log.date) <= tenSecondsAgo);
+    if (count.length > 5) {
+        return res.sendStatus(httpStatusCode_1.HttpStatusCode.TOO_MANY_REQUESTS_429);
     }
     return next();
 });
