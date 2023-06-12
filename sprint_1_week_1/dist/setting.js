@@ -15,6 +15,7 @@ const commentRouter_1 = require("./routes/commentRouter");
 const cookie_parser_1 = __importDefault(require("cookie-parser"));
 const securityRouter_1 = require("./routes/securityRouter");
 exports.app = (0, express_1.default)();
+exports.app.set('trust proxy', 1);
 exports.app.use(express_1.default.json());
 exports.app.use((0, cookie_parser_1.default)());
 exports.app.use('/security/', securityRouter_1.securityRouter);
