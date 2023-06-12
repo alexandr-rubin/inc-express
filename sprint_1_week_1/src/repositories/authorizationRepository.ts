@@ -2,7 +2,7 @@ import { Login } from '../models/Login'
 import { refreshTokensCollection, usersCollection } from './db'
 import { userService } from '../domain/userService'
 import { User } from '../models/User'
-import { RefreshToken } from '../models/RefreshToken'
+import { Device } from '../models/Device'
 
 export const authorizationRepository = {
     async login(login: Login): Promise<User | null> {
@@ -16,16 +16,31 @@ export const authorizationRepository = {
         
         return null
     },
-    async addRefreshToken(refreshToken: RefreshToken): Promise<boolean> {
-        const isAdded = (await refreshTokensCollection.insertOne(refreshToken)).acknowledged
+    async addDevice(device: Device): Promise<boolean> {
+        const isAdded = (await refreshTokensCollection.insertOne(device)).acknowledged
         return isAdded
     },
-    async getRefreshToken(refreshToken: string): Promise<RefreshToken | null> {
-        const token = await refreshTokensCollection.findOne({token: refreshToken})
-        return token
-    },
-    async updateRefreshToken(refreshToken: string): Promise<boolean> {
-        const isUpdated = (await refreshTokensCollection.updateOne({token: refreshToken}, { $set: {isValid: false}})).acknowledged
+    async updateDevice(device: Device): Promise<boolean> {
+        const isUpdated = (await refreshTokensCollection.updateOne({deviceId: device.deviceId}, { $set: {
+            issuedAt: device.issuedAt,
+            expirationDate: device.expirationDate,
+            IP: device.IP,
+            deviceName: device.deviceName,
+            deviceId: device.deviceId,
+            userId: device.userId
+        }})).acknowledged
         return isUpdated
+    },
+    async logoutDevice(deviceId: string): Promise<boolean> {
+        const isUpdated = await refreshTokensCollection.updateOne({deviceId: deviceId}, { $set: {isValid: false}})
+        return isUpdated.acknowledged
+    },
+    async getDeviceByDeviceId(deviceId: string): Promise<Device | null>{
+        const device = await refreshTokensCollection.findOne({deviceId: deviceId})
+        return device
+    },
+    async testingDeleteAllDevices(): Promise<boolean>{
+        const result = await refreshTokensCollection.deleteMany({})
+        return result.acknowledged
     }
 }

@@ -4,7 +4,8 @@ import { Blog } from '../models/Blog'
 import { Post } from '../models/Post'
 import { User } from '../models/User'
 import { Comment } from '../models/Comment'
-import { RefreshToken } from '../models/RefreshToken'
+import { Device } from '../models/Device'
+import { APILog } from '../models/APILogs'
 
 dotenv.config()
 
@@ -16,7 +17,8 @@ export const blogsCollection = client.db().collection<Blog>('Blogs')
 export const postsCollection = client.db().collection<Post>('Posts')
 export const usersCollection = client.db().collection<User>('Users')
 export const commentsCollection = client.db().collection<Comment>('Comments')
-export const refreshTokensCollection = client.db().collection<RefreshToken>('RefreshTokens')
+export const refreshTokensCollection = client.db().collection<Device>('RefreshTokens')
+export const apiLogsCollection = client.db().collection<APILog>('APILogs')
 
 export async function runDb() {
     try {

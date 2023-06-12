@@ -9,6 +9,7 @@ import { userRepository } from "../repositories/userRepository"
 import { emailService } from "./emailService"
 import { ObjectId } from "mongodb"
 import { userQueryRepository } from "../queryRepositories/userQuertyRepository"
+import { Device } from "../models/Device"
 
 export const authorizationService = {
     async login(body: Login): Promise<User | null> {
@@ -71,8 +72,5 @@ export const authorizationService = {
         }
         await emailService.sendEmail(email, code)
         return true
-    },
-    async updateRefreshToken(refreshToken: string): Promise<boolean>{
-        return await authorizationRepository.updateRefreshToken(refreshToken)
     }
 }

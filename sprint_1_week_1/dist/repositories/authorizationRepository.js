@@ -25,22 +25,41 @@ exports.authorizationRepository = {
             return null;
         });
     },
-    addRefreshToken(refreshToken) {
+    addDevice(device) {
         return __awaiter(this, void 0, void 0, function* () {
-            const isAdded = (yield db_1.refreshTokensCollection.insertOne(refreshToken)).acknowledged;
+            const isAdded = (yield db_1.refreshTokensCollection.insertOne(device)).acknowledged;
             return isAdded;
         });
     },
-    getRefreshToken(refreshToken) {
+    updateDevice(device) {
         return __awaiter(this, void 0, void 0, function* () {
-            const token = yield db_1.refreshTokensCollection.findOne({ token: refreshToken });
-            return token;
+            const isUpdated = (yield db_1.refreshTokensCollection.updateOne({ deviceId: device.deviceId }, { $set: {
+                    issuedAt: device.issuedAt,
+                    expirationDate: device.expirationDate,
+                    IP: device.IP,
+                    deviceName: device.deviceName,
+                    deviceId: device.deviceId,
+                    userId: device.userId
+                } })).acknowledged;
+            return isUpdated;
         });
     },
-    updateRefreshToken(refreshToken) {
+    logoutDevice(deviceId) {
         return __awaiter(this, void 0, void 0, function* () {
-            const isUpdated = (yield db_1.refreshTokensCollection.updateOne({ token: refreshToken }, { $set: { isValid: false } })).acknowledged;
-            return isUpdated;
+            const isUpdated = yield db_1.refreshTokensCollection.updateOne({ deviceId: deviceId }, { $set: { isValid: false } });
+            return isUpdated.acknowledged;
+        });
+    },
+    getDeviceByDeviceId(deviceId) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const device = yield db_1.refreshTokensCollection.findOne({ deviceId: deviceId });
+            return device;
+        });
+    },
+    testingDeleteAllDevices() {
+        return __awaiter(this, void 0, void 0, function* () {
+            const result = yield db_1.refreshTokensCollection.deleteMany({});
+            return result.acknowledged;
         });
     }
 };

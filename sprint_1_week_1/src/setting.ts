@@ -8,11 +8,14 @@ import { usersRouter } from './routes/userRouter'
 import { authorizationRouterRouter } from './routes/authorizationRouter'
 import { commentsRouter } from './routes/commentRouter'
 import cookieParser from 'cookie-parser'
+import { securityRouter } from './routes/securityRouter'
+import { logAPIMiddleware } from './middlewares/logAPI'
 
 export const app = express()
 
 app.use(express.json())
 app.use(cookieParser())
+app.use('/security/', securityRouter)
 app.use('/testing/all-data', testingRouter)
 app.use('/auth', authorizationRouterRouter)
 app.use('/comments', commentsRouter)

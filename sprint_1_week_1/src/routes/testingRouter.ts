@@ -5,6 +5,7 @@ import { postRepository } from "../repositories/postRespository"
 import { userRepository } from "../repositories/userRepository"
 import { commentRepository } from "../repositories/commentRepository"
 import { HttpStatusCode } from "../helpers/httpStatusCode"
+import { authorizationRepository } from "../repositories/authorizationRepository"
 
 export const testingRouter = Router({})
 
@@ -14,5 +15,6 @@ testingRouter.delete('/', async (req: Request, res: Response) => {
     await postRepository.testingDeleteAllPosts()
     await userRepository.testingDeleteAllUsers()
     await commentRepository.testingDeleteAllComments()
+    await authorizationRepository.testingDeleteAllDevices()
     res.status(HttpStatusCode.NO_CONTENT_204).send('All data is deleted') 
 })

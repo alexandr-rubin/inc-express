@@ -15,7 +15,7 @@ const userQuertyRepository_1 = require("../queryRepositories/userQuertyRepositor
 const httpStatusCode_1 = require("../helpers/httpStatusCode");
 const authMiddleware = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     if (!req.headers.authorization) {
-        return res.status(httpStatusCode_1.HttpStatusCode.UNAUTHORIZED_401).json({ message: "Unauthorized" });
+        return res.status(httpStatusCode_1.HttpStatusCode.UNAUTHORIZED_401).send('Not authorized');
     }
     const token = req.headers.authorization.split(' ')[1];
     const userId = yield jwtService_1.jwtService.getUserIdByToken(token);
@@ -24,6 +24,6 @@ const authMiddleware = (req, res, next) => __awaiter(void 0, void 0, void 0, fun
         req.user = user;
         return next();
     }
-    return res.sendStatus(httpStatusCode_1.HttpStatusCode.UNAUTHORIZED_401);
+    return res.status(httpStatusCode_1.HttpStatusCode.UNAUTHORIZED_401).send('User not found');
 });
 exports.authMiddleware = authMiddleware;

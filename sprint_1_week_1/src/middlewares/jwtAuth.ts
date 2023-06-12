@@ -5,7 +5,7 @@ import { HttpStatusCode } from "../helpers/httpStatusCode"
 
 export const authMiddleware = async (req: Request, res: Response, next: NextFunction) => {
     if (!req.headers.authorization) {
-        return res.status(HttpStatusCode.UNAUTHORIZED_401).json({ message: "Unauthorized" })
+        return res.status(HttpStatusCode.UNAUTHORIZED_401).send('Not authorized')
     }
     
     const token = req.headers.authorization.split(' ')[1]
@@ -16,5 +16,5 @@ export const authMiddleware = async (req: Request, res: Response, next: NextFunc
         return next()
     }
 
-    return res.sendStatus(HttpStatusCode.UNAUTHORIZED_401)
+    return res.status(HttpStatusCode.UNAUTHORIZED_401).send('User not found')
 }

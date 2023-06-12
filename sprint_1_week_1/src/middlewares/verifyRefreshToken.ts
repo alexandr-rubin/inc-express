@@ -7,17 +7,19 @@ import { authorizationRepository } from "../repositories/authorizationRepository
 export const verifyRefreshTokenMiddleware = async (req: Request, res: Response, next: NextFunction) => {
     const token = req.cookies.refreshToken
     if (!token) {
-        return res.sendStatus(HttpStatusCode.UNAUTHORIZED_401)
+        return res.status(HttpStatusCode.UNAUTHORIZED_401).send('No refresh token')
     }
 
-    const dbToken = await authorizationRepository.getRefreshToken(token)
-    if(!dbToken || !dbToken.isValid){
-        return res.sendStatus(HttpStatusCode.UNAUTHORIZED_401)
+    const device = await jwtService.getDeviceByToken(token)
+    const isCompare = await jwtService.compareTokenDate(token)
+    if(!device || !device.isValid || !isCompare){
+        return res.status(HttpStatusCode.UNAUTHORIZED_401).send('Invalid device')
     }
+
     const userId = await jwtService.getUserIdByToken(token)
     if(userId === null){
-        await authorizationRepository.updateRefreshToken(token)
-        return res.sendStatus(HttpStatusCode.UNAUTHORIZED_401)
+        await jwtService.logoutDevice(token)
+        return res.status(HttpStatusCode.UNAUTHORIZED_401).send('Invalid user')
     }
 
     const user = await userQueryRepository.getUserById(userId)

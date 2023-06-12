@@ -13,20 +13,20 @@ exports.verifyRefreshTokenMiddleware = void 0;
 const jwtService_1 = require("../application/jwtService");
 const userQuertyRepository_1 = require("../queryRepositories/userQuertyRepository");
 const httpStatusCode_1 = require("../helpers/httpStatusCode");
-const authorizationRepository_1 = require("../repositories/authorizationRepository");
 const verifyRefreshTokenMiddleware = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     const token = req.cookies.refreshToken;
     if (!token) {
-        return res.sendStatus(httpStatusCode_1.HttpStatusCode.UNAUTHORIZED_401);
+        return res.status(httpStatusCode_1.HttpStatusCode.UNAUTHORIZED_401).send('No refresh token');
     }
-    const dbToken = yield authorizationRepository_1.authorizationRepository.getRefreshToken(token);
-    if (!dbToken || !dbToken.isValid) {
-        return res.sendStatus(httpStatusCode_1.HttpStatusCode.UNAUTHORIZED_401);
+    const device = yield jwtService_1.jwtService.getDeviceByToken(token);
+    const isCompare = yield jwtService_1.jwtService.compareTokenDate(token);
+    if (!device || !device.isValid || !isCompare) {
+        return res.status(httpStatusCode_1.HttpStatusCode.UNAUTHORIZED_401).send('Invalid device');
     }
     const userId = yield jwtService_1.jwtService.getUserIdByToken(token);
     if (userId === null) {
-        yield authorizationRepository_1.authorizationRepository.updateRefreshToken(token);
-        return res.sendStatus(httpStatusCode_1.HttpStatusCode.UNAUTHORIZED_401);
+        yield jwtService_1.jwtService.logoutDevice(token);
+        return res.status(httpStatusCode_1.HttpStatusCode.UNAUTHORIZED_401).send('Invalid user');
     }
     const user = yield userQuertyRepository_1.userQueryRepository.getUserById(userId);
     if (!user) {
