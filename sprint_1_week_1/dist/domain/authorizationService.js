@@ -76,11 +76,12 @@ exports.authorizationService = {
             const user = yield userQuertyRepository_1.userQueryRepository.getUserByEmail(email);
             if (!user)
                 return false;
-            if (user.confirmationEmail.isConfirmed)
+            if (user.confirmationEmail.isConfirmed === false)
                 return false;
             if (user.confirmationEmail.expirationDate < new Date()) {
                 return false;
             }
+            console.log(user);
             const code = (0, uuid_1.v4)();
             const isUpdated = yield userRepository_1.userRepository.updateConfirmationCode(user.id, code);
             if (!isUpdated) {

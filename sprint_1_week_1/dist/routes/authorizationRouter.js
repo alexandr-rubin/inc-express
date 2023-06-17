@@ -17,11 +17,11 @@ const authorizationService_1 = require("../domain/authorizationService");
 const jwtService_1 = require("../application/jwtService");
 const jwtAuth_1 = require("../middlewares/jwtAuth");
 const User_1 = require("../validation/User");
-const Email_1 = require("../validation/Email");
 const ConfirmationCode_1 = require("../validation/ConfirmationCode");
 const httpStatusCode_1 = require("../helpers/httpStatusCode");
 const verifyRefreshToken_1 = require("../middlewares/verifyRefreshToken");
 const logAPI_1 = require("../middlewares/logAPI");
+const EmailResending_1 = require("../validation/EmailResending");
 exports.authorizationRouterRouter = (0, express_1.Router)({});
 exports.authorizationRouterRouter.post('/login', logAPI_1.logAPIMiddleware, Login_1.validateLogin, validation_errors_handler_1.validationErrorsHandler, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const user = yield authorizationService_1.authorizationService.login(req.body);
@@ -84,7 +84,7 @@ exports.authorizationRouterRouter.post('/registration-confirmation', logAPI_1.lo
     }
     return res.status(httpStatusCode_1.HttpStatusCode.NO_CONTENT_204).send('Email was verified. Account was activated');
 }));
-exports.authorizationRouterRouter.post('/registration-email-resending', logAPI_1.logAPIMiddleware, Email_1.validateEmail, validation_errors_handler_1.validationErrorsHandler, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+exports.authorizationRouterRouter.post('/registration-email-resending', logAPI_1.logAPIMiddleware, EmailResending_1.validateConfirmationEmail, validation_errors_handler_1.validationErrorsHandler, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const isResended = yield authorizationService_1.authorizationService.resendEmail(req.body.email);
     if (!isResended) {
         return res.sendStatus(httpStatusCode_1.HttpStatusCode.BAD_REQUEST_400);

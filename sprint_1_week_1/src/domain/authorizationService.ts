@@ -60,11 +60,12 @@ export const authorizationService = {
         const user = await userQueryRepository.getUserByEmail(email)
         if (!user)
             return false
-        if (user.confirmationEmail.isConfirmed)
+        if (user.confirmationEmail.isConfirmed === false)
             return false
         if(user.confirmationEmail.expirationDate < new Date()){
             return false
         }
+        console.log(user)
         const code = uuidv4()
         const isUpdated = await userRepository.updateConfirmationCode(user.id, code)
         if(!isUpdated){

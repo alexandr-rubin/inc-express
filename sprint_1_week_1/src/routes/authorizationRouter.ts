@@ -10,6 +10,7 @@ import { validateConfirmationCode } from "../validation/ConfirmationCode"
 import { HttpStatusCode } from "../helpers/httpStatusCode"
 import { verifyRefreshTokenMiddleware } from "../middlewares/verifyRefreshToken"
 import { logAPIMiddleware } from "../middlewares/logAPI"
+import { validateConfirmationEmail } from "../validation/EmailResending"
 
 export const authorizationRouterRouter = Router({})
 
@@ -76,7 +77,7 @@ authorizationRouterRouter.post('/registration-confirmation', logAPIMiddleware, v
     return res.status(HttpStatusCode.NO_CONTENT_204).send('Email was verified. Account was activated')
 })
 
-authorizationRouterRouter.post('/registration-email-resending', logAPIMiddleware, validateEmail, validationErrorsHandler, async (req: Request, res: Response) => {
+authorizationRouterRouter.post('/registration-email-resending', logAPIMiddleware, validateConfirmationEmail, validationErrorsHandler, async (req: Request, res: Response) => {
     const isResended = await authorizationService.resendEmail(req.body.email)
     if(!isResended){
         return res.sendStatus(HttpStatusCode.BAD_REQUEST_400) 
