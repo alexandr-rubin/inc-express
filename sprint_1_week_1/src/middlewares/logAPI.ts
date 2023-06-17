@@ -1,6 +1,7 @@
 import { NextFunction, Request, Response } from "express"
 import { HttpStatusCode } from "../helpers/httpStatusCode"
-import { apiLogsCollection } from "../repositories/db"
+// import { apiLogsCollection } from "../repositories/db"
+import { LogAPIModel } from "../models/APILogs"
 import { logAPIRepository } from "../repositories/logAPIRepository"
 
 export const logAPIMiddleware = async (req: Request, res: Response, next: NextFunction) => {
@@ -13,7 +14,7 @@ export const logAPIMiddleware = async (req: Request, res: Response, next: NextFu
         date: { $gte: tenSecondsAgo.toISOString() }
     }
 
-    const count = await apiLogsCollection.countDocuments(filter)
+    const count = await LogAPIModel.countDocuments(filter)
 
     if(count >= 5){
         return res.sendStatus(HttpStatusCode.TOO_MANY_REQUESTS_429)

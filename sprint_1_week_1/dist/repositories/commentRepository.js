@@ -10,7 +10,8 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.commentRepository = void 0;
-const db_1 = require("./db");
+//import { commentsCollection } from './db'
+const Comment_1 = require("../models/Comment");
 const resultCode_1 = require("../helpers/resultCode");
 const commentQueryRepository_1 = require("../queryRepositories/commentQueryRepository");
 exports.commentRepository = {
@@ -24,7 +25,7 @@ exports.commentRepository = {
                     errorMessage: "Forbidden"
                 };
             }
-            const result = yield db_1.commentsCollection.updateOne({ id: id }, { $set: { content: content } });
+            const result = yield Comment_1.CommentModel.updateOne({ id: id }, { $set: { content: content } });
             if (result.matchedCount === 1) {
                 return {
                     code: resultCode_1.ResultCode.NoContent,
@@ -49,7 +50,7 @@ exports.commentRepository = {
                     errorMessage: "Forbidden"
                 };
             }
-            const result = yield db_1.commentsCollection.deleteOne({ id: id });
+            const result = yield Comment_1.CommentModel.deleteOne({ id: id });
             if (result.deletedCount === 1) {
                 return {
                     code: resultCode_1.ResultCode.NoContent,
@@ -66,7 +67,7 @@ exports.commentRepository = {
     },
     testingDeleteAllComments() {
         return __awaiter(this, void 0, void 0, function* () {
-            yield db_1.commentsCollection.deleteMany({});
+            yield Comment_1.CommentModel.deleteMany({});
         });
     },
 };

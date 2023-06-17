@@ -2,6 +2,7 @@ import request from 'supertest'
 import { app } from '../src/setting'
 import { HttpStatusCode } from '../src/helpers/httpStatusCode'
 import { userQueryRepository } from '../src/queryRepositories/userQuertyRepository'
+import mongoose from 'mongoose'
 
 const registrationWithIncorrectData = {
     login: 'x',
@@ -35,7 +36,12 @@ const incorrectEmail = 'aaaaaaaa@mail.com'
 
 describe('/auth', () => {
     beforeAll(async () => {
+        const MONGODB_URI = process.env.MONGODB_URI || 'mongodb://localhost:27017/testDb'
+        await mongoose.connect(MONGODB_URI)
         await request(app).delete('/testing/all-data').expect(HttpStatusCode.NO_CONTENT_204)
+    })
+    afterAll(async () => {
+        await mongoose.connection.close()
     })
     it('+GET products = []', async () => {
         await request(app).get('/users').set('Authorization', 'Basic YWRtaW46cXdlcnR5').expect({ pagesCount: 0, page: 1, pageSize: 10, totalCount: 0, items: [] })

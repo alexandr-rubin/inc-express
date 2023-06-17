@@ -1,5 +1,6 @@
 import { User } from '../models/User'
-import { usersCollection } from '../repositories/db'
+//import { usersCollection } from '../repositories/db'
+import { UserModel } from '../models/User'
 import { Paginator } from '../models/Paginator'
 import { createPaginationQuery, createPaginationResult } from '../helpers/pagination'
 import { Request } from 'express'
@@ -17,29 +18,28 @@ export const userQueryRepository = {
             search.email = {$regex: query.searchEmailTerm, $options: 'i'}
         }
         const searchTermsArray = Object.keys(search).map(key => ({ [key]: search[key] }))
-        const users = await usersCollection.find({$or: searchTermsArray.length === 0 ? [{}] : searchTermsArray}, {projection: {_id: false, password: false,passwordSalt: false, confirmationEmail: false}})
+        const users = await UserModel.find({$or: searchTermsArray.length === 0 ? [{}] : searchTermsArray}, {projection: {_id: false, password: false,passwordSalt: false, confirmationEmail: false}})
         .sort({[query.sortBy]: query.sortDirection === 'asc' ? 1 : -1})
-        .skip(skip).limit(query.pageSize)
-        .toArray()
-        const count = await usersCollection.countDocuments({$or: searchTermsArray.length === 0 ? [{}] : searchTermsArray})
+        .skip(skip).limit(query.pageSize).lean()
+        const count = await UserModel.countDocuments({$or: searchTermsArray.length === 0 ? [{}] : searchTermsArray})
         const result = createPaginationResult(count, query, users)
         
         return result
     },
     async getUserByEmail(email: string): Promise<User | null> {
-        const user = await usersCollection.findOne({email: email})
+        const user = await UserModel.findOne({email: email})
         return user
     },
     async getUserBylogin(login: string): Promise<User | null> {
-        const user = await usersCollection.findOne({login: login})
+        const user = await UserModel.findOne({login: login})
         return user
     },
     async getUserById(id: string): Promise<User | null> {
-        const user = await usersCollection.findOne({id: id})
+        const user = await UserModel.findOne({id: id})
         return user
     },
     async findUserByConfirmationCode(code: string): Promise<User | null>{
-        const user = usersCollection.findOne({'confirmationEmail.confirmationCode': code})
+        const user = UserModel.findOne({'confirmationEmail.confirmationCode': code})
         return user
     }
 }

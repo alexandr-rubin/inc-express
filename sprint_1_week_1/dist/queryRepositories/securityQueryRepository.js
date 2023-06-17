@@ -11,12 +11,13 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.securityQueryRepository = void 0;
 const jwtService_1 = require("../application/jwtService");
-const db_1 = require("../repositories/db");
+//import { refreshTokensCollection } from '../repositories/db'
+const Device_1 = require("../models/Device");
 exports.securityQueryRepository = {
     getDevicesForCurrentUser(token) {
         return __awaiter(this, void 0, void 0, function* () {
             const userId = yield jwtService_1.jwtService.getUserIdByToken(token);
-            const devices = yield db_1.refreshTokensCollection.find({ userId: userId, isValid: true }).toArray();
+            const devices = yield Device_1.DeviceModel.find({ userId: userId, isValid: true }).lean();
             const result = devices.map(device => { return { deviceId: device.deviceId, ip: device.IP, lastActiveDate: device.issuedAt, title: device.deviceName }; });
             return result;
         });

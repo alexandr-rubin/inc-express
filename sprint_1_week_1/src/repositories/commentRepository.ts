@@ -1,4 +1,5 @@
-import { commentsCollection } from './db'
+//import { commentsCollection } from './db'
+import { CommentModel } from '../models/Comment'
 import { Result } from '../models/Result'
 import { ResultCode } from '../helpers/resultCode'
 import { commentQueryRepository } from '../queryRepositories/commentQueryRepository'
@@ -13,7 +14,7 @@ export const commentRepository = {
                 errorMessage: "Forbidden"
             }
         }
-        const result = await commentsCollection.updateOne({id: id}, { $set: {content: content}})
+        const result = await CommentModel.updateOne({id: id}, { $set: {content: content}})
 
         if(result.matchedCount === 1){
             return {
@@ -38,7 +39,7 @@ export const commentRepository = {
                 errorMessage: "Forbidden"
             }
         }
-        const result = await commentsCollection.deleteOne({id: id})
+        const result = await CommentModel.deleteOne({id: id})
         if(result.deletedCount === 1){
             return {
                 code: ResultCode.NoContent,
@@ -54,6 +55,6 @@ export const commentRepository = {
         }
     },
     async testingDeleteAllComments() {
-        await commentsCollection.deleteMany({})
+        await CommentModel.deleteMany({})
     },
 }

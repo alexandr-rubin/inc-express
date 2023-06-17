@@ -1,5 +1,6 @@
 import { Post } from '../models/Post'
-import { commentsCollection, postsCollection, usersCollection } from './db'
+import { PostModel } from '../models/Post'
+import { CommentModel } from '../models/Comment'
 import { ObjectId } from 'mongodb'
 import { Comment } from '../models/Comment'
 import { User } from '../models/User'
@@ -8,19 +9,24 @@ import { postQueryRepository } from '../queryRepositories/postQueryRepository'
 export const postRepository = {
     async addPost(post: Post): Promise<boolean> {
         // TODO: return
-        const isAdded = (await postsCollection.insertOne(post)).acknowledged === true
-        return isAdded
+        try{
+            await PostModel.insertMany([post])
+            return true
+        }
+        catch(err){
+            return false
+        }
     },
     async updatePostByid(id: string, newPost: Post): Promise<boolean> {
-        const result = await postsCollection.updateOne({id: id}, { $set: {title: newPost.title, shortDescription: newPost.shortDescription, content: newPost.content, blogId: newPost.blogId}})
+        const result = await PostModel.updateOne({id: id}, { $set: {title: newPost.title, shortDescription: newPost.shortDescription, content: newPost.content, blogId: newPost.blogId}})
         return result.matchedCount === 1
     },
     async deletePostById(id: string): Promise<boolean> {
-        const result = await postsCollection.deleteOne({id: id})
+        const result = await PostModel.deleteOne({id: id})
         return result.deletedCount === 1
     },
     async testingDeleteAllPosts() {
-        await postsCollection.deleteMany({})
+        await PostModel.deleteMany({})
     },
     async createComment(user: User, content: string, postId: string): Promise<Comment | null> {
         const post = await postQueryRepository.getPostById(postId)
@@ -41,8 +47,10 @@ export const postRepository = {
 
         const result = {...comment}
 
-        const isAdded = await commentsCollection.insertOne(comment)
-        if(isAdded.acknowledged === false){
+        try{
+            await CommentModel.insertMany([comment])
+        }
+        catch(err){
             return null
         }
 

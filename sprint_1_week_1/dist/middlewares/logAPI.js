@@ -11,7 +11,8 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.logAPIMiddleware = void 0;
 const httpStatusCode_1 = require("../helpers/httpStatusCode");
-const db_1 = require("../repositories/db");
+// import { apiLogsCollection } from "../repositories/db"
+const APILogs_1 = require("../models/APILogs");
 const logAPIRepository_1 = require("../repositories/logAPIRepository");
 const logAPIMiddleware = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     const currentDate = new Date();
@@ -21,7 +22,7 @@ const logAPIMiddleware = (req, res, next) => __awaiter(void 0, void 0, void 0, f
         URL: req.originalUrl,
         date: { $gte: tenSecondsAgo.toISOString() }
     };
-    const count = yield db_1.apiLogsCollection.countDocuments(filter);
+    const count = yield APILogs_1.LogAPIModel.countDocuments(filter);
     if (count >= 5) {
         return res.sendStatus(httpStatusCode_1.HttpStatusCode.TOO_MANY_REQUESTS_429);
     }

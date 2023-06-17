@@ -25,6 +25,7 @@ exports.jwtService = {
         const result = { accessToken: accessToken, refreshToken: refreshToken };
         return result;
     },
+    // убрать дублирование при создании и обновлении девайса
     addDevice(user, userAgent, clientIP) {
         return __awaiter(this, void 0, void 0, function* () {
             if (!userAgent) {
@@ -94,6 +95,7 @@ exports.jwtService = {
             }
         });
     },
+    // add device service
     logoutDevice(refreshToken) {
         return __awaiter(this, void 0, void 0, function* () {
             try {

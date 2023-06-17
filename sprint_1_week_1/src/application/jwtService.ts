@@ -17,6 +17,7 @@ export const jwtService = {
 
         return result
     },
+    // убрать дублирование при создании и обновлении девайса
     async addDevice(user: User, userAgent: string | undefined, clientIP: string): Promise<CreateJWT | null> {
         if (!userAgent){
             userAgent = 'default device name'
@@ -81,6 +82,7 @@ export const jwtService = {
             return null
         }
     },
+    // add device service
     async logoutDevice(refreshToken: string): Promise<boolean>{
         try{
             const decodedToken: any = jwt.verify(refreshToken, secretKey)

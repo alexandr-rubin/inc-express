@@ -10,25 +10,26 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.postQueryRepository = void 0;
-const db_1 = require("../repositories/db");
+// import { commentsCollection, postsCollection } from '../repositories/db'
+const Comment_1 = require("../models/Comment");
+const Post_1 = require("../models/Post");
 const pagination_1 = require("../helpers/pagination");
 exports.postQueryRepository = {
     getPosts(req) {
         return __awaiter(this, void 0, void 0, function* () {
             const query = (0, pagination_1.createPaginationQuery)(req);
             const skip = (query.pageNumber - 1) * query.pageSize;
-            const posts = yield db_1.postsCollection.find(query.searchNameTerm === null ? {} : { name: { $regex: query.searchNameTerm, $options: 'i' } }, { projection: { _id: false } })
+            const posts = yield Post_1.PostModel.find(query.searchNameTerm === null ? {} : { name: { $regex: query.searchNameTerm, $options: 'i' } }, { projection: { _id: false } })
                 .sort({ [query.sortBy]: query.sortDirection === 'asc' ? 1 : -1 })
-                .skip(skip).limit(query.pageSize)
-                .toArray();
-            const count = yield db_1.postsCollection.countDocuments(query.searchNameTerm === null ? {} : { name: { $regex: query.searchNameTerm, $options: 'i' } });
+                .skip(skip).limit(query.pageSize).lean();
+            const count = yield Post_1.PostModel.countDocuments(query.searchNameTerm === null ? {} : { name: { $regex: query.searchNameTerm, $options: 'i' } });
             const result = (0, pagination_1.createPaginationResult)(count, query, posts);
             return result;
         });
     },
     getPostById(id) {
         return __awaiter(this, void 0, void 0, function* () {
-            const post = yield db_1.postsCollection.findOne({ id: id }, { projection: { _id: false } });
+            const post = yield Post_1.PostModel.findOne({ id: id }, { projection: { _id: false } });
             return post;
         });
     },
@@ -40,12 +41,11 @@ exports.postQueryRepository = {
             }
             const query = (0, pagination_1.createPaginationQuery)(req);
             const skip = (query.pageNumber - 1) * query.pageSize;
-            const comments = yield db_1.commentsCollection.find({ postId: postId }, { projection: { _id: false, postId: false } })
+            const comments = yield Comment_1.CommentModel.find({ postId: postId }, { projection: { _id: false, postId: false } })
                 .sort({ [query.sortBy]: query.sortDirection === 'asc' ? 1 : -1 })
                 .skip(skip)
-                .limit(query.pageSize)
-                .toArray();
-            const count = yield db_1.commentsCollection.countDocuments({ postId: postId });
+                .limit(query.pageSize).lean();
+            const count = yield Comment_1.CommentModel.countDocuments({ postId: postId });
             const result = (0, pagination_1.createPaginationResult)(count, query, comments);
             return result;
         });

@@ -10,32 +10,38 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.postRepository = void 0;
-const db_1 = require("./db");
+const Post_1 = require("../models/Post");
+const Comment_1 = require("../models/Comment");
 const mongodb_1 = require("mongodb");
 const postQueryRepository_1 = require("../queryRepositories/postQueryRepository");
 exports.postRepository = {
     addPost(post) {
         return __awaiter(this, void 0, void 0, function* () {
             // TODO: return
-            const isAdded = (yield db_1.postsCollection.insertOne(post)).acknowledged === true;
-            return isAdded;
+            try {
+                yield Post_1.PostModel.insertMany([post]);
+                return true;
+            }
+            catch (err) {
+                return false;
+            }
         });
     },
     updatePostByid(id, newPost) {
         return __awaiter(this, void 0, void 0, function* () {
-            const result = yield db_1.postsCollection.updateOne({ id: id }, { $set: { title: newPost.title, shortDescription: newPost.shortDescription, content: newPost.content, blogId: newPost.blogId } });
+            const result = yield Post_1.PostModel.updateOne({ id: id }, { $set: { title: newPost.title, shortDescription: newPost.shortDescription, content: newPost.content, blogId: newPost.blogId } });
             return result.matchedCount === 1;
         });
     },
     deletePostById(id) {
         return __awaiter(this, void 0, void 0, function* () {
-            const result = yield db_1.postsCollection.deleteOne({ id: id });
+            const result = yield Post_1.PostModel.deleteOne({ id: id });
             return result.deletedCount === 1;
         });
     },
     testingDeleteAllPosts() {
         return __awaiter(this, void 0, void 0, function* () {
-            yield db_1.postsCollection.deleteMany({});
+            yield Post_1.PostModel.deleteMany({});
         });
     },
     createComment(user, content, postId) {
@@ -55,8 +61,10 @@ exports.postRepository = {
                 postId: postId
             };
             const result = Object.assign({}, comment);
-            const isAdded = yield db_1.commentsCollection.insertOne(comment);
-            if (isAdded.acknowledged === false) {
+            try {
+                yield Comment_1.CommentModel.insertMany([comment]);
+            }
+            catch (err) {
                 return null;
             }
             return result;

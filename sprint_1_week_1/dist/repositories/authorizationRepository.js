@@ -10,12 +10,14 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.authorizationRepository = void 0;
-const db_1 = require("./db");
+//import { refreshTokensCollection, usersCollection } from './db'
+const User_1 = require("../models/User");
+const Device_1 = require("../models/Device");
 const userService_1 = require("../domain/userService");
 exports.authorizationRepository = {
     login(login) {
         return __awaiter(this, void 0, void 0, function* () {
-            const user = yield db_1.usersCollection.findOne({ $or: [{ login: login.loginOrEmail }, { email: login.loginOrEmail }] });
+            const user = yield User_1.UserModel.findOne({ $or: [{ login: login.loginOrEmail }, { email: login.loginOrEmail }] });
             if (user) {
                 const password = yield userService_1.userService._generateHash(login.password, user.passwordSalt);
                 if (user.password === password) {
@@ -27,13 +29,18 @@ exports.authorizationRepository = {
     },
     addDevice(device) {
         return __awaiter(this, void 0, void 0, function* () {
-            const isAdded = (yield db_1.refreshTokensCollection.insertOne(device)).acknowledged;
-            return isAdded;
+            try {
+                yield Device_1.DeviceModel.insertMany([device]);
+                return true;
+            }
+            catch (err) {
+                return false;
+            }
         });
     },
     updateDevice(device) {
         return __awaiter(this, void 0, void 0, function* () {
-            const isUpdated = (yield db_1.refreshTokensCollection.updateOne({ deviceId: device.deviceId }, { $set: {
+            const isUpdated = (yield Device_1.DeviceModel.updateOne({ deviceId: device.deviceId }, { $set: {
                     issuedAt: device.issuedAt,
                     expirationDate: device.expirationDate,
                     IP: device.IP,
@@ -46,20 +53,19 @@ exports.authorizationRepository = {
     },
     logoutDevice(deviceId) {
         return __awaiter(this, void 0, void 0, function* () {
-            const isUpdated = yield db_1.refreshTokensCollection.updateOne({ deviceId: deviceId }, { $set: { isValid: false } });
+            const isUpdated = yield Device_1.DeviceModel.updateOne({ deviceId: deviceId }, { $set: { isValid: false } });
             return isUpdated.acknowledged;
         });
     },
     getDeviceByDeviceId(deviceId) {
         return __awaiter(this, void 0, void 0, function* () {
-            const device = yield db_1.refreshTokensCollection.findOne({ deviceId: deviceId });
+            const device = yield Device_1.DeviceModel.findOne({ deviceId: deviceId });
             return device;
         });
     },
     testingDeleteAllDevices() {
         return __awaiter(this, void 0, void 0, function* () {
-            const result = yield db_1.refreshTokensCollection.deleteMany({});
-            return result.acknowledged;
+            yield Device_1.DeviceModel.deleteMany({});
         });
     }
 };

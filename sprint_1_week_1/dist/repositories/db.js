@@ -12,27 +12,27 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.runDb = exports.apiLogsCollection = exports.refreshTokensCollection = exports.commentsCollection = exports.usersCollection = exports.postsCollection = exports.blogsCollection = void 0;
+exports.runDb = void 0;
 const dotenv_1 = __importDefault(require("dotenv"));
-const mongodb_1 = require("mongodb");
+const mongoose_1 = __importDefault(require("mongoose"));
 dotenv_1.default.config();
 const MONGODB_URI = process.env.MONGODB_URI || 'mongodb://localhost:27017/testDb';
-const client = new mongodb_1.MongoClient(MONGODB_URI);
-exports.blogsCollection = client.db().collection('Blogs');
-exports.postsCollection = client.db().collection('Posts');
-exports.usersCollection = client.db().collection('Users');
-exports.commentsCollection = client.db().collection('Comments');
-exports.refreshTokensCollection = client.db().collection('RefreshTokens');
-exports.apiLogsCollection = client.db().collection('APILogs');
+// const client = new MongoClient(MONGODB_URI)
+// export const blogsCollection = client.db().collection<Blog>('Blogs')
+// export const postsCollection = client.db().collection<Post>('Posts')
+// export const usersCollection = client.db().collection<User>('Users')
+// export const commentsCollection = client.db().collection<Comment>('Comments')
+// export const refreshTokensCollection = client.db().collection<Device>('RefreshTokens')
+// export const apiLogsCollection = client.db().collection<APILog>('APILogs')
 function runDb() {
     return __awaiter(this, void 0, void 0, function* () {
         try {
-            yield client.connect();
-            console.log("Connected");
+            yield mongoose_1.default.connect(MONGODB_URI);
+            console.log("Connected " + MONGODB_URI);
         }
         catch (_a) {
             console.log('Database connection error');
-            yield client.close();
+            yield mongoose_1.default.disconnect();
         }
     });
 }

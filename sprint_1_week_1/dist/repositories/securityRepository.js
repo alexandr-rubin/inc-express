@@ -10,25 +10,26 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.securityRepository = void 0;
-const db_1 = require("../repositories/db");
+//import { refreshTokensCollection } from '../repositories/db'
+const Device_1 = require("../models/Device");
 exports.securityRepository = {
     terminateAllDeviceSessions(userId, deviceId) {
         return __awaiter(this, void 0, void 0, function* () {
-            const isTerminated = (yield db_1.refreshTokensCollection.deleteMany({ userId: userId, deviceId: { $ne: deviceId } })).acknowledged;
+            const isTerminated = (yield Device_1.DeviceModel.deleteMany({ userId: userId, deviceId: { $ne: deviceId } })).acknowledged;
             return isTerminated;
         });
     },
     terminateSpecifiedDeviceSessions(deviceId, userId) {
         return __awaiter(this, void 0, void 0, function* () {
             // возвращать объект как в комментах
-            const device = yield db_1.refreshTokensCollection.findOne({ deviceId: deviceId });
+            const device = yield Device_1.DeviceModel.findOne({ deviceId: deviceId });
             if (!device) {
                 return false;
             }
             if (device.userId !== userId) {
                 return null;
             }
-            const isTerminated = (yield db_1.refreshTokensCollection.deleteOne({ deviceId: deviceId })).acknowledged;
+            const isTerminated = (yield Device_1.DeviceModel.deleteOne({ deviceId: deviceId })).acknowledged;
             return isTerminated;
         });
     },

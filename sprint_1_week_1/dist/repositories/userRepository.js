@@ -10,34 +10,41 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.userRepository = void 0;
-const db_1 = require("./db");
+//import { usersCollection } from './db'
+const User_1 = require("../models/User");
 const date_fns_1 = require("date-fns");
 exports.userRepository = {
     addUser(user) {
         return __awaiter(this, void 0, void 0, function* () {
-            return (yield db_1.usersCollection.insertOne(user)).acknowledged === true;
+            try {
+                yield User_1.UserModel.insertMany([user]);
+                return true;
+            }
+            catch (err) {
+                return false;
+            }
         });
     },
     deleteUserById(id) {
         return __awaiter(this, void 0, void 0, function* () {
-            const result = yield db_1.usersCollection.deleteOne({ id: id });
+            const result = yield User_1.UserModel.deleteOne({ id: id });
             return result.deletedCount === 1;
         });
     },
     testingDeleteAllUsers() {
         return __awaiter(this, void 0, void 0, function* () {
-            yield db_1.usersCollection.deleteMany({});
+            yield User_1.UserModel.deleteMany({});
         });
     },
     updateConfirmation(id) {
         return __awaiter(this, void 0, void 0, function* () {
-            let result = yield db_1.usersCollection.updateOne({ id }, { $set: { 'confirmationEmail.isConfirmed': true } });
+            let result = yield User_1.UserModel.updateOne({ id: id }, { $set: { 'confirmationEmail.isConfirmed': true } });
             return result.modifiedCount === 1;
         });
     },
     updateConfirmationCode(id, code) {
         return __awaiter(this, void 0, void 0, function* () {
-            let result = yield db_1.usersCollection.updateOne({ id }, { $set: { 'confirmationEmail.confirmationCode': code, 'confirmationEmail.expirationDate': (0, date_fns_1.add)(new Date(), { hours: 1, minutes: 3 }) } });
+            let result = yield User_1.UserModel.updateOne({ id: id }, { $set: { 'confirmationEmail.confirmationCode': code, 'confirmationEmail.expirationDate': (0, date_fns_1.add)(new Date(), { hours: 1, minutes: 3 }) } });
             return result.modifiedCount === 1;
         });
     }

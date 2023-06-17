@@ -10,12 +10,18 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.logAPIRepository = void 0;
-const db_1 = require("../repositories/db");
+// import { apiLogsCollection, refreshTokensCollection } from '../repositories/db'
+const APILogs_1 = require("../models/APILogs");
 exports.logAPIRepository = {
     addLog(logEntry) {
         return __awaiter(this, void 0, void 0, function* () {
-            const isAdded = (yield db_1.apiLogsCollection.insertOne(logEntry)).acknowledged;
-            return isAdded;
+            try {
+                yield APILogs_1.LogAPIModel.insertMany([logEntry]);
+                return true;
+            }
+            catch (err) {
+                return false;
+            }
         });
     },
 };

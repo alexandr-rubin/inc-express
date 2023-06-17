@@ -10,17 +10,18 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.commentQueryRepository = void 0;
-const db_1 = require("../repositories/db");
+//import { commentsCollection } from '../repositories/db'
+const Comment_1 = require("../models/Comment");
 exports.commentQueryRepository = {
     getCommentById(id) {
         return __awaiter(this, void 0, void 0, function* () {
-            const comment = yield db_1.commentsCollection.findOne({ id: id }, { projection: { _id: false, postId: false } });
+            const comment = yield Comment_1.CommentModel.findOne({ id: id }, { projection: { _id: false, postId: false } });
             return comment;
         });
     },
     getAllComments() {
         return __awaiter(this, void 0, void 0, function* () {
-            const comments = yield db_1.commentsCollection.find({}).toArray();
+            const comments = yield Comment_1.CommentModel.find({}).lean();
             return comments;
         });
     }
