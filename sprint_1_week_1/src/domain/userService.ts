@@ -23,9 +23,16 @@ export const userService = {
                     minutes: 3
                 }),
                 isConfirmed: true
+            },
+            confirmationPassword: {
+                confirmationCode: uuidv4(),
+                expirationDate: add(new Date(), {
+                    hours: 1,
+                    minutes: 3
+                })
             }
         }
-        const {password, passwordSalt, confirmationEmail, ...result} = newUser
+        const {password, passwordSalt, confirmationEmail, confirmationPassword, ...result} = newUser
         await userRepository.addUser(newUser)
         return result
     },

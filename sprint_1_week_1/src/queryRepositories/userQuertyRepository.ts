@@ -39,7 +39,11 @@ export const userQueryRepository = {
         return user
     },
     async findUserByConfirmationCode(code: string): Promise<User | null>{
-        const user = UserModel.findOne({'confirmationEmail.confirmationCode': code})
+        const user = await UserModel.findOne({'confirmationEmail.confirmationCode': code})
+        return user
+    },
+    async findUserByConfirmationPasswordCode(code: string): Promise<User | null>{
+        const user = await UserModel.findOne({'confirmationPassword.confirmationCode': code})
         return user
     }
 }

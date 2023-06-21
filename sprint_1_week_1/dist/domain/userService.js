@@ -48,9 +48,16 @@ exports.userService = {
                         minutes: 3
                     }),
                     isConfirmed: true
+                },
+                confirmationPassword: {
+                    confirmationCode: (0, uuid_1.v4)(),
+                    expirationDate: (0, date_fns_1.add)(new Date(), {
+                        hours: 1,
+                        minutes: 3
+                    })
                 }
             };
-            const { password, passwordSalt, confirmationEmail } = newUser, result = __rest(newUser, ["password", "passwordSalt", "confirmationEmail"]);
+            const { password, passwordSalt, confirmationEmail, confirmationPassword } = newUser, result = __rest(newUser, ["password", "passwordSalt", "confirmationEmail", "confirmationPassword"]);
             yield userRepository_1.userRepository.addUser(newUser);
             return result;
         });

@@ -50,10 +50,17 @@ exports.authorizationService = {
                         minutes: 3
                     }),
                     isConfirmed: false
+                },
+                confirmationPassword: {
+                    confirmationCode: (0, uuid_1.v4)(),
+                    expirationDate: (0, date_fns_1.add)(new Date(), {
+                        hours: 1,
+                        minutes: 3
+                    })
                 }
             };
             const createResult = yield userRepository_1.userRepository.addUser(newUser);
-            yield emailService_1.emailService.sendEmail(newUser.email, newUser.confirmationEmail.confirmationCode);
+            yield emailService_1.emailService.sendRegistrationConfirmationEmail(newUser.email, newUser.confirmationEmail.confirmationCode);
             return createResult;
         });
     },
@@ -87,7 +94,37 @@ exports.authorizationService = {
             if (!isUpdated) {
                 return false;
             }
-            yield emailService_1.emailService.sendEmail(email, code);
+            yield emailService_1.emailService.sendRegistrationConfirmationEmail(email, code);
+            return true;
+        });
+    },
+    recoverPassword(email) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const user = yield userQuertyRepository_1.userQueryRepository.getUserByEmail(email);
+            if (!user) {
+                return null;
+            }
+            const code = (0, uuid_1.v4)();
+            const expirationDate = (0, date_fns_1.add)(new Date(), {
+                hours: 1,
+                minutes: 3
+            });
+            const isUpdated = yield userRepository_1.userRepository.updateconfirmationPasswordData(email, code, expirationDate);
+            if (!isUpdated) {
+                return false;
+            }
+            yield emailService_1.emailService.sendPasswordRecoverEmail(email, code);
+            return true;
+        });
+    },
+    updatePassword(password, code) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const passSalt = yield bcrypt_1.default.genSalt(10);
+            const passwordHash = yield userService_1.userService._generateHash(password, passSalt);
+            const isUpdated = yield userRepository_1.userRepository.updatePassword(passwordHash, passSalt, code);
+            if (!isUpdated) {
+                return false;
+            }
             return true;
         });
     }

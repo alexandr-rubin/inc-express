@@ -16,6 +16,10 @@ exports.UserSchema = new mongoose_1.default.Schema({
         confirmationCode: { type: String, require: true },
         expirationDate: { type: Date, require: true },
         isConfirmed: { type: String, require: true }
+    },
+    confirmationPassword: {
+        confirmationCode: { type: String, require: true },
+        expirationDate: { type: Date, require: true },
     }
 });
 exports.UserModel = mongoose_1.default.model('Users', exports.UserSchema);

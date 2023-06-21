@@ -55,7 +55,13 @@ exports.userQueryRepository = {
     },
     findUserByConfirmationCode(code) {
         return __awaiter(this, void 0, void 0, function* () {
-            const user = User_1.UserModel.findOne({ 'confirmationEmail.confirmationCode': code });
+            const user = yield User_1.UserModel.findOne({ 'confirmationEmail.confirmationCode': code });
+            return user;
+        });
+    },
+    findUserByConfirmationPasswordCode(code) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const user = yield User_1.UserModel.findOne({ 'confirmationPassword.confirmationCode': code });
             return user;
         });
     }

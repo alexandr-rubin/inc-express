@@ -12,9 +12,18 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.emailService = void 0;
 const emailAdapter_1 = require("../adapters/emailAdapter");
 exports.emailService = {
-    sendEmail(email, code) {
+    sendRegistrationConfirmationEmail(email, code) {
         return __awaiter(this, void 0, void 0, function* () {
-            return yield emailAdapter_1.emailAdapter.sendEmail(email, code);
+            const html = `<a href='https://incubator-homework-1jd6.vercel.app/confirm-email?code=${code}'>complete registration</a>`;
+            const subject = 'registration';
+            return yield emailAdapter_1.emailAdapter.sendEmail(email, html, subject);
+        });
+    },
+    sendPasswordRecoverEmail(email, code) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const html = `<a href='https://incubator-homework-1jd6.vercel.app/password-recovery?recoveryCode=${code}'>recovery password</a>`;
+            const subject = 'password recovery';
+            return yield emailAdapter_1.emailAdapter.sendEmail(email, html, subject);
         });
     }
 };

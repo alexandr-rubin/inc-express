@@ -5,12 +5,13 @@ import { authorizationService } from "../domain/authorizationService"
 import { jwtService } from "../application/jwtService"
 import { authMiddleware } from "../middlewares/jwtAuth"
 import { validateUser } from "../validation/User"
-import { validateEmail } from "../validation/Email"
 import { validateConfirmationCode } from "../validation/ConfirmationCode"
 import { HttpStatusCode } from "../helpers/httpStatusCode"
 import { verifyRefreshTokenMiddleware } from "../middlewares/verifyRefreshToken"
 import { logAPIMiddleware } from "../middlewares/logAPI"
 import { validateConfirmationEmail } from "../validation/EmailResending"
+import { validateEmail } from "../validation/Email"
+import { validateRecoveryPassword } from "../validation/RecoveryPassword"
 
 export const authorizationRouterRouter = Router({})
 
@@ -83,4 +84,25 @@ authorizationRouterRouter.post('/registration-email-resending', logAPIMiddleware
         return res.sendStatus(HttpStatusCode.BAD_REQUEST_400) 
     }
     return res.status(HttpStatusCode.NO_CONTENT_204).send('Input data is accepted. Email with confirmation code will be send to passed email address')
+})
+
+authorizationRouterRouter.post('/password-recovery', logAPIMiddleware, validateEmail, validationErrorsHandler, async (req: Request, res: Response) => {
+    const isSended = await authorizationService.recoverPassword(req.body.email)
+    if(isSended === null) {
+        return res.sendStatus(HttpStatusCode.NO_CONTENT_204)
+    }
+    if(isSended === false){
+        return res.sendStatus(HttpStatusCode.INTERNAL_SERVER_ERROR_500)
+    }
+
+    return res.sendStatus(HttpStatusCode.NO_CONTENT_204)
+})
+
+authorizationRouterRouter.post('/new-password', logAPIMiddleware, validateRecoveryPassword, validationErrorsHandler, async (req: Request, res: Response) => {
+    const isUpdated = await authorizationService.updatePassword(req.body.newPassword, req.body.recoveryCode)
+    if(!isUpdated) {
+        return res.sendStatus(HttpStatusCode.INTERNAL_SERVER_ERROR_500)
+    }
+    
+    return res.sendStatus(HttpStatusCode.NO_CONTENT_204)
 })

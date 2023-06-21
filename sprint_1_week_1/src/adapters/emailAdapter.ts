@@ -1,7 +1,7 @@
 import { createTransport, getTestMessageUrl } from "nodemailer";
 
 export const emailAdapter = {
-    async sendEmail(email: string, code: string){
+    async sendEmail(email: string, html: string, subject: string) {
         let transporter = createTransport({
             service: 'gmail',
             auth: {
@@ -13,8 +13,8 @@ export const emailAdapter = {
             let info = await transporter.sendMail({
                 from: 'homework <rubinyourhead@gmail.com>',
                 to: email,
-                subject: 'registration',
-                html: `<a href='https://incubator-homework-1jd6.vercel.app/confirm-email?code=${code}'>complete registration</a>`,
+                subject: subject,
+                html: html,
             });
         
             console.log("Message sent: %s", info.messageId);

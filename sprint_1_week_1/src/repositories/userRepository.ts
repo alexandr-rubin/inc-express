@@ -27,5 +27,13 @@ export const userRepository = {
     async updateConfirmationCode(id: string, code: string): Promise<boolean> {
         let result = await UserModel.updateOne({id: id}, {$set: {'confirmationEmail.confirmationCode': code, 'confirmationEmail.expirationDate': add(new Date(), { hours: 1, minutes: 3})}})
         return result.modifiedCount === 1
+    },
+    async updateconfirmationPasswordData(email: string, code: string, expirationDate: Date): Promise<boolean> {
+        let result = await UserModel.updateOne({email: email}, {$set: {'confirmationPassword.confirmationCode': code, 'confirmationPassword.expirationDate': expirationDate}})
+        return result.modifiedCount === 1
+    },
+    async updatePassword(password: string, salt: string, code: string): Promise<boolean> {
+        const result = await UserModel.updateOne({'confirmationPassword.confirmationCode': code}, {$set: {password: password, passwordSalt: salt}})
+        return result.modifiedCount === 1
     }
 }

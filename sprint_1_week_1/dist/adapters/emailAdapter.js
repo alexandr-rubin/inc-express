@@ -12,7 +12,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.emailAdapter = void 0;
 const nodemailer_1 = require("nodemailer");
 exports.emailAdapter = {
-    sendEmail(email, code) {
+    sendEmail(email, html, subject) {
         return __awaiter(this, void 0, void 0, function* () {
             let transporter = (0, nodemailer_1.createTransport)({
                 service: 'gmail',
@@ -24,8 +24,8 @@ exports.emailAdapter = {
             let info = yield transporter.sendMail({
                 from: 'homework <rubinyourhead@gmail.com>',
                 to: email,
-                subject: 'registration',
-                html: `<a href='https://incubator-homework-1jd6.vercel.app/confirm-email?code=${code}'>complete registration</a>`,
+                subject: subject,
+                html: html,
             });
             console.log("Message sent: %s", info.messageId);
             return info;

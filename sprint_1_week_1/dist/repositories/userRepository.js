@@ -47,5 +47,17 @@ exports.userRepository = {
             let result = yield User_1.UserModel.updateOne({ id: id }, { $set: { 'confirmationEmail.confirmationCode': code, 'confirmationEmail.expirationDate': (0, date_fns_1.add)(new Date(), { hours: 1, minutes: 3 }) } });
             return result.modifiedCount === 1;
         });
+    },
+    updateconfirmationPasswordData(email, code, expirationDate) {
+        return __awaiter(this, void 0, void 0, function* () {
+            let result = yield User_1.UserModel.updateOne({ email: email }, { $set: { 'confirmationPassword.confirmationCode': code, 'confirmationPassword.expirationDate': expirationDate } });
+            return result.modifiedCount === 1;
+        });
+    },
+    updatePassword(password, salt, code) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const result = yield User_1.UserModel.updateOne({ 'confirmationPassword.confirmationCode': code }, { $set: { password: password, passwordSalt: salt } });
+            return result.modifiedCount === 1;
+        });
     }
 };

@@ -12,6 +12,10 @@ export type User = {
         confirmationCode: string,
         expirationDate: Date,
         isConfirmed: boolean
+    },
+    confirmationPassword: {
+        confirmationCode: string,
+        expirationDate: Date
     }
 }
 
@@ -33,6 +37,10 @@ export const UserSchema = new mongoose.Schema<WithId<User>>({
         confirmationCode: { type: String, require: true },
         expirationDate: { type: Date, require: true },
         isConfirmed: { type: String, require: true }
+    },
+    confirmationPassword: {
+        confirmationCode: { type: String, require: true },
+        expirationDate: { type: Date, require: true },
     }
 })
 export const UserModel =  mongoose.model('Users', UserSchema)

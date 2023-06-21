@@ -9,7 +9,6 @@ import { userRepository } from "../repositories/userRepository"
 import { emailService } from "./emailService"
 import { ObjectId } from "mongodb"
 import { userQueryRepository } from "../queryRepositories/userQuertyRepository"
-import { Device } from "../models/Device"
 
 export const authorizationService = {
     async login(body: Login): Promise<User | null> {
@@ -36,11 +35,18 @@ export const authorizationService = {
                     minutes: 3
                 }),
                 isConfirmed: false
+            },
+            confirmationPassword: {
+                confirmationCode: uuidv4(),
+                expirationDate: add(new Date(), {
+                    hours: 1,
+                    minutes: 3
+                })
             }
         }
 
         const createResult = await userRepository.addUser(newUser)
-        await emailService.sendEmail(newUser.email, newUser.confirmationEmail.confirmationCode)
+        await emailService.sendRegistrationConfirmationEmail(newUser.email, newUser.confirmationEmail.confirmationCode)
         return createResult
     },
     async confrmEmail(code: string): Promise<boolean>{
@@ -71,7 +77,39 @@ export const authorizationService = {
         if(!isUpdated){
             return false
         }
-        await emailService.sendEmail(email, code)
+        await emailService.sendRegistrationConfirmationEmail(email, code)
+        return true
+    },
+    async recoverPassword(email: string): Promise<boolean | null> {
+        const user = await userQueryRepository.getUserByEmail(email)
+        if(!user){
+            return null
+        }
+
+        const code = uuidv4()
+        const expirationDate = add(new Date(), {
+            hours: 1,
+            minutes: 3
+        })
+
+        const isUpdated = await userRepository.updateconfirmationPasswordData(email, code, expirationDate)
+
+        if(!isUpdated){
+            return false
+        }
+        
+        await emailService.sendPasswordRecoverEmail(email, code)
+
+        return true
+    },
+    async updatePassword(password: string, code: string): Promise<boolean>{
+        const passSalt = await bcrypt.genSalt(10)
+        const passwordHash = await userService._generateHash(password, passSalt)
+        const isUpdated = await userRepository.updatePassword(passwordHash, passSalt, code)
+        if(!isUpdated){
+            return false
+        }
+
         return true
     }
 }
