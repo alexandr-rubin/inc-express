@@ -25,7 +25,7 @@ exports.commentRepository = {
                     errorMessage: "Forbidden"
                 };
             }
-            const result = yield Comment_1.CommentModel.updateOne({ id: id }, { $set: { content: content } });
+            const result = yield Comment_1.CommentModel.updateOne({ id: id }, { content });
             if (result.matchedCount === 1) {
                 return {
                     code: resultCode_1.ResultCode.NoContent,

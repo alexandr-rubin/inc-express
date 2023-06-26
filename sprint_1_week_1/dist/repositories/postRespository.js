@@ -12,7 +12,6 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.postRepository = void 0;
 const Post_1 = require("../models/Post");
 const Comment_1 = require("../models/Comment");
-const mongodb_1 = require("mongodb");
 const postQueryRepository_1 = require("../queryRepositories/postQueryRepository");
 exports.postRepository = {
     addPost(post) {
@@ -29,8 +28,8 @@ exports.postRepository = {
     },
     updatePostByid(id, newPost) {
         return __awaiter(this, void 0, void 0, function* () {
-            const result = yield Post_1.PostModel.updateOne({ id: id }, { $set: { title: newPost.title, shortDescription: newPost.shortDescription, content: newPost.content, blogId: newPost.blogId } });
-            return result.matchedCount === 1;
+            const post = yield Post_1.PostModel.updateOne(Object.assign(Object.assign({}, newPost), { id: id }));
+            return post.acknowledged;
         });
     },
     deletePostById(id) {
@@ -44,22 +43,12 @@ exports.postRepository = {
             yield Post_1.PostModel.deleteMany({});
         });
     },
-    createComment(user, content, postId) {
+    createComment(comment) {
         return __awaiter(this, void 0, void 0, function* () {
-            const post = yield postQueryRepository_1.postQueryRepository.getPostById(postId);
+            const post = yield postQueryRepository_1.postQueryRepository.getPostById(comment.postId);
             if (!post) {
                 return null;
             }
-            const comment = {
-                id: new mongodb_1.ObjectId().toString(),
-                content: content,
-                commentatorInfo: {
-                    userId: user.id,
-                    userLogin: user.login
-                },
-                createdAt: new Date().toISOString(),
-                postId: postId
-            };
             const result = Object.assign({}, comment);
             try {
                 yield Comment_1.CommentModel.insertMany([comment]);

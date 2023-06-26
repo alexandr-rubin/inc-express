@@ -40,14 +40,7 @@ exports.authorizationRepository = {
     },
     updateDevice(device) {
         return __awaiter(this, void 0, void 0, function* () {
-            const isUpdated = (yield Device_1.DeviceModel.updateOne({ deviceId: device.deviceId }, { $set: {
-                    issuedAt: device.issuedAt,
-                    expirationDate: device.expirationDate,
-                    IP: device.IP,
-                    deviceName: device.deviceName,
-                    deviceId: device.deviceId,
-                    userId: device.userId
-                } })).acknowledged;
+            const isUpdated = (yield Device_1.DeviceModel.updateOne(device)).acknowledged;
             return isUpdated;
         });
     },

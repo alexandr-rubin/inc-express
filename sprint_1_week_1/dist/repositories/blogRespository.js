@@ -27,7 +27,7 @@ exports.blogRepository = {
     },
     updateBlogById(id, newBlog) {
         return __awaiter(this, void 0, void 0, function* () {
-            const result = yield Blog_1.BlogModel.updateOne({ id: id }, { $set: { name: newBlog.name, description: newBlog.description, websiteUrl: newBlog.websiteUrl } });
+            const result = yield Blog_1.BlogModel.updateOne({ id: id }, { newBlog });
             return result.matchedCount === 1;
         });
     },

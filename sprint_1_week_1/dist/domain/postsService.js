@@ -60,7 +60,17 @@ exports.postService = {
     },
     createComment(user, content, postId) {
         return __awaiter(this, void 0, void 0, function* () {
-            return yield postRespository_1.postRepository.createComment(user, content, postId);
+            const comment = {
+                id: new mongodb_1.ObjectId().toString(),
+                content: content,
+                commentatorInfo: {
+                    userId: user.id,
+                    userLogin: user.login
+                },
+                createdAt: new Date().toISOString(),
+                postId: postId
+            };
+            return yield postRespository_1.postRepository.createComment(comment);
         });
     }
 };

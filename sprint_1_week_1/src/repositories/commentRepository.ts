@@ -14,7 +14,7 @@ export const commentRepository = {
                 errorMessage: "Forbidden"
             }
         }
-        const result = await CommentModel.updateOne({id: id}, { $set: {content: content}})
+        const result = await CommentModel.updateOne({id: id}, {content})
 
         if(result.matchedCount === 1){
             return {

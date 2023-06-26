@@ -18,8 +18,8 @@ export const postRepository = {
         }
     },
     async updatePostByid(id: string, newPost: Post): Promise<boolean> {
-        const result = await PostModel.updateOne({id: id}, { $set: {title: newPost.title, shortDescription: newPost.shortDescription, content: newPost.content, blogId: newPost.blogId}})
-        return result.matchedCount === 1
+        const post = await PostModel.updateOne({...newPost, id: id})
+        return post.acknowledged
     },
     async deletePostById(id: string): Promise<boolean> {
         const result = await PostModel.deleteOne({id: id})
@@ -28,21 +28,10 @@ export const postRepository = {
     async testingDeleteAllPosts() {
         await PostModel.deleteMany({})
     },
-    async createComment(user: User, content: string, postId: string): Promise<Comment | null> {
-        const post = await postQueryRepository.getPostById(postId)
+    async createComment(comment: Comment): Promise<Comment | null> {
+        const post = await postQueryRepository.getPostById(comment.postId)
         if(!post){
             return null
-        }
-
-        const comment: Comment = {
-            id: new ObjectId().toString(),
-            content: content,
-            commentatorInfo: {
-                userId: user.id,
-                userLogin: user.login
-            },
-            createdAt: new Date().toISOString(),
-            postId: postId
         }
 
         const result = {...comment}

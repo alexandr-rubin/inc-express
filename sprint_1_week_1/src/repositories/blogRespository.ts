@@ -14,7 +14,7 @@ export const blogRepository = {
         }
     },
     async updateBlogById(id: string, newBlog: Blog): Promise<boolean> {
-        const result = await BlogModel.updateOne({id: id}, { $set: {name: newBlog.name, description: newBlog.description, websiteUrl: newBlog.websiteUrl}})
+        const result = await BlogModel.updateOne({id: id}, { newBlog })
         return result.matchedCount === 1
     },
     async deleteBlogById(id: string): Promise<boolean> {

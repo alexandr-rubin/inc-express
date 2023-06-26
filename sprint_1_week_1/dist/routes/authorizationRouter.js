@@ -39,7 +39,7 @@ exports.authorizationRouterRouter.post('/login', logAPI_1.logAPIMiddleware, Logi
     res.cookie('refreshToken', tokens.refreshToken, { httpOnly: true, secure: true });
     return res.status(httpStatusCode_1.HttpStatusCode.OK_200).send({ accessToken: tokens.accessToken });
 }));
-exports.authorizationRouterRouter.post('/refresh-token', verifyRefreshToken_1.verifyRefreshTokenMiddleware, validation_errors_handler_1.validationErrorsHandler, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+exports.authorizationRouterRouter.post('/refresh-token', logAPI_1.logAPIMiddleware, verifyRefreshToken_1.verifyRefreshTokenMiddleware, validation_errors_handler_1.validationErrorsHandler, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const user = req.user;
     const oldToken = req.cookies.refreshToken;
     const userAgent = req.headers['user-agent'];
@@ -51,7 +51,7 @@ exports.authorizationRouterRouter.post('/refresh-token', verifyRefreshToken_1.ve
     res.cookie('refreshToken', tokens.refreshToken, { httpOnly: true, secure: true });
     return res.status(httpStatusCode_1.HttpStatusCode.OK_200).send({ accessToken: tokens.accessToken });
 }));
-exports.authorizationRouterRouter.post('/logout', verifyRefreshToken_1.verifyRefreshTokenMiddleware, validation_errors_handler_1.validationErrorsHandler, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+exports.authorizationRouterRouter.post('/logout', logAPI_1.logAPIMiddleware, verifyRefreshToken_1.verifyRefreshTokenMiddleware, validation_errors_handler_1.validationErrorsHandler, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const oldToken = req.cookies.refreshToken;
     const isUpdated = yield jwtService_1.jwtService.logoutDevice(oldToken);
     if (!isUpdated) {
@@ -60,7 +60,7 @@ exports.authorizationRouterRouter.post('/logout', verifyRefreshToken_1.verifyRef
     return res.sendStatus(httpStatusCode_1.HttpStatusCode.NO_CONTENT_204);
 }));
 // !!0, 
-exports.authorizationRouterRouter.get('/me', jwtAuth_1.authMiddleware, validation_errors_handler_1.validationErrorsHandler, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+exports.authorizationRouterRouter.get('/me', logAPI_1.logAPIMiddleware, jwtAuth_1.authMiddleware, validation_errors_handler_1.validationErrorsHandler, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     var _a, _b, _c;
     // ид
     // файд by id

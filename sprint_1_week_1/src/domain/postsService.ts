@@ -50,6 +50,16 @@ export const postService = {
         postRepository.testingDeleteAllPosts()
     },
     async createComment(user: User, content: string, postId: string): Promise<Comment | null> {
-        return await postRepository.createComment(user, content, postId)
+        const comment: Comment = {
+            id: new ObjectId().toString(),
+            content: content,
+            commentatorInfo: {
+                userId: user.id,
+                userLogin: user.login
+            },
+            createdAt: new Date().toISOString(),
+            postId: postId
+        }
+        return await postRepository.createComment(comment)
     }
 }

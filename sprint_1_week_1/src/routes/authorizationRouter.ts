@@ -29,7 +29,7 @@ authorizationRouterRouter.post('/login', logAPIMiddleware, validateLogin, valida
     res.cookie('refreshToken', tokens.refreshToken, {httpOnly: true,secure: true})
     return res.status(HttpStatusCode.OK_200).send({accessToken: tokens.accessToken})
 })
-authorizationRouterRouter.post('/refresh-token', verifyRefreshTokenMiddleware, validationErrorsHandler, async (req: Request, res: Response) => {
+authorizationRouterRouter.post('/refresh-token', logAPIMiddleware, verifyRefreshTokenMiddleware, validationErrorsHandler, async (req: Request, res: Response) => {
     const user = req.user!
     const oldToken = req.cookies.refreshToken
     const userAgent = req.headers['user-agent']
@@ -41,7 +41,7 @@ authorizationRouterRouter.post('/refresh-token', verifyRefreshTokenMiddleware, v
     res.cookie('refreshToken', tokens.refreshToken, {httpOnly: true,secure: true})
     return res.status(HttpStatusCode.OK_200).send({accessToken: tokens.accessToken})
 })
-authorizationRouterRouter.post('/logout', verifyRefreshTokenMiddleware, validationErrorsHandler, async (req: Request, res: Response) => {
+authorizationRouterRouter.post('/logout', logAPIMiddleware, verifyRefreshTokenMiddleware, validationErrorsHandler, async (req: Request, res: Response) => {
     const oldToken = req.cookies.refreshToken
     const isUpdated = await jwtService.logoutDevice(oldToken)
     if(!isUpdated){
@@ -50,7 +50,7 @@ authorizationRouterRouter.post('/logout', verifyRefreshTokenMiddleware, validati
     return res.sendStatus(HttpStatusCode.NO_CONTENT_204)
 })
 // !!0, 
-authorizationRouterRouter.get('/me', authMiddleware, validationErrorsHandler, async (req: Request, res: Response) => {
+authorizationRouterRouter.get('/me', logAPIMiddleware, authMiddleware, validationErrorsHandler, async (req: Request, res: Response) => {
     // ид
     // файд by id
     //

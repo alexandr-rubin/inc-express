@@ -28,14 +28,7 @@ export const authorizationRepository = {
         }
     },
     async updateDevice(device: Device): Promise<boolean> {
-        const isUpdated = (await DeviceModel.updateOne({deviceId: device.deviceId}, { $set: {
-            issuedAt: device.issuedAt,
-            expirationDate: device.expirationDate,
-            IP: device.IP,
-            deviceName: device.deviceName,
-            deviceId: device.deviceId,
-            userId: device.userId
-        }})).acknowledged
+        const isUpdated = (await DeviceModel.updateOne(device)).acknowledged
         return isUpdated
     },
     async logoutDevice(deviceId: string): Promise<boolean> {

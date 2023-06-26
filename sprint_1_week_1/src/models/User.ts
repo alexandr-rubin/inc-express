@@ -19,6 +19,31 @@ export type User = {
     }
 }
 
+// export class User {
+//     constructor(public id: string, public login: string, public password: string, public passwordSalt: string, public email: string,
+//         public createdAt: string, public confirmationEmail : { confirmationCode: string, expirationDate: Date, isConfirmed: boolean}, 
+//         public confirmationPassword : {confirmationCode: string, expirationDate: Date})
+//     {}
+// }
+
+// export class User { 
+//     id: string
+//     login: string
+//     password: strin
+//     passwordSalt: string
+//     email: string
+//     createdAt: string
+//     confirmationEmail: {
+//         confirmationCode: string,
+//         expirationDate: Date,
+//         isConfirmed: boolean
+//     }
+//     confirmationPassword: {
+//         confirmationCode: string,
+//         expirationDate: Date
+//     }
+// }
+
 export type UserViewModel ={
     id: string,
     login: string,
