@@ -1,10 +1,14 @@
 import mongoose from 'mongoose'
 import { WithId } from 'mongodb'
 
-export type APILog = {
-    IP: string,
-    URL: string,
-    date: string
+// export type APILog = {
+//     IP: string,
+//     URL: string,
+//     date: string
+// }
+
+export class APILog {
+    constructor(public IP: string, public URL: string, public date: string){}
 }
 
 export const APILogSchema = new mongoose.Schema<WithId<APILog>>({

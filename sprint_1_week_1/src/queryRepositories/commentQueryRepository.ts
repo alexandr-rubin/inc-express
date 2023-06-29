@@ -1,12 +1,25 @@
 //import { commentsCollection } from '../repositories/db'
-import { CommentModel } from '../models/Comment'
+import { CommentModel, CommentViewModel } from '../models/Comment'
 import { Comment } from '../models/Comment'
+import { LikeModel } from '../models/Like'
 
-export const commentQueryRepository = {
-    async getCommentById(id: string): Promise<Comment | null> {
-        const comment = await CommentModel.findOne({id: id}, {projection: {_id: false, postId: false}})
-        return comment
-    },
+export class CommentQueryRepository {
+    async getCommentById(id: string, userId: string | null) {
+        //fix typization
+        let like = null
+        if(userId !== null) {
+            like = await LikeModel.findOne({commentId: id , userId: userId}).lean()
+        }
+        const likeStatus = like === null ? 'None' : like.likeStatus
+        const comment = await CommentModel.findOne({id: id}, {projection: {_id: false, postId: false}}).lean()
+        if(comment){
+            const result = {...comment, likesInfo: {...comment.likesInfo, myStatus: likeStatus}}  
+            const { _id, postId, ...newResult}   = result
+            return newResult
+        }
+        
+        return null
+    }
     async getAllComments(){
         const comments = await CommentModel.find({}).lean()
         return comments

@@ -1,6 +1,6 @@
 import { createTransport, getTestMessageUrl } from "nodemailer";
 
-export const emailAdapter = {
+export class EmailAdapter {
     async sendEmail(email: string, html: string, subject: string) {
         let transporter = createTransport({
             service: 'gmail',

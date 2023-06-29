@@ -1,14 +1,19 @@
 import mongoose from 'mongoose'
 import { WithId } from 'mongodb'
 
-export type Device = {
-    issuedAt: string,
-    expirationDate: string,
-    IP: string,
-    deviceName: string,
-    deviceId: string,
-    userId: string,
-    isValid: boolean
+// export type Device = {
+//     issuedAt: string,
+//     expirationDate: string,
+//     IP: string,
+//     deviceName: string,
+//     deviceId: string,
+//     userId: string,
+//     isValid: boolean
+// }
+
+export class Device {
+    constructor(public issuedAt: string, public expirationDate: string, public IP: string,
+        public deviceName: string, public deviceId: string, public userId: string, public isValid: boolean){}
 }
 
 export const DeviceSchema = new mongoose.Schema<WithId<Device>>({

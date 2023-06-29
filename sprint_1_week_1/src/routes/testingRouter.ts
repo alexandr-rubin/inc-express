@@ -1,11 +1,8 @@
 import { Router, Request, Response } from "express"
 import { testingDeleteAllVideos } from "./video-router"
-import { blogRepository } from "../repositories/blogRespository"
-import { postRepository } from "../repositories/postRespository"
-import { userRepository } from "../repositories/userRepository"
-import { commentRepository } from "../repositories/commentRepository"
 import { HttpStatusCode } from "../helpers/httpStatusCode"
-import { authorizationRepository } from "../repositories/authorizationRepository"
+import { AuthorizationRepository } from "../repositories/authorizationRepository"
+import { authorizationRepository, blogRepository, commentRepository, postRepository, userRepository } from "../composition-root"
 
 export const testingRouter = Router({})
 

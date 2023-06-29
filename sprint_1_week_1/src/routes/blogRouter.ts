@@ -1,11 +1,12 @@
 import { Router, Request, Response } from "express"
 import { validateBlog } from "../validation/Blog"
 import { validationErrorsHandler } from "../middlewares/validation-errors-handler"
-import { blogService } from "../domain/blogsService"
+import { BlogService } from "../domain/blogsService"
 import { validatePostForBlog } from "../validation/Post"
 import { basicAuthMiddleware } from "../middlewares/basicAuth"
-import { blogQueryRepository } from "../queryRepositories/blogQueryRepository"
+import { BlogQueryRepository } from "../queryRepositories/blogQueryRepository"
 import { HttpStatusCode } from "../helpers/httpStatusCode"
+import { blogQueryRepository, blogService } from "../composition-root"
 
 export const blogsRouter = Router({})
 
@@ -14,7 +15,8 @@ blogsRouter.get('/', async (req: Request, res: Response) => {
 })
 
 blogsRouter.post('/', basicAuthMiddleware, validateBlog, validationErrorsHandler, async (req: Request, res: Response) => {
-    return res.status(HttpStatusCode.CREATED_201).send(await blogService.addBlog(req.body))
+    const result = await blogService.addBlog(req.body)
+    return res.status(HttpStatusCode.CREATED_201).send(result)
 })
 
 blogsRouter.get('/:id', async (req: Request, res: Response) => {

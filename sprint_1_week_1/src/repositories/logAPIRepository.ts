@@ -4,7 +4,7 @@ import { User } from '../models/User'
 // import { apiLogsCollection, refreshTokensCollection } from '../repositories/db'
 import { LogAPIModel } from '../models/APILogs'
 
-export const logAPIRepository = {
+export class LogAPIRepository {
     async addLog(logEntry: APILog): Promise<boolean> {
         try{
             await LogAPIModel.insertMany([logEntry])
@@ -13,5 +13,5 @@ export const logAPIRepository = {
         catch(err) {
             return false
         }
-    },
+    }
 }

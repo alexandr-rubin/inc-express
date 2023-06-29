@@ -1,9 +1,11 @@
 import { body } from "express-validator"
-import { userQueryRepository } from "../queryRepositories/userQuertyRepository"
+import { UserQueryRepository } from "../queryRepositories/userQuertyRepository"
+
+const userQueryRepositoryInst = new UserQueryRepository()
 
 export const validateConfirmationEmail = [
     body('email').notEmpty().isString().isEmail().custom(async email => {
-        const user = await userQueryRepository.getUserByEmail(email)
+        const user = await userQueryRepositoryInst.getUserByEmail(email)
         if (!user) {
             throw new Error('Wrong email')
         }

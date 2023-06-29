@@ -1,8 +1,6 @@
 import { Router, Request, Response } from "express"
 import { validateLogin  } from "../validation/Login"
 import { validationErrorsHandler } from "../middlewares/validation-errors-handler"
-import { authorizationService } from "../domain/authorizationService"
-import { jwtService } from "../application/jwtService"
 import { authMiddleware } from "../middlewares/jwtAuth"
 import { validateUser } from "../validation/User"
 import { validateConfirmationCode } from "../validation/ConfirmationCode"
@@ -12,6 +10,7 @@ import { logAPIMiddleware } from "../middlewares/logAPI"
 import { validateConfirmationEmail } from "../validation/EmailResending"
 import { validateEmail } from "../validation/Email"
 import { validateRecoveryPassword } from "../validation/RecoveryPassword"
+import { authorizationService, jwtService } from "../composition-root"
 
 export const authorizationRouterRouter = Router({})
 

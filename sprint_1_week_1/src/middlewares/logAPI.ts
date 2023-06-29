@@ -2,9 +2,10 @@ import { NextFunction, Request, Response } from "express"
 import { HttpStatusCode } from "../helpers/httpStatusCode"
 // import { apiLogsCollection } from "../repositories/db"
 import { LogAPIModel } from "../models/APILogs"
-import { logAPIRepository } from "../repositories/logAPIRepository"
+import { LogAPIRepository } from "../repositories/logAPIRepository"
 
 export const logAPIMiddleware = async (req: Request, res: Response, next: NextFunction) => {
+    const logAPIRepositoryInst = new LogAPIRepository()
     const currentDate = new Date();
     const tenSecondsAgo = new Date(currentDate.getTime() - 10 * 1000)
 
@@ -21,7 +22,7 @@ export const logAPIMiddleware = async (req: Request, res: Response, next: NextFu
     }
 
     const logEntry = {...filter, date: currentDate.toISOString() }
-    const isAdded = await logAPIRepository.addLog(logEntry)
+    const isAdded = await logAPIRepositoryInst.addLog(logEntry)
     if(!isAdded){
         // какую ошибку
         return res.sendStatus(HttpStatusCode.INTERNAL_SERVER_ERROR_500)

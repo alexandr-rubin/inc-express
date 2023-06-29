@@ -1,12 +1,13 @@
 import { Router, Request, Response } from "express"
 import { validationErrorsHandler } from "../middlewares/validation-errors-handler"
 import { validatePost } from "../validation/Post"
-import { postService } from "../domain/postsService"
+import { PostService } from "../domain/postsService"
 import { authMiddleware } from "../middlewares/jwtAuth"
 import { validateComment } from "../validation/Comment"
 import { basicAuthMiddleware } from "../middlewares/basicAuth"
-import { postQueryRepository } from "../queryRepositories/postQueryRepository"
+import { PostQueryRepository } from "../queryRepositories/postQueryRepository"
 import { HttpStatusCode } from "../helpers/httpStatusCode"
+import { jwtService, postQueryRepository, postService } from "../composition-root"
 
 export const postsRouter = Router({})
 
@@ -53,9 +54,21 @@ postsRouter.post('/:postId/comments', authMiddleware, validateComment, validatio
 })
 
 postsRouter.get('/:postId/comments', async (req: Request, res: Response) => {
-    const comments = await postQueryRepository.getCommentsForSpecifiedPost(req.params.postId, req)
+    //fix
+    let userId = null
+    const auth = req.headers.authorization
+    if(auth){
+        const token = auth.split(' ')[1]
+        userId = await jwtService.getUserIdByToken(token)
+    }
+    const comments = await postQueryRepository.getCommentsForSpecifiedPost(req.params.postId, req, userId)
     if(comments === null) {
         return res.status(HttpStatusCode.NOT_FOUND_404).send('Post not found')
     }
-    return res.status(HttpStatusCode.OK_200).send(comments)
+    //fix
+    const newArray = comments.items.map(({ postId, ...rest }) => ({
+        ...rest
+    }))
+    const result = {...comments, items: newArray}
+    return res.status(HttpStatusCode.OK_200).send(result)
 })

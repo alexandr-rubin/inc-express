@@ -1,12 +1,15 @@
 //import { commentsCollection } from './db'
-import { CommentModel } from '../models/Comment'
+import { Comment, CommentModel, CommentViewModel } from '../models/Comment'
 import { Result } from '../models/Result'
 import { ResultCode } from '../helpers/resultCode'
-import { commentQueryRepository } from '../queryRepositories/commentQueryRepository'
+import { CommentQueryRepository } from '../queryRepositories/commentQueryRepository'
+import { Like, LikeModel } from '../models/Like'
+import { ObjectId } from 'mongodb'
 
-export const commentRepository = {
+export class CommentRepository {
+    constructor(protected commentQueryRepository: CommentQueryRepository){}
     async updateCommentById(id: string, content: string, userId: string): Promise<Result<boolean>> {
-        const comment = await commentQueryRepository.getCommentById(id)
+        const comment = await this.commentQueryRepository.getCommentById(id, userId)
         if(comment && comment.commentatorInfo.userId !== userId){
             return {
                 code: ResultCode.Forbidden,
@@ -29,9 +32,9 @@ export const commentRepository = {
             data: false,
             errorMessage: "Not Found"
         }
-    },
+    }
     async deleteCommentById(id: string, userId: string): Promise<Result<boolean>> {
-        const comment = await commentQueryRepository.getCommentById(id)
+        const comment = await this.commentQueryRepository.getCommentById(id, userId)
         if(comment && comment.commentatorInfo.userId !== userId){
             return {
                 code: ResultCode.Forbidden,
@@ -53,8 +56,69 @@ export const commentRepository = {
             data: false,
             errorMessage: "Not Found"
         }
-    },
+    }
+    async updateCommentLikeStatus(commentId: string, likeStatus: string, userId:string): Promise<boolean> {
+        const comment = await CommentModel.findOne({id: commentId})
+        if(!comment){
+            return false
+        }
+        const like = await LikeModel.findOne({commentId: commentId, userId: userId})
+        if(!like){
+            const newLike = new LikeModel({id: new ObjectId().toString(), commentId: commentId, userId: userId, likeStatus: likeStatus})
+            await newLike.save()
+            if(likeStatus === 'Like'){
+                comment.likesInfo.likesCount +=1
+            }
+            else{
+                comment.likesInfo.dislikesCount +=1
+            }
+            await comment.save()
+            
+            return true
+        }
+        if(like.likeStatus === likeStatus){
+            return true
+        }
+        if(likeStatus === 'None'){
+            if(like.likeStatus === 'Like'){
+                comment.likesInfo.likesCount -= 1
+            }
+            else{
+                comment.likesInfo.dislikesCount -= 1
+            }
+            like.likeStatus = likeStatus
+            await like.save()
+            await comment.save()
+            return true
+        }
+        if(like.likeStatus !== likeStatus){
+            like.likeStatus = likeStatus
+            await like.save()
+            if(likeStatus === 'Like'){
+                comment.likesInfo.likesCount += 1
+                comment.likesInfo.dislikesCount -= 1
+            }
+            else{
+                comment.likesInfo.likesCount -= 1
+                comment.likesInfo.dislikesCount += 1
+            }
+            await comment.save()
+            return true
+        }
+        return true
+    }
+    // async createCommentLikeOrDislike(newLike: Like, comment: Comment): Promise<boolean> {
+    //     const isCreated = await LikeModel.create(newLike)
+    //         if(newLike.likeStatus === 'Like'){
+    //             const isUpdated = await CommentModel.updateOne({id: newLike.commentId}, {$set: {'likesInfo.likesCount': comment.likesInfo.likesCount + 1}})
+    //         }
+    //         if(newLike.likeStatus === 'Dislike'){
+    //             const isUpdated = await CommentModel.updateOne({id: newLike.commentId}, {$set: {'likesInfo.dislikesCount': comment.likesInfo.dislikesCount + 1}})
+    //         }
+    //         // fix update validation and create validation
+    //         return true
+    // }
     async testingDeleteAllComments() {
         await CommentModel.deleteMany({})
-    },
+    }
 }

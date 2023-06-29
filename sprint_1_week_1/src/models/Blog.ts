@@ -1,14 +1,18 @@
 import mongoose from 'mongoose'
 import { WithId } from 'mongodb'
 
-export type Blog ={
-    id: string,
-    name: string,
-    description: string,
-    websiteUrl: string,
-    createdAt: string,
-    isMembership: boolean
-  }
+// export type Blog ={
+//     id: string,
+//     name: string,
+//     description: string,
+//     websiteUrl: string,
+//     createdAt: string,
+//     isMembership: boolean
+//   }
+
+export class Blog {
+  constructor(public id: string, public name: string, public description: string, public websiteUrl: string, public createdAt: string, public isMembership: boolean){}
+}
 
   export const BlogSchema = new mongoose.Schema<WithId<Blog>>({
     id: { type: String, require: true },

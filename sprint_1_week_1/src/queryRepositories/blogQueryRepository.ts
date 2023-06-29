@@ -8,7 +8,7 @@ import { PostModel } from '../models/Post'
 import { Post } from '../models/Post'
 import { Request } from 'express'
 
-export const blogQueryRepository = {
+export class BlogQueryRepository {
     async getBlogs(req: Request): Promise<Paginator<Blog>> {
         const query = createPaginationQuery(req)
         const skip = (query.pageNumber - 1) * query.pageSize
@@ -19,11 +19,11 @@ export const blogQueryRepository = {
         const result = createPaginationResult(count, query, blogs)
         
         return result
-    },
+    }
     async getBlogById(id: string): Promise<Blog | null> {
         const blog = await BlogModel.findOne({id: id}, {projection: {_id: false}})
         return blog
-    },
+    }
     async getPostsForSpecifiedBlog(blogId: string, req: Request): Promise<Paginator<Post> | null>{
         const isFinded = await this.getBlogById(blogId) === null
         if(isFinded){

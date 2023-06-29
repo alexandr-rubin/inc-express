@@ -2,10 +2,12 @@ import { Router, Request, Response } from "express"
 import { validationErrorsHandler } from "../middlewares/validation-errors-handler"
 import { authMiddleware } from "../middlewares/jwtAuth"
 import { validateComment } from "../validation/Comment"
-import { commentService } from "../domain/commentService"
+import { CommentService } from "../domain/commentService"
 import { ResultCode } from "../helpers/resultCode"
-import { commentQueryRepository } from "../queryRepositories/commentQueryRepository"
+import { CommentQueryRepository } from "../queryRepositories/commentQueryRepository"
 import { HttpStatusCode } from "../helpers/httpStatusCode"
+import { commentQueryRepository, commentService, jwtService } from "../composition-root"
+import { validateLike } from "../validation/Like"
 
 export const commentsRouter = Router({})
 
@@ -32,7 +34,14 @@ commentsRouter.delete('/:id', authMiddleware, async (req: Request, res: Response
 })
 
 commentsRouter.get('/:id', async (req: Request, res: Response) => {
-    const comment = await commentQueryRepository.getCommentById(req.params.id)
+    //wtf откуда токен
+    let userId = null
+    const auth = req.headers.authorization
+    if(auth){
+        const token = auth.split(' ')[1]
+        userId = await jwtService.getUserIdByToken(token)
+    }
+    const comment = await commentQueryRepository.getCommentById(req.params.id, userId)
     if(!comment) {
         return res.status(HttpStatusCode.NOT_FOUND_404).send('Comment not found')
     }
@@ -41,4 +50,12 @@ commentsRouter.get('/:id', async (req: Request, res: Response) => {
 
 commentsRouter.get('/', async (req: Request, res: Response) => {
     return res.status(HttpStatusCode.OK_200).send(await commentQueryRepository.getAllComments())
+})
+
+commentsRouter.put('/:commentId/like-status', authMiddleware, validateLike, validationErrorsHandler, async (req: Request, res: Response) => {
+    const result = await commentService.updateCommentLikeStatus(req.params.commentId, req.body.likeStatus, req.user!.id)
+    if(!result){
+        return res.sendStatus(HttpStatusCode.NOT_FOUND_404)
+    }
+    return res.sendStatus(HttpStatusCode.NO_CONTENT_204)
 })

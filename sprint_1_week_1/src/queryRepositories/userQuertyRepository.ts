@@ -5,7 +5,7 @@ import { Paginator } from '../models/Paginator'
 import { createPaginationQuery, createPaginationResult } from '../helpers/pagination'
 import { Request } from 'express'
 
-export const userQueryRepository = {
+export class UserQueryRepository {
     async getUsers(req: Request): Promise<Paginator<User>> {
         const query = createPaginationQuery(req)
         const skip = (query.pageNumber - 1) * query.pageSize
@@ -25,23 +25,23 @@ export const userQueryRepository = {
         const result = createPaginationResult(count, query, users)
         
         return result
-    },
+    }
     async getUserByEmail(email: string): Promise<User | null> {
         const user = await UserModel.findOne({email: email})
         return user
-    },
+    }
     async getUserBylogin(login: string): Promise<User | null> {
         const user = await UserModel.findOne({login: login})
         return user
-    },
+    }
     async getUserById(id: string): Promise<User | null> {
         const user = await UserModel.findOne({id: id})
         return user
-    },
+    }
     async findUserByConfirmationCode(code: string): Promise<User | null>{
         const user = await UserModel.findOne({'confirmationEmail.confirmationCode': code})
         return user
-    },
+    }
     async findUserByConfirmationPasswordCode(code: string): Promise<User | null>{
         const user = await UserModel.findOne({'confirmationPassword.confirmationCode': code})
         return user
