@@ -9,17 +9,25 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.commentService = void 0;
-const commentRepository_1 = require("../repositories/commentRepository");
-exports.commentService = {
+exports.CommentService = void 0;
+class CommentService {
+    constructor(commentRepository) {
+        this.commentRepository = commentRepository;
+    }
     updateCommentByid(id, content, userId) {
         return __awaiter(this, void 0, void 0, function* () {
-            return yield commentRepository_1.commentRepository.updateCommentById(id, content, userId);
-        });
-    },
-    deleteCommentById(id, userId) {
-        return __awaiter(this, void 0, void 0, function* () {
-            return yield commentRepository_1.commentRepository.deleteCommentById(id, userId);
+            return yield this.commentRepository.updateCommentById(id, content, userId);
         });
     }
-};
+    deleteCommentById(id, userId) {
+        return __awaiter(this, void 0, void 0, function* () {
+            return yield this.commentRepository.deleteCommentById(id, userId);
+        });
+    }
+    updateCommentLikeStatus(commentId, likeStatus, userId) {
+        return __awaiter(this, void 0, void 0, function* () {
+            return yield this.commentRepository.updateCommentLikeStatus(commentId, likeStatus, userId);
+        });
+    }
+}
+exports.CommentService = CommentService;

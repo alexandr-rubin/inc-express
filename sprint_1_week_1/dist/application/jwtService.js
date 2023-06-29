@@ -12,19 +12,22 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.jwtService = void 0;
+exports.JWTService = void 0;
 const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
-const authorizationRepository_1 = require("../repositories/authorizationRepository");
+const Device_1 = require("../models/Device");
 const uuid_1 = require("uuid");
-const securityRepository_1 = require("../repositories/securityRepository");
 const secretKey = process.env.JWT_SECRET_KEY || '123';
-exports.jwtService = {
+class JWTService {
+    constructor(authorizationRepository, securityRepository) {
+        this.authorizationRepository = authorizationRepository;
+        this.securityRepository = securityRepository;
+    }
     createJWT(user, deviceId, issuedAt) {
-        const accessToken = jsonwebtoken_1.default.sign({ userId: user.id }, secretKey, { expiresIn: '10s' });
-        const refreshToken = jsonwebtoken_1.default.sign({ deviceId: deviceId, userId: user.id, issuedAt: issuedAt }, secretKey, { expiresIn: '20s' });
+        const accessToken = jsonwebtoken_1.default.sign({ userId: user.id }, secretKey, { expiresIn: '10m' });
+        const refreshToken = jsonwebtoken_1.default.sign({ deviceId: deviceId, userId: user.id, issuedAt: issuedAt }, secretKey, { expiresIn: '20m' });
         const result = { accessToken: accessToken, refreshToken: refreshToken };
         return result;
-    },
+    }
     // убрать дублирование при создании и обновлении девайса
     addDevice(user, userAgent, clientIP) {
         return __awaiter(this, void 0, void 0, function* () {
@@ -36,22 +39,14 @@ exports.jwtService = {
             const tokens = this.createJWT(user, deviceId, issuedAt);
             const decodedToken = jsonwebtoken_1.default.verify(tokens.refreshToken, secretKey);
             const expirationDate = new Date(decodedToken.exp * 1000);
-            const device = {
-                issuedAt: issuedAt,
-                expirationDate: expirationDate.toISOString(),
-                IP: clientIP,
-                deviceName: userAgent,
-                deviceId: deviceId,
-                userId: decodedToken.userId,
-                isValid: true
-            };
-            const isAdded = yield authorizationRepository_1.authorizationRepository.addDevice(device);
+            const device = new Device_1.Device(issuedAt, expirationDate.toISOString(), clientIP, userAgent, deviceId, decodedToken.userId, true);
+            const isAdded = yield this.authorizationRepository.addDevice(device);
             if (!isAdded) {
                 return null;
             }
             return tokens;
         });
-    },
+    }
     updateDevice(refreshToken, clientIP, userAgent, user) {
         return __awaiter(this, void 0, void 0, function* () {
             try {
@@ -64,16 +59,8 @@ exports.jwtService = {
                 const tokens = this.createJWT(user, deviceId, issuedAt);
                 const decodedNewToken = jsonwebtoken_1.default.verify(tokens.refreshToken, secretKey);
                 const expirationDate = new Date(decodedNewToken.exp * 1000);
-                const newDevice = {
-                    issuedAt: issuedAt,
-                    expirationDate: expirationDate.toISOString(),
-                    IP: clientIP,
-                    deviceName: userAgent,
-                    deviceId: deviceId,
-                    userId: decodedNewToken.userId,
-                    isValid: true
-                };
-                const isUpdated = yield authorizationRepository_1.authorizationRepository.updateDevice(newDevice);
+                const newDevice = new Device_1.Device(issuedAt, expirationDate.toISOString(), clientIP, userAgent, deviceId, decodedNewToken.userId, true);
+                const isUpdated = yield this.authorizationRepository.updateDevice(newDevice);
                 if (!isUpdated) {
                     return null;
                 }
@@ -83,7 +70,7 @@ exports.jwtService = {
                 return null;
             }
         });
-    },
+    }
     getUserIdByToken(token) {
         return __awaiter(this, void 0, void 0, function* () {
             try {
@@ -94,32 +81,32 @@ exports.jwtService = {
                 return null;
             }
         });
-    },
+    }
     // add device service
     logoutDevice(refreshToken) {
         return __awaiter(this, void 0, void 0, function* () {
             try {
                 const decodedToken = jsonwebtoken_1.default.verify(refreshToken, secretKey);
-                const isLogedout = yield authorizationRepository_1.authorizationRepository.logoutDevice(decodedToken.deviceId);
+                const isLogedout = yield this.authorizationRepository.logoutDevice(decodedToken.deviceId);
                 return isLogedout;
             }
             catch (_a) {
                 return false;
             }
         });
-    },
+    }
     getDeviceByToken(token) {
         return __awaiter(this, void 0, void 0, function* () {
             try {
                 const decodedToken = jsonwebtoken_1.default.verify(token, secretKey);
-                const device = yield authorizationRepository_1.authorizationRepository.getDeviceByDeviceId(decodedToken.deviceId);
+                const device = yield this.authorizationRepository.getDeviceByDeviceId(decodedToken.deviceId);
                 return device;
             }
             catch (err) {
                 return null;
             }
         });
-    },
+    }
     compareTokenDate(token) {
         return __awaiter(this, void 0, void 0, function* () {
             try {
@@ -134,19 +121,19 @@ exports.jwtService = {
                 return false;
             }
         });
-    },
+    }
     terminateAllDeviceSessions(token) {
         return __awaiter(this, void 0, void 0, function* () {
             try {
                 const decodedToken = jsonwebtoken_1.default.verify(token, secretKey);
-                const isTerminated = yield securityRepository_1.securityRepository.terminateAllDeviceSessions(decodedToken.userId, decodedToken.deviceId);
+                const isTerminated = yield this.securityRepository.terminateAllDeviceSessions(decodedToken.userId, decodedToken.deviceId);
                 return isTerminated;
             }
             catch (err) {
                 return false;
             }
         });
-    },
+    }
     terminateSpecifiedDeviceSessions(deviceId, token) {
         return __awaiter(this, void 0, void 0, function* () {
             // TODO: вернуть объект вместо null
@@ -155,7 +142,7 @@ exports.jwtService = {
                 // if(decodedToken.userId !== userId){
                 //     return null
                 // }
-                const isTerminated = yield securityRepository_1.securityRepository.terminateSpecifiedDeviceSessions(deviceId, decodedToken.userId);
+                const isTerminated = yield this.securityRepository.terminateSpecifiedDeviceSessions(deviceId, decodedToken.userId);
                 return isTerminated;
             }
             catch (err) {
@@ -163,4 +150,5 @@ exports.jwtService = {
             }
         });
     }
-};
+}
+exports.JWTService = JWTService;

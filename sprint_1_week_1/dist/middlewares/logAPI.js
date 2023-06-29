@@ -15,6 +15,7 @@ const httpStatusCode_1 = require("../helpers/httpStatusCode");
 const APILogs_1 = require("../models/APILogs");
 const logAPIRepository_1 = require("../repositories/logAPIRepository");
 const logAPIMiddleware = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
+    const logAPIRepositoryInst = new logAPIRepository_1.LogAPIRepository();
     const currentDate = new Date();
     const tenSecondsAgo = new Date(currentDate.getTime() - 10 * 1000);
     const filter = {
@@ -27,7 +28,7 @@ const logAPIMiddleware = (req, res, next) => __awaiter(void 0, void 0, void 0, f
         return res.sendStatus(httpStatusCode_1.HttpStatusCode.TOO_MANY_REQUESTS_429);
     }
     const logEntry = Object.assign(Object.assign({}, filter), { date: currentDate.toISOString() });
-    const isAdded = yield logAPIRepository_1.logAPIRepository.addLog(logEntry);
+    const isAdded = yield logAPIRepositoryInst.addLog(logEntry);
     if (!isAdded) {
         // какую ошибку
         return res.sendStatus(httpStatusCode_1.HttpStatusCode.INTERNAL_SERVER_ERROR_500);

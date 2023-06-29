@@ -9,13 +9,13 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.blogQueryRepository = void 0;
+exports.BlogQueryRepository = void 0;
 //import { blogsCollection } from '../repositories/db'
 const Blog_1 = require("../models/Blog");
 const pagination_1 = require("../helpers/pagination");
 //import { postsCollection } from '../repositories/db'
 const Post_1 = require("../models/Post");
-exports.blogQueryRepository = {
+class BlogQueryRepository {
     getBlogs(req) {
         return __awaiter(this, void 0, void 0, function* () {
             const query = (0, pagination_1.createPaginationQuery)(req);
@@ -27,13 +27,13 @@ exports.blogQueryRepository = {
             const result = (0, pagination_1.createPaginationResult)(count, query, blogs);
             return result;
         });
-    },
+    }
     getBlogById(id) {
         return __awaiter(this, void 0, void 0, function* () {
             const blog = yield Blog_1.BlogModel.findOne({ id: id }, { projection: { _id: false } });
             return blog;
         });
-    },
+    }
     getPostsForSpecifiedBlog(blogId, req) {
         return __awaiter(this, void 0, void 0, function* () {
             const isFinded = (yield this.getBlogById(blogId)) === null;
@@ -51,4 +51,5 @@ exports.blogQueryRepository = {
             return result;
         });
     }
-};
+}
+exports.BlogQueryRepository = BlogQueryRepository;

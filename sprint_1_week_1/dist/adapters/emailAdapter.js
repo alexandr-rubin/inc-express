@@ -9,9 +9,9 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.emailAdapter = void 0;
+exports.EmailAdapter = void 0;
 const nodemailer_1 = require("nodemailer");
-exports.emailAdapter = {
+class EmailAdapter {
     sendEmail(email, html, subject) {
         return __awaiter(this, void 0, void 0, function* () {
             let transporter = (0, nodemailer_1.createTransport)({
@@ -31,4 +31,5 @@ exports.emailAdapter = {
             return info;
         });
     }
-};
+}
+exports.EmailAdapter = EmailAdapter;

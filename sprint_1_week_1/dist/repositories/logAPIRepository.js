@@ -9,10 +9,10 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.logAPIRepository = void 0;
+exports.LogAPIRepository = void 0;
 // import { apiLogsCollection, refreshTokensCollection } from '../repositories/db'
 const APILogs_1 = require("../models/APILogs");
-exports.logAPIRepository = {
+class LogAPIRepository {
     addLog(logEntry) {
         return __awaiter(this, void 0, void 0, function* () {
             try {
@@ -23,5 +23,6 @@ exports.logAPIRepository = {
                 return false;
             }
         });
-    },
-};
+    }
+}
+exports.LogAPIRepository = LogAPIRepository;

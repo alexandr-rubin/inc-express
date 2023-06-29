@@ -1,8 +1,9 @@
 import request from 'supertest'
 import { app } from '../src/setting'
 import { HttpStatusCode } from '../src/helpers/httpStatusCode'
-import { userQueryRepository } from '../src/queryRepositories/userQuertyRepository'
+import { UserQueryRepository } from '../src/queryRepositories/userQuertyRepository'
 import mongoose from 'mongoose'
+import { userQueyRepository } from '../src/composition-root'
 
 const registrationWithIncorrectData = {
     login: 'x',
@@ -74,12 +75,12 @@ describe('/auth', () => {
     })
     it('+POST registration-confirmation with correct confirmation code', async () => {
         const users = (await request(app).get('/users').set('Authorization', 'Basic YWRtaW46cXdlcnR5')).body.items
-        const user = await userQueryRepository.getUserByEmail(users[0].email)
+        const user = await userQueyRepository.getUserByEmail(users[0].email)
         await request(app).post('/auth/registration-confirmation').send({code: user?.confirmationEmail.confirmationCode}).expect(HttpStatusCode.NO_CONTENT_204)
     })
     it('-POST registration-confirmation confirn confirmed user', async () => {
         const users = (await request(app).get('/users').set('Authorization', 'Basic YWRtaW46cXdlcnR5')).body.items
-        const user = await userQueryRepository.getUserByEmail(users[0].email)
+        const user = await userQueyRepository.getUserByEmail(users[0].email)
         await request(app).post('/auth/registration-confirmation').send({code: user?.confirmationEmail.confirmationCode}).expect(HttpStatusCode.BAD_REQUEST_400)
     })
     it('-POST login with incorrect data', async () => {
@@ -97,12 +98,12 @@ describe('/auth', () => {
     })
     it('-GET get current user unauthorized', async () => {
         const users = (await request(app).get('/users').set('Authorization', 'Basic YWRtaW46cXdlcnR5')).body.items
-        const user = await userQueryRepository.getUserByEmail(users[0].email)
+        const user = await userQueyRepository.getUserByEmail(users[0].email)
         await request(app).get('/auth/me').expect(HttpStatusCode.UNAUTHORIZED_401)
     })
     it('+GET get current user', async () => {
         const users = (await request(app).get('/users').set('Authorization', 'Basic YWRtaW46cXdlcnR5')).body.items
-        const user = await userQueryRepository.getUserByEmail(users[0].email)
+        const user = await userQueyRepository.getUserByEmail(users[0].email)
         await request(app).get('/auth/me').set('Authorization', 'Bearer ' + accToken).expect(HttpStatusCode.OK_200, {
             email: user?.email,
             login: user?.login,

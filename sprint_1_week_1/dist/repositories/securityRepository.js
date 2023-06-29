@@ -9,16 +9,16 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.securityRepository = void 0;
+exports.SecurityRepository = void 0;
 //import { refreshTokensCollection } from '../repositories/db'
 const Device_1 = require("../models/Device");
-exports.securityRepository = {
+class SecurityRepository {
     terminateAllDeviceSessions(userId, deviceId) {
         return __awaiter(this, void 0, void 0, function* () {
             const isTerminated = (yield Device_1.DeviceModel.deleteMany({ userId: userId, deviceId: { $ne: deviceId } })).acknowledged;
             return isTerminated;
         });
-    },
+    }
     terminateSpecifiedDeviceSessions(deviceId, userId) {
         return __awaiter(this, void 0, void 0, function* () {
             // возвращать объект как в комментах
@@ -32,5 +32,6 @@ exports.securityRepository = {
             const isTerminated = (yield Device_1.DeviceModel.deleteOne({ deviceId: deviceId })).acknowledged;
             return isTerminated;
         });
-    },
-};
+    }
+}
+exports.SecurityRepository = SecurityRepository;

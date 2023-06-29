@@ -9,11 +9,11 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.userQueryRepository = void 0;
+exports.UserQueryRepository = void 0;
 //import { usersCollection } from '../repositories/db'
 const User_1 = require("../models/User");
 const pagination_1 = require("../helpers/pagination");
-exports.userQueryRepository = {
+class UserQueryRepository {
     getUsers(req) {
         return __awaiter(this, void 0, void 0, function* () {
             const query = (0, pagination_1.createPaginationQuery)(req);
@@ -34,35 +34,36 @@ exports.userQueryRepository = {
             const result = (0, pagination_1.createPaginationResult)(count, query, users);
             return result;
         });
-    },
+    }
     getUserByEmail(email) {
         return __awaiter(this, void 0, void 0, function* () {
             const user = yield User_1.UserModel.findOne({ email: email });
             return user;
         });
-    },
+    }
     getUserBylogin(login) {
         return __awaiter(this, void 0, void 0, function* () {
             const user = yield User_1.UserModel.findOne({ login: login });
             return user;
         });
-    },
+    }
     getUserById(id) {
         return __awaiter(this, void 0, void 0, function* () {
             const user = yield User_1.UserModel.findOne({ id: id });
             return user;
         });
-    },
+    }
     findUserByConfirmationCode(code) {
         return __awaiter(this, void 0, void 0, function* () {
             const user = yield User_1.UserModel.findOne({ 'confirmationEmail.confirmationCode': code });
             return user;
         });
-    },
+    }
     findUserByConfirmationPasswordCode(code) {
         return __awaiter(this, void 0, void 0, function* () {
             const user = yield User_1.UserModel.findOne({ 'confirmationPassword.confirmationCode': code });
             return user;
         });
     }
-};
+}
+exports.UserQueryRepository = UserQueryRepository;

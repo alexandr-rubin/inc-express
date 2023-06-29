@@ -9,15 +9,19 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.postService = void 0;
+exports.PostService = void 0;
+const Post_1 = require("../models/Post");
 const mongodb_1 = require("mongodb");
-const postRespository_1 = require("../repositories/postRespository");
+const Comment_1 = require("../models/Comment");
 const resultCode_1 = require("../helpers/resultCode");
-const blogQueryRepository_1 = require("../queryRepositories/blogQueryRepository");
-exports.postService = {
+class PostService {
+    constructor(blogQueryRepository, postRepository) {
+        this.blogQueryRepository = blogQueryRepository;
+        this.postRepository = postRepository;
+    }
     addPost(post) {
         return __awaiter(this, void 0, void 0, function* () {
-            const blog = yield blogQueryRepository_1.blogQueryRepository.getBlogById(post.blogId);
+            const blog = yield this.blogQueryRepository.getBlogById(post.blogId);
             if (!blog) {
                 return {
                     code: resultCode_1.ResultCode.NotFound,
@@ -25,52 +29,37 @@ exports.postService = {
                     errorMessage: 'incorrect id'
                 };
             }
-            const newPost = {
-                id: new mongodb_1.ObjectId().toString(),
-                title: post.title,
-                shortDescription: post.shortDescription,
-                content: post.content,
-                blogId: blog.id,
-                blogName: blog.name,
-                createdAt: new Date().toISOString()
-            };
+            const newPost = new Post_1.Post(new mongodb_1.ObjectId().toString(), post.title, post.shortDescription, post.content, blog.id, blog.name, new Date().toISOString());
             const result = Object.assign({}, newPost);
-            yield postRespository_1.postRepository.addPost(newPost);
+            yield this.postRepository.addPost(newPost);
             return {
                 code: resultCode_1.ResultCode.Success,
                 data: result,
                 errorMessage: 'OK'
             };
         });
-    },
+    }
     updatePostByid(id, newPost) {
         return __awaiter(this, void 0, void 0, function* () {
-            return yield postRespository_1.postRepository.updatePostByid(id, newPost);
-        });
-    },
-    deletePostById(id) {
-        return __awaiter(this, void 0, void 0, function* () {
-            return yield postRespository_1.postRepository.deletePostById(id);
-        });
-    },
-    testingDeleteAllPosts() {
-        return __awaiter(this, void 0, void 0, function* () {
-            postRespository_1.postRepository.testingDeleteAllPosts();
-        });
-    },
-    createComment(user, content, postId) {
-        return __awaiter(this, void 0, void 0, function* () {
-            const comment = {
-                id: new mongodb_1.ObjectId().toString(),
-                content: content,
-                commentatorInfo: {
-                    userId: user.id,
-                    userLogin: user.login
-                },
-                createdAt: new Date().toISOString(),
-                postId: postId
-            };
-            return yield postRespository_1.postRepository.createComment(comment);
+            return yield this.postRepository.updatePostByid(id, newPost);
         });
     }
-};
+    deletePostById(id) {
+        return __awaiter(this, void 0, void 0, function* () {
+            return yield this.postRepository.deletePostById(id);
+        });
+    }
+    testingDeleteAllPosts() {
+        return __awaiter(this, void 0, void 0, function* () {
+            this.postRepository.testingDeleteAllPosts();
+        });
+    }
+    createComment(user, content, postId) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const comment = new Comment_1.Comment(new mongodb_1.ObjectId().toString(), content, { userId: user.id, userLogin: user.login }, new Date().toISOString(), postId, { likesCount: 0, dislikesCount: 0 });
+            const result = yield this.postRepository.createComment(comment);
+            return Object.assign(Object.assign({}, comment), { likesInfo: Object.assign(Object.assign({}, comment.likesInfo), { myStatus: 'None' }) });
+        });
+    }
+}
+exports.PostService = PostService;

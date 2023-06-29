@@ -9,10 +9,10 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.blogRepository = void 0;
+exports.BlogRepository = void 0;
 //import { blogsCollection } from './db'
 const Blog_1 = require("../models/Blog");
-exports.blogRepository = {
+class BlogRepository {
     addBlog(blog) {
         return __awaiter(this, void 0, void 0, function* () {
             // TODO: return
@@ -24,22 +24,23 @@ exports.blogRepository = {
                 return false;
             }
         });
-    },
+    }
     updateBlogById(id, newBlog) {
         return __awaiter(this, void 0, void 0, function* () {
             const result = yield Blog_1.BlogModel.updateOne({ id: id }, { newBlog });
             return result.matchedCount === 1;
         });
-    },
+    }
     deleteBlogById(id) {
         return __awaiter(this, void 0, void 0, function* () {
             const result = yield Blog_1.BlogModel.deleteOne({ id: id });
             return result.deletedCount === 1;
         });
-    },
+    }
     testingDeleteAllBlogs() {
         return __awaiter(this, void 0, void 0, function* () {
             yield Blog_1.BlogModel.deleteMany({});
         });
     }
-};
+}
+exports.BlogRepository = BlogRepository;

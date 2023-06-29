@@ -3,9 +3,22 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.UserModel = exports.UserSchema = void 0;
+exports.UserModel = exports.User = void 0;
 const mongoose_1 = __importDefault(require("mongoose"));
-exports.UserSchema = new mongoose_1.default.Schema({
+class User {
+    constructor(id, login, password, passwordSalt, email, createdAt, confirmationEmail, confirmationPassword) {
+        this.id = id;
+        this.login = login;
+        this.password = password;
+        this.passwordSalt = passwordSalt;
+        this.email = email;
+        this.createdAt = createdAt;
+        this.confirmationEmail = confirmationEmail;
+        this.confirmationPassword = confirmationPassword;
+    }
+}
+exports.User = User;
+const UserSchema = new mongoose_1.default.Schema({
     id: { type: String, require: true },
     login: { type: String, require: true },
     password: { type: String, require: true },
@@ -22,4 +35,5 @@ exports.UserSchema = new mongoose_1.default.Schema({
         expirationDate: { type: Date, require: true },
     }
 });
-exports.UserModel = mongoose_1.default.model('Users', exports.UserSchema);
+exports.UserModel = mongoose_1.default.model('Users', UserSchema);
+// export const UserModel = getModelForClass(User)

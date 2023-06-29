@@ -1,8 +1,9 @@
 import request from 'supertest'
 import { app } from '../src/setting'
 import { HttpStatusCode } from '../src/helpers/httpStatusCode'
-import { userQueryRepository } from '../src/queryRepositories/userQuertyRepository'
+import { UserQueryRepository } from '../src/queryRepositories/userQuertyRepository'
 import mongoose from 'mongoose'
+import { userQueyRepository } from '../src/composition-root'
 
 const post = {
     "title": "zxc",
@@ -79,13 +80,13 @@ describe('/comments', () => {
     it('+POST create superadmin user with correct data', async () => {
         const response = await request(app).post('/users').send(sueradminUserCorrect).set('Authorization', 'Basic YWRtaW46cXdlcnR5').expect(HttpStatusCode.CREATED_201)
         const { email } = response.body
-        const createdUser = await userQueryRepository.getUserByEmail(email)
+        const createdUser = await userQueyRepository.getUserByEmail(email)
         expect(createdUser?.id).toEqual(response.body.id)
     })
     it('+POST create superadmin user with correct data 2', async () => {
         const response = await request(app).post('/users').send(sueradmin2UserCorrect).set('Authorization', 'Basic YWRtaW46cXdlcnR5').expect(HttpStatusCode.CREATED_201)
         const { email } = response.body
-        const createdUser = await userQueryRepository.getUserByEmail(email)
+        const createdUser = await userQueyRepository.getUserByEmail(email)
         expect(createdUser?.id).toEqual(response.body.id)
     })
     let accToken = '' 

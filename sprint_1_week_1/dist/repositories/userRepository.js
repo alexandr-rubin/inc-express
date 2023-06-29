@@ -9,11 +9,11 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.userRepository = void 0;
+exports.UserRepository = void 0;
 //import { usersCollection } from './db'
 const User_1 = require("../models/User");
 const date_fns_1 = require("date-fns");
-exports.userRepository = {
+class UserRepository {
     addUser(user) {
         return __awaiter(this, void 0, void 0, function* () {
             try {
@@ -24,40 +24,41 @@ exports.userRepository = {
                 return false;
             }
         });
-    },
+    }
     deleteUserById(id) {
         return __awaiter(this, void 0, void 0, function* () {
             const result = yield User_1.UserModel.deleteOne({ id: id });
             return result.deletedCount === 1;
         });
-    },
+    }
     testingDeleteAllUsers() {
         return __awaiter(this, void 0, void 0, function* () {
             yield User_1.UserModel.deleteMany({});
         });
-    },
+    }
     updateConfirmation(id) {
         return __awaiter(this, void 0, void 0, function* () {
             let result = yield User_1.UserModel.updateOne({ id: id }, { $set: { 'confirmationEmail.isConfirmed': true } });
             return result.modifiedCount === 1;
         });
-    },
+    }
     updateConfirmationCode(id, code) {
         return __awaiter(this, void 0, void 0, function* () {
             let result = yield User_1.UserModel.updateOne({ id: id }, { $set: { 'confirmationEmail.confirmationCode': code, 'confirmationEmail.expirationDate': (0, date_fns_1.add)(new Date(), { hours: 1, minutes: 3 }) } });
             return result.modifiedCount === 1;
         });
-    },
+    }
     updateconfirmationPasswordData(email, code, expirationDate) {
         return __awaiter(this, void 0, void 0, function* () {
             let result = yield User_1.UserModel.updateOne({ email: email }, { $set: { 'confirmationPassword.confirmationCode': code, 'confirmationPassword.expirationDate': expirationDate } });
             return result.modifiedCount === 1;
         });
-    },
+    }
     updatePassword(password, salt, code) {
         return __awaiter(this, void 0, void 0, function* () {
             const result = yield User_1.UserModel.updateOne({ 'confirmationPassword.confirmationCode': code }, { $set: { password: password, passwordSalt: salt } });
             return result.modifiedCount === 1;
         });
     }
-};
+}
+exports.UserRepository = UserRepository;

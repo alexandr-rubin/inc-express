@@ -9,11 +9,14 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.postRepository = void 0;
+exports.PostRepository = void 0;
 const Post_1 = require("../models/Post");
 const Comment_1 = require("../models/Comment");
 const postQueryRepository_1 = require("../queryRepositories/postQueryRepository");
-exports.postRepository = {
+class PostRepository {
+    constructor() {
+        this.postQueryRepository = new postQueryRepository_1.PostQueryRepository();
+    }
     addPost(post) {
         return __awaiter(this, void 0, void 0, function* () {
             // TODO: return
@@ -25,27 +28,27 @@ exports.postRepository = {
                 return false;
             }
         });
-    },
+    }
     updatePostByid(id, newPost) {
         return __awaiter(this, void 0, void 0, function* () {
             const post = yield Post_1.PostModel.updateOne(Object.assign(Object.assign({}, newPost), { id: id }));
             return post.acknowledged;
         });
-    },
+    }
     deletePostById(id) {
         return __awaiter(this, void 0, void 0, function* () {
             const result = yield Post_1.PostModel.deleteOne({ id: id });
             return result.deletedCount === 1;
         });
-    },
+    }
     testingDeleteAllPosts() {
         return __awaiter(this, void 0, void 0, function* () {
             yield Post_1.PostModel.deleteMany({});
         });
-    },
+    }
     createComment(comment) {
         return __awaiter(this, void 0, void 0, function* () {
-            const post = yield postQueryRepository_1.postQueryRepository.getPostById(comment.postId);
+            const post = yield this.postQueryRepository.getPostById(comment.postId);
             if (!post) {
                 return null;
             }
@@ -59,4 +62,5 @@ exports.postRepository = {
             return result;
         });
     }
-};
+}
+exports.PostRepository = PostRepository;

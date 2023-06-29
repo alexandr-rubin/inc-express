@@ -12,61 +12,55 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.authorizationService = void 0;
-const authorizationRepository_1 = require("../repositories/authorizationRepository");
+exports.AuthorizationService = void 0;
+const User_1 = require("../models/User");
 const uuid_1 = require("uuid");
 const date_fns_1 = require("date-fns");
 const bcrypt_1 = __importDefault(require("bcrypt"));
-const userService_1 = require("./userService");
-const userRepository_1 = require("../repositories/userRepository");
-const emailService_1 = require("./emailService");
 const mongodb_1 = require("mongodb");
-const userQuertyRepository_1 = require("../queryRepositories/userQuertyRepository");
-exports.authorizationService = {
+class AuthorizationService {
+    constructor(emailService, userService, authorizationRepository, userRepository, userQueryRepository) {
+        this.emailService = emailService;
+        this.userService = userService;
+        this.authorizationRepository = authorizationRepository;
+        this.userRepository = userRepository;
+        this.userQueryRepository = userQueryRepository;
+    }
     login(body) {
         return __awaiter(this, void 0, void 0, function* () {
             const login = {
                 loginOrEmail: body.loginOrEmail,
                 password: body.password
             };
-            return authorizationRepository_1.authorizationRepository.login(login);
+            return this.authorizationRepository.login(login);
         });
-    },
+    }
     createUser(user) {
         return __awaiter(this, void 0, void 0, function* () {
             const passSalt = yield bcrypt_1.default.genSalt(10);
-            const passwordHash = yield userService_1.userService._generateHash(user.password, passSalt);
-            const newUser = {
-                id: new mongodb_1.ObjectId().toString(),
-                login: user.login,
-                password: passwordHash,
-                passwordSalt: passSalt,
-                email: user.email,
-                createdAt: new Date().toISOString(),
-                confirmationEmail: {
-                    confirmationCode: (0, uuid_1.v4)(),
-                    expirationDate: (0, date_fns_1.add)(new Date(), {
-                        hours: 1,
-                        minutes: 3
-                    }),
-                    isConfirmed: false
-                },
-                confirmationPassword: {
-                    confirmationCode: (0, uuid_1.v4)(),
-                    expirationDate: (0, date_fns_1.add)(new Date(), {
-                        hours: 1,
-                        minutes: 3
-                    })
-                }
-            };
-            const createResult = yield userRepository_1.userRepository.addUser(newUser);
-            yield emailService_1.emailService.sendRegistrationConfirmationEmail(newUser.email, newUser.confirmationEmail.confirmationCode);
+            const passwordHash = yield this.userService._generateHash(user.password, passSalt);
+            const newUser = new User_1.User(new mongodb_1.ObjectId().toString(), user.login, passwordHash, passSalt, user.email, new Date().toISOString(), {
+                confirmationCode: (0, uuid_1.v4)(),
+                expirationDate: (0, date_fns_1.add)(new Date(), {
+                    hours: 1,
+                    minutes: 3
+                }),
+                isConfirmed: false
+            }, {
+                confirmationCode: (0, uuid_1.v4)(),
+                expirationDate: (0, date_fns_1.add)(new Date(), {
+                    hours: 1,
+                    minutes: 3
+                })
+            });
+            const createResult = yield this.userRepository.addUser(newUser);
+            yield this.emailService.sendRegistrationConfirmationEmail(newUser.email, newUser.confirmationEmail.confirmationCode);
             return createResult;
         });
-    },
+    }
     confrmEmail(code) {
         return __awaiter(this, void 0, void 0, function* () {
-            const user = yield userQuertyRepository_1.userQueryRepository.findUserByConfirmationCode(code);
+            const user = yield this.userQueryRepository.findUserByConfirmationCode(code);
             if (!user)
                 return false;
             if (user.confirmationEmail.isConfirmed)
@@ -74,13 +68,13 @@ exports.authorizationService = {
             if (user.confirmationEmail.expirationDate < new Date()) {
                 return false;
             }
-            const isUpdated = yield userRepository_1.userRepository.updateConfirmation(user.id);
+            const isUpdated = yield this.userRepository.updateConfirmation(user.id);
             return isUpdated;
         });
-    },
+    }
     resendEmail(email) {
         return __awaiter(this, void 0, void 0, function* () {
-            const user = yield userQuertyRepository_1.userQueryRepository.getUserByEmail(email);
+            const user = yield this.userQueryRepository.getUserByEmail(email);
             if (!user)
                 return false;
             if (user.confirmationEmail.isConfirmed === false)
@@ -90,17 +84,17 @@ exports.authorizationService = {
             }
             console.log(user);
             const code = (0, uuid_1.v4)();
-            const isUpdated = yield userRepository_1.userRepository.updateConfirmationCode(user.id, code);
+            const isUpdated = yield this.userRepository.updateConfirmationCode(user.id, code);
             if (!isUpdated) {
                 return false;
             }
-            yield emailService_1.emailService.sendRegistrationConfirmationEmail(email, code);
+            yield this.emailService.sendRegistrationConfirmationEmail(email, code);
             return true;
         });
-    },
+    }
     recoverPassword(email) {
         return __awaiter(this, void 0, void 0, function* () {
-            const user = yield userQuertyRepository_1.userQueryRepository.getUserByEmail(email);
+            const user = yield this.userQueryRepository.getUserByEmail(email);
             if (!user) {
                 return null;
             }
@@ -109,23 +103,24 @@ exports.authorizationService = {
                 hours: 1,
                 minutes: 3
             });
-            const isUpdated = yield userRepository_1.userRepository.updateconfirmationPasswordData(email, code, expirationDate);
+            const isUpdated = yield this.userRepository.updateconfirmationPasswordData(email, code, expirationDate);
             if (!isUpdated) {
                 return false;
             }
-            yield emailService_1.emailService.sendPasswordRecoverEmail(email, code);
+            yield this.emailService.sendPasswordRecoverEmail(email, code);
             return true;
         });
-    },
+    }
     updatePassword(password, code) {
         return __awaiter(this, void 0, void 0, function* () {
             const passSalt = yield bcrypt_1.default.genSalt(10);
-            const passwordHash = yield userService_1.userService._generateHash(password, passSalt);
-            const isUpdated = yield userRepository_1.userRepository.updatePassword(passwordHash, passSalt, code);
+            const passwordHash = yield this.userService._generateHash(password, passSalt);
+            const isUpdated = yield this.userRepository.updatePassword(passwordHash, passSalt, code);
             if (!isUpdated) {
                 return false;
             }
             return true;
         });
     }
-};
+}
+exports.AuthorizationService = AuthorizationService;

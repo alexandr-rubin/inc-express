@@ -12,10 +12,11 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.validateRecoveryPassword = void 0;
 const express_validator_1 = require("express-validator");
 const userQuertyRepository_1 = require("../queryRepositories/userQuertyRepository");
+const userQueryRepositoryInst = new userQuertyRepository_1.UserQueryRepository();
 exports.validateRecoveryPassword = [
     (0, express_validator_1.body)('newPassword').notEmpty().isString().trim().isLength({ min: 6, max: 20 }),
     (0, express_validator_1.body)('recoveryCode').notEmpty().isString().custom((code) => __awaiter(void 0, void 0, void 0, function* () {
-        const user = yield userQuertyRepository_1.userQueryRepository.findUserByConfirmationPasswordCode(code);
+        const user = yield userQueryRepositoryInst.findUserByConfirmationPasswordCode(code);
         if (!user) {
             throw new Error('Error');
         }

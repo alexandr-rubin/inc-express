@@ -8,4 +8,4 @@ var ResultCode;
     ResultCode[ResultCode["ServerError"] = 2] = "ServerError";
     ResultCode[ResultCode["Forbidden"] = 3] = "Forbidden";
     ResultCode[ResultCode["NoContent"] = 4] = "NoContent";
-})(ResultCode = exports.ResultCode || (exports.ResultCode = {}));
+})(ResultCode || (exports.ResultCode = ResultCode = {}));
