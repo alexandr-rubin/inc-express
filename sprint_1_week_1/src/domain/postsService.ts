@@ -10,6 +10,7 @@ import { User } from '../models/User'
 import { Result } from '../models/Result'
 import { ResultCode } from '../helpers/resultCode'
 import { BlogQueryRepository } from '../queryRepositories/blogQueryRepository'
+import { LikeStatuses } from '../helpers/likeStatus'
 
 export class PostService {
     constructor(protected blogQueryRepository: BlogQueryRepository, protected postRepository: PostRepository){}
@@ -42,10 +43,19 @@ export class PostService {
     async testingDeleteAllPosts() {
         this.postRepository.testingDeleteAllPosts()
     }
-    async createComment(user: User, content: string, postId: string): Promise<CommentViewModel | null> {
-        const comment: Comment = new Comment(new ObjectId().toString(), content, {userId: user.id, userLogin: user.login}, new Date().toISOString(), postId,
+    async createComment(user: User, content: string, pId: string): Promise<CommentViewModel | null> {
+        const comment: Comment = new Comment(new ObjectId().toString(), content, {userId: user.id, userLogin: user.login}, new Date().toISOString(), pId,
         {likesCount: 0, dislikesCount: 0})
-        const result = await this.postRepository.createComment(comment)
-        return {...comment, likesInfo: {...comment.likesInfo, myStatus: 'None'}}
+        //fix
+        try{
+            await this.postRepository.createComment(comment)
+        }
+        catch{
+            return null
+        }
+
+        const {postId, ...result} = ({...comment, likesInfo: {...comment.likesInfo, myStatus: LikeStatuses.None}})
+
+        return result
     }
 }

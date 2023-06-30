@@ -1,5 +1,6 @@
 import mongoose from 'mongoose'
 import { WithId } from 'mongodb'
+import { LikeStatuses } from '../helpers/likeStatus'
 
 // export type Comment ={
 //     id: string,
@@ -14,7 +15,7 @@ import { WithId } from 'mongodb'
 
 export class CommentViewModel {
     constructor(public id: string, public content: string, public commentatorInfo: {userId: string, userLogin: string}, 
-        public createdAt: string, public postId: string, public likesInfo: {likesCount: number, dislikesCount: number, myStatus: string}){}
+        public createdAt: string, public likesInfo: {likesCount: number, dislikesCount: number, myStatus: String}){}
 }
 
 export class Comment {

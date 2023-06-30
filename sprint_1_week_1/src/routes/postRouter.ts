@@ -49,13 +49,13 @@ postsRouter.post('/:postId/comments', authMiddleware, validateComment, validatio
     if(comment === null){
         return res.sendStatus(HttpStatusCode.NOT_FOUND_404)
     }
-    const {postId, ...result} = comment
-    return res.status(HttpStatusCode.CREATED_201).send(result)
+    
+    return res.status(HttpStatusCode.CREATED_201).send(comment)
 })
 
 postsRouter.get('/:postId/comments', async (req: Request, res: Response) => {
     //fix
-    let userId = null
+    let userId = ''
     const auth = req.headers.authorization
     if(auth){
         const token = auth.split(' ')[1]
@@ -65,10 +65,6 @@ postsRouter.get('/:postId/comments', async (req: Request, res: Response) => {
     if(comments === null) {
         return res.status(HttpStatusCode.NOT_FOUND_404).send('Post not found')
     }
-    //fix
-    const newArray = comments.items.map(({ postId, ...rest }) => ({
-        ...rest
-    }))
-    const result = {...comments, items: newArray}
-    return res.status(HttpStatusCode.OK_200).send(result)
+    
+    return res.status(HttpStatusCode.OK_200).send(comments)
 })

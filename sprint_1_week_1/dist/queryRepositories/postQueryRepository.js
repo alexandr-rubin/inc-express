@@ -26,6 +26,7 @@ const Comment_1 = require("../models/Comment");
 const Post_1 = require("../models/Post");
 const pagination_1 = require("../helpers/pagination");
 const Like_1 = require("../models/Like");
+const likeStatus_1 = require("../helpers/likeStatus");
 class PostQueryRepository {
     getPosts(req) {
         return __awaiter(this, void 0, void 0, function* () {
@@ -57,22 +58,24 @@ class PostQueryRepository {
                 .sort({ [query.sortBy]: query.sortDirection === 'asc' ? 1 : -1 })
                 .skip(skip)
                 .limit(query.pageSize).lean();
-            //fix
-            //const newArray = comments.map(comment => ({...comment, likesInfo:{...comment.likesInfo, myStatus: 'None' }}))
-            const newArray = comments.map((_a) => {
-                var { _id } = _a, rest = __rest(_a, ["_id"]);
-                return (Object.assign(Object.assign({}, rest), { likesInfo: Object.assign(Object.assign({}, rest.likesInfo), { myStatus: 'None' }) }));
-            });
-            //fix
-            for (let i = 0; i < newArray.length; i++) {
-                const status = yield Like_1.LikeModel.findOne({ commentId: newArray[i].id, userId: userId });
+            const count = yield Comment_1.CommentModel.countDocuments({ postId: postId });
+            const result = (0, pagination_1.createPaginationResult)(count, query, comments);
+            return this.editCommentToViewModel(result, userId);
+        });
+    }
+    editCommentToViewModel(comment, userId) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const newArray = Object.assign(Object.assign({}, comment), { items: comment.items.map((_a) => {
+                    var { _id, postId } = _a, rest = __rest(_a, ["_id", "postId"]);
+                    return (Object.assign(Object.assign({}, rest), { likesInfo: Object.assign(Object.assign({}, rest.likesInfo), { myStatus: likeStatus_1.LikeStatuses.None.toString() }) }));
+                }) });
+            for (let i = 0; i < newArray.items.length; i++) {
+                const status = yield Like_1.LikeModel.findOne({ commentId: newArray.items[i].id, userId: userId });
                 if (status) {
-                    newArray[i].likesInfo.myStatus = status.likeStatus;
+                    newArray.items[i].likesInfo.myStatus = status.likeStatus;
                 }
             }
-            const count = yield Comment_1.CommentModel.countDocuments({ postId: postId });
-            const result = (0, pagination_1.createPaginationResult)(count, query, newArray);
-            return result;
+            return newArray;
         });
     }
 }

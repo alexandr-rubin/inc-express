@@ -35,7 +35,7 @@ commentsRouter.delete('/:id', authMiddleware, async (req: Request, res: Response
 
 commentsRouter.get('/:id', async (req: Request, res: Response) => {
     //wtf откуда токен
-    let userId = null
+    let userId = ''
     const auth = req.headers.authorization
     if(auth){
         const token = auth.split(' ')[1]

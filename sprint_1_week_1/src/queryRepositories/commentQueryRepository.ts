@@ -1,16 +1,15 @@
 //import { commentsCollection } from '../repositories/db'
+import { LikeStatuses } from '../helpers/likeStatus'
 import { CommentModel, CommentViewModel } from '../models/Comment'
 import { Comment } from '../models/Comment'
 import { LikeModel } from '../models/Like'
 
+
 export class CommentQueryRepository {
-    async getCommentById(id: string, userId: string | null) {
+    async getCommentById(id: string, userId: string) {
         //fix typization
-        let like = null
-        if(userId !== null) {
-            like = await LikeModel.findOne({commentId: id , userId: userId}).lean()
-        }
-        const likeStatus = like === null ? 'None' : like.likeStatus
+        const like = await LikeModel.findOne({commentId: id , userId: userId}).lean()
+        const likeStatus = like === null ? LikeStatuses.None : like.likeStatus
         const comment = await CommentModel.findOne({id: id}, {projection: {_id: false, postId: false}}).lean()
         if(comment){
             const result = {...comment, likesInfo: {...comment.likesInfo, myStatus: likeStatus}}  

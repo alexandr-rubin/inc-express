@@ -8,17 +8,6 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
-var __rest = (this && this.__rest) || function (s, e) {
-    var t = {};
-    for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p) && e.indexOf(p) < 0)
-        t[p] = s[p];
-    if (s != null && typeof Object.getOwnPropertySymbols === "function")
-        for (var i = 0, p = Object.getOwnPropertySymbols(s); i < p.length; i++) {
-            if (e.indexOf(p[i]) < 0 && Object.prototype.propertyIsEnumerable.call(s, p[i]))
-                t[p[i]] = s[p[i]];
-        }
-    return t;
-};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.postsRouter = void 0;
 const express_1 = require("express");
@@ -63,12 +52,11 @@ exports.postsRouter.post('/:postId/comments', jwtAuth_1.authMiddleware, Comment_
     if (comment === null) {
         return res.sendStatus(httpStatusCode_1.HttpStatusCode.NOT_FOUND_404);
     }
-    const { postId } = comment, result = __rest(comment, ["postId"]);
-    return res.status(httpStatusCode_1.HttpStatusCode.CREATED_201).send(result);
+    return res.status(httpStatusCode_1.HttpStatusCode.CREATED_201).send(comment);
 }));
 exports.postsRouter.get('/:postId/comments', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     //fix
-    let userId = null;
+    let userId = '';
     const auth = req.headers.authorization;
     if (auth) {
         const token = auth.split(' ')[1];
@@ -78,11 +66,5 @@ exports.postsRouter.get('/:postId/comments', (req, res) => __awaiter(void 0, voi
     if (comments === null) {
         return res.status(httpStatusCode_1.HttpStatusCode.NOT_FOUND_404).send('Post not found');
     }
-    //fix
-    const newArray = comments.items.map((_a) => {
-        var { postId } = _a, rest = __rest(_a, ["postId"]);
-        return (Object.assign({}, rest));
-    });
-    const result = Object.assign(Object.assign({}, comments), { items: newArray });
-    return res.status(httpStatusCode_1.HttpStatusCode.OK_200).send(result);
+    return res.status(httpStatusCode_1.HttpStatusCode.OK_200).send(comments);
 }));

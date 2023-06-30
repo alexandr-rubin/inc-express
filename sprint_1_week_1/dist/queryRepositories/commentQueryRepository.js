@@ -22,17 +22,15 @@ var __rest = (this && this.__rest) || function (s, e) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.CommentQueryRepository = void 0;
 //import { commentsCollection } from '../repositories/db'
+const likeStatus_1 = require("../helpers/likeStatus");
 const Comment_1 = require("../models/Comment");
 const Like_1 = require("../models/Like");
 class CommentQueryRepository {
     getCommentById(id, userId) {
         return __awaiter(this, void 0, void 0, function* () {
             //fix typization
-            let like = null;
-            if (userId !== null) {
-                like = yield Like_1.LikeModel.findOne({ commentId: id, userId: userId }).lean();
-            }
-            const likeStatus = like === null ? 'None' : like.likeStatus;
+            const like = yield Like_1.LikeModel.findOne({ commentId: id, userId: userId }).lean();
+            const likeStatus = like === null ? likeStatus_1.LikeStatuses.None : like.likeStatus;
             const comment = yield Comment_1.CommentModel.findOne({ id: id }, { projection: { _id: false, postId: false } }).lean();
             if (comment) {
                 const result = Object.assign(Object.assign({}, comment), { likesInfo: Object.assign(Object.assign({}, comment.likesInfo), { myStatus: likeStatus }) });

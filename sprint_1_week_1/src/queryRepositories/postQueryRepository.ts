@@ -1,12 +1,14 @@
 import { Post } from '../models/Post'
 // import { commentsCollection, postsCollection } from '../repositories/db'
-import { CommentModel } from '../models/Comment'
+import { CommentModel, CommentViewModel } from '../models/Comment'
 import { PostModel } from '../models/Post'
 import { Paginator } from '../models/Paginator'
 import { createPaginationQuery, createPaginationResult } from '../helpers/pagination'
 import { Comment } from '../models/Comment'
 import { Request } from 'express'
 import { Like, LikeModel } from '../models/Like'
+import { LikeStatuses } from '../helpers/likeStatus'
+import { WithId } from 'mongodb'
 
 export class PostQueryRepository {
     async getPosts(req: Request): Promise<Paginator<Post>> {
@@ -24,7 +26,7 @@ export class PostQueryRepository {
         const post = await PostModel.findOne({id: id}, {projection: {_id: false}})
         return post
     }
-    async getCommentsForSpecifiedPost(postId: string, req: Request, userId: string | null): Promise<Paginator<Comment> | null>{
+    async getCommentsForSpecifiedPost(postId: string, req: Request, userId: string): Promise<Paginator<CommentViewModel> | null>{
         const isFinded = await this.getPostById(postId)
         if(isFinded === null){
             return null
@@ -35,21 +37,23 @@ export class PostQueryRepository {
         .sort({[query.sortBy]: query.sortDirection === 'asc' ? 1 : -1})
         .skip(skip)
         .limit(query.pageSize).lean()
-        //fix
-        //const newArray = comments.map(comment => ({...comment, likesInfo:{...comment.likesInfo, myStatus: 'None' }}))
-        const newArray = comments.map(({ _id, ...rest }) => ({
+        const count = await CommentModel.countDocuments({postId: postId})
+        const result = createPaginationResult(count, query, comments)
+
+        return this.editCommentToViewModel(result, userId)
+    }
+
+    private async editCommentToViewModel(comment: Paginator<WithId<Comment>>, userId: string): Promise<Paginator<CommentViewModel>>  {
+        const newArray = {...comment, items: comment.items.map(({ _id, postId, ...rest }) => ({
             ...rest,
-            likesInfo: { ...rest.likesInfo, myStatus: 'None' }
-        }))
-        //fix
-        for(let i = 0; i < newArray.length; i++){
-            const status = await LikeModel.findOne({commentId: newArray[i].id, userId: userId})
+            likesInfo: { ...rest.likesInfo, myStatus: LikeStatuses.None.toString() }
+        }))}
+        for(let i = 0; i < newArray.items.length; i++){
+            const status = await LikeModel.findOne({commentId: newArray.items[i].id, userId: userId})
             if(status){
-                newArray[i].likesInfo.myStatus = status.likeStatus
+                newArray.items[i].likesInfo.myStatus = status.likeStatus
             }
         }
-        const count = await CommentModel.countDocuments({postId: postId})
-        const result = createPaginationResult(count, query, newArray)
-        return result
+        return newArray
     }
 }

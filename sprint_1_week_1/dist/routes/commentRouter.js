@@ -41,7 +41,7 @@ exports.commentsRouter.delete('/:id', jwtAuth_1.authMiddleware, (req, res) => __
 }));
 exports.commentsRouter.get('/:id', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     //wtf откуда токен
-    let userId = null;
+    let userId = '';
     const auth = req.headers.authorization;
     if (auth) {
         const token = auth.split(' ')[1];

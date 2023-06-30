@@ -16,12 +16,11 @@ const mongoose_1 = __importDefault(require("mongoose"));
 //     postId: string
 // }
 class CommentViewModel {
-    constructor(id, content, commentatorInfo, createdAt, postId, likesInfo) {
+    constructor(id, content, commentatorInfo, createdAt, likesInfo) {
         this.id = id;
         this.content = content;
         this.commentatorInfo = commentatorInfo;
         this.createdAt = createdAt;
-        this.postId = postId;
         this.likesInfo = likesInfo;
     }
 }
