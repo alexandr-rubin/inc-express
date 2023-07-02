@@ -2,7 +2,17 @@ import { Router, Request, Response } from "express"
 import { testingDeleteAllVideos } from "./video-router"
 import { HttpStatusCode } from "../helpers/httpStatusCode"
 import { AuthorizationRepository } from "../repositories/authorizationRepository"
-import { authorizationRepository, blogRepository, commentRepository, postRepository, userRepository } from "../composition-root"
+import { container } from "../composition-root"
+import { BlogRepository } from "../repositories/blogRespository"
+import { PostRepository } from "../repositories/postRespository"
+import { UserRepository } from "../repositories/userRepository"
+import { CommentRepository } from "../repositories/commentRepository"
+
+const blogRepository = container.resolve(BlogRepository)
+const postRepository = container.resolve(PostRepository)
+const userRepository = container.resolve(UserRepository)
+const commentRepository = container.resolve(CommentRepository)
+const authorizationRepository = container.resolve(AuthorizationRepository)
 
 export const testingRouter = Router({})
 

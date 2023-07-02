@@ -4,7 +4,9 @@ import { UserModel } from '../models/User'
 import { Paginator } from '../models/Paginator'
 import { createPaginationQuery, createPaginationResult } from '../helpers/pagination'
 import { Request } from 'express'
+import { injectable } from 'inversify'
 
+@injectable()
 export class UserQueryRepository {
     async getUsers(req: Request): Promise<Paginator<User>> {
         const query = createPaginationQuery(req)

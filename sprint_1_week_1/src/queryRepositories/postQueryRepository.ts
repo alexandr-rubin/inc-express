@@ -9,7 +9,9 @@ import { Request } from 'express'
 import { Like, LikeModel } from '../models/Like'
 import { LikeStatuses } from '../helpers/likeStatus'
 import { WithId } from 'mongodb'
+import { injectable } from 'inversify'
 
+@injectable()
 export class PostQueryRepository {
     async getPosts(req: Request): Promise<Paginator<Post>> {
         const query = createPaginationQuery(req)

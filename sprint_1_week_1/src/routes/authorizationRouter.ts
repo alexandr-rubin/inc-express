@@ -10,7 +10,12 @@ import { logAPIMiddleware } from "../middlewares/logAPI"
 import { validateConfirmationEmail } from "../validation/EmailResending"
 import { validateEmail } from "../validation/Email"
 import { validateRecoveryPassword } from "../validation/RecoveryPassword"
-import { authorizationService, jwtService } from "../composition-root"
+import { container } from "../composition-root"
+import { AuthorizationService } from "../domain/authorizationService"
+import { JWTService } from "../application/jwtService"
+
+const authorizationService = container.resolve(AuthorizationService)
+const jwtService = container.resolve(JWTService)
 
 export const authorizationRouterRouter = Router({})
 

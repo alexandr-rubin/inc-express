@@ -5,7 +5,9 @@ import { DeviceModel } from '../models/Device'
 import { UserService } from '../domain/userService'
 import { User } from '../models/User'
 import { Device } from '../models/Device'
+import { injectable } from 'inversify'
 
+@injectable()
 export class AuthorizationRepository {
     constructor(protected userService: UserService){}
     async login(login: Login): Promise<User | null> {

@@ -9,7 +9,9 @@ import { UserRepository } from "../repositories/userRepository"
 import { EmailService } from "./emailService"
 import { ObjectId } from "mongodb"
 import { UserQueryRepository } from "../queryRepositories/userQuertyRepository"
+import { injectable } from "inversify"
 
+@injectable()
 export class AuthorizationService {
     constructor(protected emailService: EmailService, protected userService: UserService, protected authorizationRepository: AuthorizationRepository,
         protected userRepository: UserRepository, protected userQueryRepository: UserQueryRepository){}

@@ -7,7 +7,9 @@ import { createPaginationQuery, createPaginationResult } from '../helpers/pagina
 import { PostModel } from '../models/Post'
 import { Post } from '../models/Post'
 import { Request } from 'express'
+import { injectable } from 'inversify'
 
+@injectable()
 export class BlogQueryRepository {
     async getBlogs(req: Request): Promise<Paginator<Blog>> {
         const query = createPaginationQuery(req)

@@ -1,10 +1,11 @@
 //import { commentsCollection } from '../repositories/db'
+import { injectable } from 'inversify'
 import { LikeStatuses } from '../helpers/likeStatus'
 import { CommentModel, CommentViewModel } from '../models/Comment'
 import { Comment } from '../models/Comment'
 import { LikeModel } from '../models/Like'
 
-
+@injectable()
 export class CommentQueryRepository {
     async getCommentById(id: string, userId: string) {
         //fix typization

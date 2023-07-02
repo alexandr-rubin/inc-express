@@ -1,3 +1,4 @@
+import "reflect-metadata";
 import { Router, Request, Response } from "express"
 import { validationErrorsHandler } from "../middlewares/validation-errors-handler"
 import { validatePost } from "../validation/Post"
@@ -7,7 +8,12 @@ import { validateComment } from "../validation/Comment"
 import { basicAuthMiddleware } from "../middlewares/basicAuth"
 import { PostQueryRepository } from "../queryRepositories/postQueryRepository"
 import { HttpStatusCode } from "../helpers/httpStatusCode"
-import { jwtService, postQueryRepository, postService } from "../composition-root"
+import { JWTService } from "../application/jwtService"
+import { container } from "../composition-root"
+
+const postQueryRepository = container.resolve(PostQueryRepository)
+const jwtService = container.resolve(JWTService)
+const postService = container.resolve(PostService)
 
 export const postsRouter = Router({})
 

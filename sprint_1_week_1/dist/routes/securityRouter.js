@@ -13,14 +13,18 @@ exports.securityRouter = void 0;
 const express_1 = require("express");
 const httpStatusCode_1 = require("../helpers/httpStatusCode");
 const verifyRefreshToken_1 = require("../middlewares/verifyRefreshToken");
+const securityQueryRepository_1 = require("../queryRepositories/securityQueryRepository");
+const jwtService_1 = require("../application/jwtService");
 const composition_root_1 = require("../composition-root");
+const securityQueryRepository = composition_root_1.container.resolve(securityQueryRepository_1.SecurityQueryRepository);
+const jwtService = composition_root_1.container.resolve(jwtService_1.JWTService);
 exports.securityRouter = (0, express_1.Router)({});
 exports.securityRouter.get('/devices', verifyRefreshToken_1.verifyRefreshTokenMiddleware, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     // почему без авторизации
-    return res.status(httpStatusCode_1.HttpStatusCode.OK_200).send(yield composition_root_1.securityQueryRepository.getDevicesForCurrentUser(req.cookies.refreshToken));
+    return res.status(httpStatusCode_1.HttpStatusCode.OK_200).send(yield securityQueryRepository.getDevicesForCurrentUser(req.cookies.refreshToken));
 }));
 exports.securityRouter.delete('/devices', verifyRefreshToken_1.verifyRefreshTokenMiddleware, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const isTerminated = yield composition_root_1.jwtService.terminateAllDeviceSessions(req.cookies.refreshToken);
+    const isTerminated = yield jwtService.terminateAllDeviceSessions(req.cookies.refreshToken);
     if (!isTerminated) {
         //какую ошибку
         return res.sendStatus(httpStatusCode_1.HttpStatusCode.BAD_REQUEST_400);
@@ -28,7 +32,7 @@ exports.securityRouter.delete('/devices', verifyRefreshToken_1.verifyRefreshToke
     return res.sendStatus(httpStatusCode_1.HttpStatusCode.NO_CONTENT_204);
 }));
 exports.securityRouter.delete('/devices/:deviceId', verifyRefreshToken_1.verifyRefreshTokenMiddleware, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const isTerminated = yield composition_root_1.jwtService.terminateSpecifiedDeviceSessions(req.params.deviceId, req.cookies.refreshToken);
+    const isTerminated = yield jwtService.terminateSpecifiedDeviceSessions(req.params.deviceId, req.cookies.refreshToken);
     if (isTerminated === false) {
         // принимать объект
         return res.sendStatus(httpStatusCode_1.HttpStatusCode.NOT_FOUND_404);

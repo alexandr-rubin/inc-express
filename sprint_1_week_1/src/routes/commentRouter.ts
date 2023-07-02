@@ -6,8 +6,13 @@ import { CommentService } from "../domain/commentService"
 import { ResultCode } from "../helpers/resultCode"
 import { CommentQueryRepository } from "../queryRepositories/commentQueryRepository"
 import { HttpStatusCode } from "../helpers/httpStatusCode"
-import { commentQueryRepository, commentService, jwtService } from "../composition-root"
 import { validateLike } from "../validation/Like"
+import { JWTService } from "../application/jwtService"
+import { container } from "../composition-root"
+
+const commentQueryRepository = container.resolve(CommentQueryRepository)
+const jwtService = container.resolve(JWTService)
+const commentService = container.resolve(CommentService)
 
 export const commentsRouter = Router({})
 

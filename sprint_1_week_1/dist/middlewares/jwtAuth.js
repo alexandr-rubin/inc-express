@@ -10,16 +10,18 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.authMiddleware = void 0;
+const jwtService_1 = require("../application/jwtService");
 const userQuertyRepository_1 = require("../queryRepositories/userQuertyRepository");
 const httpStatusCode_1 = require("../helpers/httpStatusCode");
 const composition_root_1 = require("../composition-root");
+const jwtService = composition_root_1.container.resolve(jwtService_1.JWTService);
 const authMiddleware = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     const userQueryRepositoryInst = new userQuertyRepository_1.UserQueryRepository();
     if (!req.headers.authorization) {
         return res.status(httpStatusCode_1.HttpStatusCode.UNAUTHORIZED_401).send('Not authorized');
     }
     const token = req.headers.authorization.split(' ')[1];
-    const userId = yield composition_root_1.jwtService.getUserIdByToken(token);
+    const userId = yield jwtService.getUserIdByToken(token);
     if (userId) {
         const user = (yield userQueryRepositoryInst.getUsers(req)).items.find(item => item.id === userId);
         req.user = user;

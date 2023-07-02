@@ -5,7 +5,9 @@ import { ObjectId } from 'mongodb'
 import { Comment } from '../models/Comment'
 import { User } from '../models/User'
 import { PostQueryRepository } from '../queryRepositories/postQueryRepository'
+import { injectable } from 'inversify'
 
+@injectable()
 export class PostRepository {
     private postQueryRepository: PostQueryRepository
     constructor(){

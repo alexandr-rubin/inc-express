@@ -4,7 +4,9 @@ import { BlogRepository } from '../repositories/blogRespository'
 import { Post } from '../models/Post'
 import { PostService } from './postsService'
 import { BlogQueryRepository } from '../queryRepositories/blogQueryRepository'
+import { injectable } from 'inversify'
 
+@injectable()
 export class BlogService {
     constructor(protected blogRepository: BlogRepository, protected blogQueryRepository: BlogQueryRepository, protected postService: PostService){}
     async addBlog(blog: Blog): Promise<Blog> {

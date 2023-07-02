@@ -1,8 +1,10 @@
+import { injectable } from "inversify"
 import { UserService } from "../domain/userService"
 import { HttpStatusCode } from "../helpers/httpStatusCode"
 import { UserQueryRepository } from "../queryRepositories/userQuertyRepository"
 import { Request, Response } from "express"
 
+@injectable()
 export class UserController {
     constructor(protected userService: UserService, protected userQueryRepositoryInst: UserQueryRepository){}
     async getUsers(req: Request, res: Response) {

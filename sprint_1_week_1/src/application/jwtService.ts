@@ -6,9 +6,11 @@ import { Device } from "../models/Device"
 import { CreateJWT } from "../models/CreateJWT"
 import { v4 as uuidv4 } from 'uuid'
 import { SecurityRepository } from "../repositories/securityRepository"
+import { injectable } from "inversify"
 
 const secretKey = process.env.JWT_SECRET_KEY || '123'
 
+@injectable()
 export class JWTService {
     constructor(protected authorizationRepository: AuthorizationRepository, protected securityRepository: SecurityRepository){}
     createJWT(user: User, deviceId: string, issuedAt: string): CreateJWT {

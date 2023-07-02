@@ -5,7 +5,9 @@ import { ResultCode } from '../helpers/resultCode'
 import { CommentQueryRepository } from '../queryRepositories/commentQueryRepository'
 import { Like, LikeModel } from '../models/Like'
 import { ObjectId } from 'mongodb'
+import { injectable } from 'inversify'
 
+@injectable()
 export class CommentRepository {
     constructor(protected commentQueryRepository: CommentQueryRepository){}
     async updateCommentById(id: string, content: string, userId: string): Promise<Result<boolean>> {

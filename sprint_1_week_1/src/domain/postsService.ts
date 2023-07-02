@@ -11,7 +11,9 @@ import { Result } from '../models/Result'
 import { ResultCode } from '../helpers/resultCode'
 import { BlogQueryRepository } from '../queryRepositories/blogQueryRepository'
 import { LikeStatuses } from '../helpers/likeStatus'
+import { injectable } from 'inversify'
 
+@injectable()
 export class PostService {
     constructor(protected blogQueryRepository: BlogQueryRepository, protected postRepository: PostRepository){}
     async addPost(post: Post): Promise<Result<Post>> {

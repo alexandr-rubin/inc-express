@@ -1,7 +1,9 @@
+import { injectable } from 'inversify'
 import { Blog } from '../models/Blog'
 //import { blogsCollection } from './db'
 import { BlogModel } from '../models/Blog'
 
+@injectable()
 export class  BlogRepository {
     async addBlog(blog: Blog): Promise<boolean> {
         // TODO: return

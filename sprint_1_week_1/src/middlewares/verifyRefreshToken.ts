@@ -2,8 +2,9 @@ import { NextFunction, Request, Response } from "express"
 import { JWTService } from "../application/jwtService"
 import { UserQueryRepository } from "../queryRepositories/userQuertyRepository"
 import { HttpStatusCode } from "../helpers/httpStatusCode"
-import { AuthorizationRepository } from "../repositories/authorizationRepository"
-import { jwtService } from "../composition-root"
+import { container } from "../composition-root"
+
+const jwtService = container.resolve(JWTService)
 
 export const verifyRefreshTokenMiddleware = async (req: Request, res: Response, next: NextFunction) => {
     const userQueryRepositoryInst = new UserQueryRepository()

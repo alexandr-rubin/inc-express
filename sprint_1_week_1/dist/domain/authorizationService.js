@@ -1,4 +1,13 @@
 "use strict";
+var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
+    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
+};
+var __metadata = (this && this.__metadata) || function (k, v) {
+    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
+};
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
     function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
     return new (P || (P = Promise))(function (resolve, reject) {
@@ -14,11 +23,17 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.AuthorizationService = void 0;
 const User_1 = require("../models/User");
+const authorizationRepository_1 = require("../repositories/authorizationRepository");
 const uuid_1 = require("uuid");
 const date_fns_1 = require("date-fns");
 const bcrypt_1 = __importDefault(require("bcrypt"));
+const userService_1 = require("./userService");
+const userRepository_1 = require("../repositories/userRepository");
+const emailService_1 = require("./emailService");
 const mongodb_1 = require("mongodb");
-class AuthorizationService {
+const userQuertyRepository_1 = require("../queryRepositories/userQuertyRepository");
+const inversify_1 = require("inversify");
+let AuthorizationService = exports.AuthorizationService = class AuthorizationService {
     constructor(emailService, userService, authorizationRepository, userRepository, userQueryRepository) {
         this.emailService = emailService;
         this.userService = userService;
@@ -122,5 +137,9 @@ class AuthorizationService {
             return true;
         });
     }
-}
-exports.AuthorizationService = AuthorizationService;
+};
+exports.AuthorizationService = AuthorizationService = __decorate([
+    (0, inversify_1.injectable)(),
+    __metadata("design:paramtypes", [emailService_1.EmailService, userService_1.UserService, authorizationRepository_1.AuthorizationRepository,
+        userRepository_1.UserRepository, userQuertyRepository_1.UserQueryRepository])
+], AuthorizationService);

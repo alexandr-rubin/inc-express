@@ -4,7 +4,9 @@ import { UserRepository } from '../repositories/userRepository'
 import bcrypt from 'bcrypt'
 import { v4 as uuidv4 } from 'uuid'
 import { add } from 'date-fns'
+import { injectable } from 'inversify'
 
+@injectable()
 export class UserService {
     constructor(protected userRepository: UserRepository){}
     async addUser(user: User): Promise<UserViewModel> {

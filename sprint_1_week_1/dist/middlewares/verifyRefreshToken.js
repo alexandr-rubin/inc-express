@@ -10,23 +10,25 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.verifyRefreshTokenMiddleware = void 0;
+const jwtService_1 = require("../application/jwtService");
 const userQuertyRepository_1 = require("../queryRepositories/userQuertyRepository");
 const httpStatusCode_1 = require("../helpers/httpStatusCode");
 const composition_root_1 = require("../composition-root");
+const jwtService = composition_root_1.container.resolve(jwtService_1.JWTService);
 const verifyRefreshTokenMiddleware = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     const userQueryRepositoryInst = new userQuertyRepository_1.UserQueryRepository();
     const token = req.cookies.refreshToken;
     if (!token) {
         return res.status(httpStatusCode_1.HttpStatusCode.UNAUTHORIZED_401).send('No refresh token');
     }
-    const device = yield composition_root_1.jwtService.getDeviceByToken(token);
-    const isCompare = yield composition_root_1.jwtService.compareTokenDate(token);
+    const device = yield jwtService.getDeviceByToken(token);
+    const isCompare = yield jwtService.compareTokenDate(token);
     if (!device || !device.isValid || !isCompare) {
         return res.status(httpStatusCode_1.HttpStatusCode.UNAUTHORIZED_401).send('Invalid device');
     }
-    const userId = yield composition_root_1.jwtService.getUserIdByToken(token);
+    const userId = yield jwtService.getUserIdByToken(token);
     if (userId === null) {
-        yield composition_root_1.jwtService.logoutDevice(token);
+        yield jwtService.logoutDevice(token);
         return res.status(httpStatusCode_1.HttpStatusCode.UNAUTHORIZED_401).send('Invalid user');
     }
     const user = yield userQueryRepositoryInst.getUserById(userId);

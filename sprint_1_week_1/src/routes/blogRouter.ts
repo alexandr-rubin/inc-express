@@ -6,7 +6,10 @@ import { validatePostForBlog } from "../validation/Post"
 import { basicAuthMiddleware } from "../middlewares/basicAuth"
 import { BlogQueryRepository } from "../queryRepositories/blogQueryRepository"
 import { HttpStatusCode } from "../helpers/httpStatusCode"
-import { blogQueryRepository, blogService } from "../composition-root"
+import { container } from "../composition-root"
+
+const blogQueryRepository = container.resolve(BlogQueryRepository)
+const blogService = container.resolve(BlogService)
 
 export const blogsRouter = Router({})
 

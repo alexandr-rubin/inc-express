@@ -3,7 +3,9 @@ import { Device } from '../models/Device'
 import { User } from '../models/User'
 //import { refreshTokensCollection } from '../repositories/db'
 import { DeviceModel } from '../models/Device'
+import { injectable } from 'inversify'
 
+@injectable()
 export class SecurityQueryRepository {
     constructor(protected jwtService: JWTService){}
     async getDevicesForCurrentUser(token: string) {

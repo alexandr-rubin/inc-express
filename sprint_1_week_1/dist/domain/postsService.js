@@ -1,4 +1,13 @@
 "use strict";
+var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
+    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
+};
+var __metadata = (this && this.__metadata) || function (k, v) {
+    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
+};
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
     function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
     return new (P || (P = Promise))(function (resolve, reject) {
@@ -23,10 +32,13 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.PostService = void 0;
 const Post_1 = require("../models/Post");
 const mongodb_1 = require("mongodb");
+const postRespository_1 = require("../repositories/postRespository");
 const Comment_1 = require("../models/Comment");
 const resultCode_1 = require("../helpers/resultCode");
+const blogQueryRepository_1 = require("../queryRepositories/blogQueryRepository");
 const likeStatus_1 = require("../helpers/likeStatus");
-class PostService {
+const inversify_1 = require("inversify");
+let PostService = exports.PostService = class PostService {
     constructor(blogQueryRepository, postRepository) {
         this.blogQueryRepository = blogQueryRepository;
         this.postRepository = postRepository;
@@ -80,5 +92,8 @@ class PostService {
             return result;
         });
     }
-}
-exports.PostService = PostService;
+};
+exports.PostService = PostService = __decorate([
+    (0, inversify_1.injectable)(),
+    __metadata("design:paramtypes", [blogQueryRepository_1.BlogQueryRepository, postRespository_1.PostRepository])
+], PostService);

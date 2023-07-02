@@ -1,7 +1,12 @@
 import { Router, Request, Response } from "express"
 import { HttpStatusCode } from "../helpers/httpStatusCode"
 import { verifyRefreshTokenMiddleware } from "../middlewares/verifyRefreshToken"
-import { jwtService, securityQueryRepository } from "../composition-root"
+import { SecurityQueryRepository } from "../queryRepositories/securityQueryRepository"
+import { JWTService } from "../application/jwtService"
+import { container } from "../composition-root"
+
+const securityQueryRepository = container.resolve(SecurityQueryRepository)
+const jwtService = container.resolve(JWTService)
 
 export const securityRouter = Router({})
 

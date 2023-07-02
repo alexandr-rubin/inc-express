@@ -1,8 +1,10 @@
+import { injectable } from 'inversify'
 import { User } from '../models/User'
 //import { usersCollection } from './db'
 import { UserModel } from '../models/User'
 import { add } from 'date-fns'  
 
+@injectable()
 export class UserRepository {
     async addUser(user: User): Promise<boolean> {
         try{

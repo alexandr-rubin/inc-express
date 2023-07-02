@@ -1,5 +1,7 @@
+import { injectable } from "inversify";
 import { createTransport, getTestMessageUrl } from "nodemailer";
 
+@injectable()
 export class EmailAdapter {
     async sendEmail(email: string, html: string, subject: string) {
         let transporter = createTransport({
