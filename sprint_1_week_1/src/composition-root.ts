@@ -19,6 +19,7 @@ import { CommentRepository } from "./repositories/commentRepository";
 import { PostRepository } from "./repositories/postRespository";
 import { SecurityRepository } from "./repositories/securityRepository";
 import { UserRepository } from "./repositories/userRepository";
+import { BlogController } from "./controllers/blogController";
 import { Container } from "inversify";
 
 // export const userRepository = new UserRepository()
@@ -54,6 +55,7 @@ container.bind(AuthorizationService).toSelf()
 container.bind(SecurityRepository).toSelf()
 container.bind(SecurityQueryRepository).toSelf()
 container.bind(JWTService).toSelf()
+container.bind(BlogController).toSelf()
 container.bind(BlogQueryRepository).toSelf()
 container.bind(BlogRepository).toSelf()
 container.bind(BlogService).toSelf()
