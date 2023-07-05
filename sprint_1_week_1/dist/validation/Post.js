@@ -12,13 +12,14 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.validatePostForBlog = exports.validatePost = void 0;
 const express_validator_1 = require("express-validator");
 const blogQueryRepository_1 = require("../queryRepositories/blogQueryRepository");
-const blogQueryRepositoryInst = new blogQueryRepository_1.BlogQueryRepository();
+const composition_root_1 = require("../composition-root");
+const blogQueryRepository = composition_root_1.container.resolve(blogQueryRepository_1.BlogQueryRepository);
 exports.validatePost = [
     (0, express_validator_1.body)('title').notEmpty().isString().trim().isLength({ min: 1, max: 30 }),
     (0, express_validator_1.body)('shortDescription').notEmpty().isString().trim().isLength({ min: 1, max: 100 }),
     (0, express_validator_1.body)('content').notEmpty().isString().trim().isLength({ min: 1, max: 1000 }),
     (0, express_validator_1.body)('blogId').notEmpty().isString().custom((id) => __awaiter(void 0, void 0, void 0, function* () {
-        const blog = yield blogQueryRepositoryInst.getBlogById(id);
+        const blog = yield blogQueryRepository.getBlogById(id);
         if (!blog) {
             throw new Error('Blog not found');
         }
