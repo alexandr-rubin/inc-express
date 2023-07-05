@@ -69,7 +69,7 @@ export class PostQueryRepository {
         return newArray
     }
 
-    private async editPostToViewModel(post: Paginator<WithId<Post>>, userId: string): Promise<Paginator<PostViewModel>>  {
+    public async editPostToViewModel(post: Paginator<WithId<Post>>, userId: string): Promise<Paginator<PostViewModel>>  {
         const newArray: Paginator<PostViewModel> = {...post, items: post.items.map(({...rest }) => ({
             ...rest,
             extendedLikesInfo: { ...rest.extendedLikesInfo, myStatus: LikeStatuses.None.toString(), newestLikes: [] }

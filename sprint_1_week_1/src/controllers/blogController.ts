@@ -8,10 +8,11 @@ import { BlogQueryRepository } from "../queryRepositories/blogQueryRepository"
 import { HttpStatusCode } from "../helpers/httpStatusCode"
 import { injectable } from "inversify"
 import { container } from "../composition-root"
+import { JWTService } from "../application/jwtService"
 
 @injectable()
 export class BlogController {
-    constructor(protected blogQueryRepository: BlogQueryRepository, protected blogService: BlogService){}
+    constructor(protected blogQueryRepository: BlogQueryRepository, protected blogService: BlogService, protected jwtService: JWTService){}
     async getBlogs(req: Request, res: Response) {
         return res.status(HttpStatusCode.OK_200).send(await this.blogQueryRepository.getBlogs(req))
     }
@@ -41,7 +42,13 @@ export class BlogController {
         return res.status(HttpStatusCode.NO_CONTENT_204).send('Blog deleted')
     }
     async getPostsForSpecBlog(req: Request, res: Response) {
-        const posts = await this.blogQueryRepository.getPostsForSpecifiedBlog(req.params.blogId,req)
+        let userId = ''
+        const auth = req.headers.authorization
+        if(auth){
+            const token = auth.split(' ')[1]
+            userId = await this.jwtService.getUserIdByToken(token)
+        }
+        const posts = await this.blogQueryRepository.getPostsForSpecifiedBlog(req.params.blogId,req, userId)
         if(posts === null) {
             return res.status(HttpStatusCode.NOT_FOUND_404).send('Blog not found')
         }

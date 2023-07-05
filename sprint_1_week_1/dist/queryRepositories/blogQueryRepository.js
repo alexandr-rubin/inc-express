@@ -5,6 +5,9 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
+var __metadata = (this && this.__metadata) || function (k, v) {
+    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
+};
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
     function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
     return new (P || (P = Promise))(function (resolve, reject) {
@@ -22,7 +25,11 @@ const pagination_1 = require("../helpers/pagination");
 //import { postsCollection } from '../repositories/db'
 const Post_1 = require("../models/Post");
 const inversify_1 = require("inversify");
+const postQueryRepository_1 = require("./postQueryRepository");
 let BlogQueryRepository = exports.BlogQueryRepository = class BlogQueryRepository {
+    constructor(postQueryRepository) {
+        this.postQueryRepository = postQueryRepository;
+    }
     getBlogs(req) {
         return __awaiter(this, void 0, void 0, function* () {
             const query = (0, pagination_1.createPaginationQuery)(req);
@@ -41,7 +48,7 @@ let BlogQueryRepository = exports.BlogQueryRepository = class BlogQueryRepositor
             return blog;
         });
     }
-    getPostsForSpecifiedBlog(blogId, req) {
+    getPostsForSpecifiedBlog(blogId, req, userId) {
         return __awaiter(this, void 0, void 0, function* () {
             const isFinded = (yield this.getBlogById(blogId)) === null;
             if (isFinded) {
@@ -49,16 +56,17 @@ let BlogQueryRepository = exports.BlogQueryRepository = class BlogQueryRepositor
             }
             const query = (0, pagination_1.createPaginationQuery)(req);
             const skip = (query.pageNumber - 1) * query.pageSize;
-            const posts = yield Post_1.PostModel.find(query.searchNameTerm === null ? { blogId: blogId } : { blogId: blogId, name: { $regex: query.searchNameTerm, $options: 'i' } }, { projection: { _id: false } })
+            const posts = yield Post_1.PostModel.find(query.searchNameTerm === null ? { blogId: blogId } : { blogId: blogId, name: { $regex: query.searchNameTerm, $options: 'i' } }).select('-_id')
                 .sort({ [query.sortBy]: query.sortDirection === 'asc' ? 1 : -1 })
                 .skip(skip)
                 .limit(query.pageSize).lean();
             const count = yield Post_1.PostModel.countDocuments({ blogId: blogId });
             const result = (0, pagination_1.createPaginationResult)(count, query, posts);
-            return result;
+            return yield this.postQueryRepository.editPostToViewModel(result, userId);
         });
     }
 };
 exports.BlogQueryRepository = BlogQueryRepository = __decorate([
-    (0, inversify_1.injectable)()
+    (0, inversify_1.injectable)(),
+    __metadata("design:paramtypes", [postQueryRepository_1.PostQueryRepository])
 ], BlogQueryRepository);
