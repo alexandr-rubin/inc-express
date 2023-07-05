@@ -53,8 +53,8 @@ let PostService = exports.PostService = class PostService {
                     errorMessage: 'incorrect id'
                 };
             }
-            const newPost = new Post_1.Post(new mongodb_1.ObjectId().toString(), post.title, post.shortDescription, post.content, blog.id, blog.name, new Date().toISOString());
-            const result = Object.assign({}, newPost);
+            const newPost = new Post_1.Post(new mongodb_1.ObjectId().toString(), post.title, post.shortDescription, post.content, blog.id, blog.name, new Date().toISOString(), { likesCount: 0, dislikesCount: 0 });
+            const result = Object.assign(Object.assign({}, newPost), { extendedLikesInfo: Object.assign(Object.assign({}, newPost.extendedLikesInfo), { myStatus: 'None', newestLikes: [ /*{ addedAt: '', login: '', userId: ''}*/] }) });
             yield this.postRepository.addPost(newPost);
             return {
                 code: resultCode_1.ResultCode.Success,
@@ -90,6 +90,11 @@ let PostService = exports.PostService = class PostService {
             }
             const _b = (Object.assign(Object.assign({}, comment), { likesInfo: Object.assign(Object.assign({}, comment.likesInfo), { myStatus: likeStatus_1.LikeStatuses.None }) })), { postId } = _b, result = __rest(_b, ["postId"]);
             return result;
+        });
+    }
+    updatePostLikeStatus(postId, likeStatus, userId, login) {
+        return __awaiter(this, void 0, void 0, function* () {
+            return yield this.postRepository.updatePostLikeStatus(postId, likeStatus, userId, login);
         });
     }
 };

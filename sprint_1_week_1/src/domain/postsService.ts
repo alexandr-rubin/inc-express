@@ -27,8 +27,9 @@ export class PostService {
             }
         }
 
-        const newPost: Post = new Post(new ObjectId().toString(), post.title, post.shortDescription, post.content, blog.id, blog.name, new Date().toISOString())
-        const result = {...newPost}
+        const newPost: Post = new Post(new ObjectId().toString(), post.title, post.shortDescription, post.content, blog.id, blog.name, new Date().toISOString(),
+        { likesCount: 0, dislikesCount: 0})
+        const result = {...newPost, extendedLikesInfo: {...newPost.extendedLikesInfo, myStatus: 'None', newestLikes: [/*{ addedAt: '', login: '', userId: ''}*/]}}
         await this.postRepository.addPost(newPost)
         return {
             code: ResultCode.Success,
@@ -59,5 +60,8 @@ export class PostService {
         const {postId, ...result} = ({...comment, likesInfo: {...comment.likesInfo, myStatus: LikeStatuses.None}})
 
         return result
+    }
+    async updatePostLikeStatus(postId: string, likeStatus: string, userId:string, login: string): Promise<boolean> {
+        return await this.postRepository.updatePostLikeStatus(postId, likeStatus, userId, login)
     }
 }

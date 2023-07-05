@@ -10,6 +10,7 @@ import { PostQueryRepository } from "../queryRepositories/postQueryRepository"
 import { HttpStatusCode } from "../helpers/httpStatusCode"
 import { JWTService } from "../application/jwtService"
 import { container } from "../composition-root"
+import { validateLike } from "../validation/Like";
 
 const postQueryRepository = container.resolve(PostQueryRepository)
 const jwtService = container.resolve(JWTService)
@@ -18,7 +19,13 @@ const postService = container.resolve(PostService)
 export const postsRouter = Router({})
 
 postsRouter.get('/', async (req: Request, res: Response) => {
-    res.status(HttpStatusCode.OK_200).send(await postQueryRepository.getPosts(req))
+    let userId = ''
+    const auth = req.headers.authorization
+    if(auth){
+        const token = auth.split(' ')[1]
+        userId = await jwtService.getUserIdByToken(token)
+    }
+    res.status(HttpStatusCode.OK_200).send(await postQueryRepository.getPosts(req, userId))
 })
 
 postsRouter.post('/', basicAuthMiddleware, validatePost, validationErrorsHandler, async (req: Request, res: Response) => {
@@ -27,11 +34,17 @@ postsRouter.post('/', basicAuthMiddleware, validatePost, validationErrorsHandler
 })
 
 postsRouter.get('/:id', async (req: Request, res: Response) => {
-    const blog = await postQueryRepository.getPostById(req.params.id)
-    if(!blog) {
+    let userId = ''
+    const auth = req.headers.authorization
+    if(auth){
+        const token = auth.split(' ')[1]
+        userId = await jwtService.getUserIdByToken(token)
+    }
+    const post = await postQueryRepository.getPostById(req.params.id, userId)
+    if(!post) {
         return res.status(HttpStatusCode.NOT_FOUND_404).send('Post not found')
     }
-    return res.status(HttpStatusCode.OK_200).send(blog)
+    return res.status(HttpStatusCode.OK_200).send(post)
 })
 
 postsRouter.put('/:id', basicAuthMiddleware, validatePost, validationErrorsHandler, async (req: Request, res: Response) => {
@@ -73,4 +86,12 @@ postsRouter.get('/:postId/comments', async (req: Request, res: Response) => {
     }
     
     return res.status(HttpStatusCode.OK_200).send(comments)
+})
+
+postsRouter.put('/:postId/like-status', authMiddleware, validateLike, validationErrorsHandler, async (req: Request, res: Response) => {
+    const result = await postService.updatePostLikeStatus(req.params.postId, req.body.likeStatus, req.user!.id, req.user!.login)
+    if(!result){
+        return res.sendStatus(HttpStatusCode.NOT_FOUND_404)
+    }
+    return res.sendStatus(HttpStatusCode.NO_CONTENT_204)
 })

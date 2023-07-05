@@ -35,27 +35,36 @@ const Like_1 = require("../models/Like");
 const likeStatus_1 = require("../helpers/likeStatus");
 const inversify_1 = require("inversify");
 let PostQueryRepository = exports.PostQueryRepository = class PostQueryRepository {
-    getPosts(req) {
+    getPosts(req, userId) {
         return __awaiter(this, void 0, void 0, function* () {
             const query = (0, pagination_1.createPaginationQuery)(req);
             const skip = (query.pageNumber - 1) * query.pageSize;
-            const posts = yield Post_1.PostModel.find(query.searchNameTerm === null ? {} : { name: { $regex: query.searchNameTerm, $options: 'i' } }, { projection: { _id: false } })
+            const posts = yield Post_1.PostModel.find(query.searchNameTerm === null ? {} : { name: { $regex: query.searchNameTerm, $options: 'i' } }).select('-_id')
                 .sort({ [query.sortBy]: query.sortDirection === 'asc' ? 1 : -1 })
                 .skip(skip).limit(query.pageSize).lean();
             const count = yield Post_1.PostModel.countDocuments(query.searchNameTerm === null ? {} : { name: { $regex: query.searchNameTerm, $options: 'i' } });
             const result = (0, pagination_1.createPaginationResult)(count, query, posts);
-            return result;
+            return yield this.editPostToViewModel(result, userId);
         });
     }
-    getPostById(id) {
+    getPostById(postId, userId) {
         return __awaiter(this, void 0, void 0, function* () {
-            const post = yield Post_1.PostModel.findOne({ id: id }, { projection: { _id: false } });
-            return post;
+            const like = yield Like_1.PostLikeModel.findOne({ postId: postId, userId: userId }).lean();
+            const likeStatus = like === null ? likeStatus_1.LikeStatuses.None : like.likeStatus;
+            const post = yield Post_1.PostModel.findOne({ id: postId }).select('-_id').lean();
+            if (post) {
+                const newestLikes = yield Like_1.PostLikeModel.find({ postId: postId, likeStatus: likeStatus_1.LikeStatuses.Like }).sort({ date: -1, login: -1 }).select('-_id -__v -id -postId -likeStatus').limit(3).lean();
+                const result = Object.assign(Object.assign({}, post), { extendedLikesInfo: Object.assign(Object.assign({}, post.extendedLikesInfo), { myStatus: likeStatus, newestLikes: newestLikes }) });
+                console.log(newestLikes);
+                // мб не над удалять _id здесь. удалено выше
+                return result;
+            }
+            return null;
         });
     }
     getCommentsForSpecifiedPost(postId, req, userId) {
         return __awaiter(this, void 0, void 0, function* () {
-            const isFinded = yield this.getPostById(postId);
+            const isFinded = yield this.getPostById(postId, userId);
             if (isFinded === null) {
                 return null;
             }
@@ -67,7 +76,7 @@ let PostQueryRepository = exports.PostQueryRepository = class PostQueryRepositor
                 .limit(query.pageSize).lean();
             const count = yield Comment_1.CommentModel.countDocuments({ postId: postId });
             const result = (0, pagination_1.createPaginationResult)(count, query, comments);
-            return this.editCommentToViewModel(result, userId);
+            return yield this.editCommentToViewModel(result, userId);
         });
     }
     editCommentToViewModel(comment, userId) {
@@ -77,9 +86,28 @@ let PostQueryRepository = exports.PostQueryRepository = class PostQueryRepositor
                     return (Object.assign(Object.assign({}, rest), { likesInfo: Object.assign(Object.assign({}, rest.likesInfo), { myStatus: likeStatus_1.LikeStatuses.None.toString() }) }));
                 }) });
             for (let i = 0; i < newArray.items.length; i++) {
-                const status = yield Like_1.LikeModel.findOne({ commentId: newArray.items[i].id, userId: userId });
+                const status = yield Like_1.CommentLikeModel.findOne({ commentId: newArray.items[i].id, userId: userId });
                 if (status) {
                     newArray.items[i].likesInfo.myStatus = status.likeStatus;
+                }
+            }
+            return newArray;
+        });
+    }
+    editPostToViewModel(post, userId) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const newArray = Object.assign(Object.assign({}, post), { items: post.items.map((_a) => {
+                    var rest = __rest(_a, []);
+                    return (Object.assign(Object.assign({}, rest), { extendedLikesInfo: Object.assign(Object.assign({}, rest.extendedLikesInfo), { myStatus: likeStatus_1.LikeStatuses.None.toString(), newestLikes: [] }) }));
+                }) });
+            for (let i = 0; i < newArray.items.length; i++) {
+                const newestLikes = yield Like_1.PostLikeModel.find({ postId: newArray.items[i].id, likeStatus: likeStatus_1.LikeStatuses.Like }).sort({ addedAt: -1 }).select('-_id -__v -id -postId -likeStatus').limit(3).lean();
+                if (newestLikes) {
+                    newArray.items[i].extendedLikesInfo.newestLikes = newestLikes;
+                }
+                const status = yield Like_1.PostLikeModel.findOne({ postId: newArray.items[i].id, userId: userId });
+                if (status) {
+                    newArray.items[i].extendedLikesInfo.myStatus = status.likeStatus;
                 }
             }
             return newArray;

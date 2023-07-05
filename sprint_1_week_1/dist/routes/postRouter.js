@@ -22,23 +22,36 @@ const postQueryRepository_1 = require("../queryRepositories/postQueryRepository"
 const httpStatusCode_1 = require("../helpers/httpStatusCode");
 const jwtService_1 = require("../application/jwtService");
 const composition_root_1 = require("../composition-root");
+const Like_1 = require("../validation/Like");
 const postQueryRepository = composition_root_1.container.resolve(postQueryRepository_1.PostQueryRepository);
 const jwtService = composition_root_1.container.resolve(jwtService_1.JWTService);
 const postService = composition_root_1.container.resolve(postsService_1.PostService);
 exports.postsRouter = (0, express_1.Router)({});
 exports.postsRouter.get('/', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    res.status(httpStatusCode_1.HttpStatusCode.OK_200).send(yield postQueryRepository.getPosts(req));
+    let userId = '';
+    const auth = req.headers.authorization;
+    if (auth) {
+        const token = auth.split(' ')[1];
+        userId = yield jwtService.getUserIdByToken(token);
+    }
+    res.status(httpStatusCode_1.HttpStatusCode.OK_200).send(yield postQueryRepository.getPosts(req, userId));
 }));
 exports.postsRouter.post('/', basicAuth_1.basicAuthMiddleware, Post_1.validatePost, validation_errors_handler_1.validationErrorsHandler, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const result = yield postService.addPost(req.body);
     return res.status(httpStatusCode_1.HttpStatusCode.CREATED_201).send(result.data);
 }));
 exports.postsRouter.get('/:id', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const blog = yield postQueryRepository.getPostById(req.params.id);
-    if (!blog) {
+    let userId = '';
+    const auth = req.headers.authorization;
+    if (auth) {
+        const token = auth.split(' ')[1];
+        userId = yield jwtService.getUserIdByToken(token);
+    }
+    const post = yield postQueryRepository.getPostById(req.params.id, userId);
+    if (!post) {
         return res.status(httpStatusCode_1.HttpStatusCode.NOT_FOUND_404).send('Post not found');
     }
-    return res.status(httpStatusCode_1.HttpStatusCode.OK_200).send(blog);
+    return res.status(httpStatusCode_1.HttpStatusCode.OK_200).send(post);
 }));
 exports.postsRouter.put('/:id', basicAuth_1.basicAuthMiddleware, Post_1.validatePost, validation_errors_handler_1.validationErrorsHandler, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const post = yield postService.updatePostByid(req.params.id, req.body);
@@ -74,4 +87,11 @@ exports.postsRouter.get('/:postId/comments', (req, res) => __awaiter(void 0, voi
         return res.status(httpStatusCode_1.HttpStatusCode.NOT_FOUND_404).send('Post not found');
     }
     return res.status(httpStatusCode_1.HttpStatusCode.OK_200).send(comments);
+}));
+exports.postsRouter.put('/:postId/like-status', jwtAuth_1.authMiddleware, Like_1.validateLike, validation_errors_handler_1.validationErrorsHandler, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const result = yield postService.updatePostLikeStatus(req.params.postId, req.body.likeStatus, req.user.id, req.user.login);
+    if (!result) {
+        return res.sendStatus(httpStatusCode_1.HttpStatusCode.NOT_FOUND_404);
+    }
+    return res.sendStatus(httpStatusCode_1.HttpStatusCode.NO_CONTENT_204);
 }));

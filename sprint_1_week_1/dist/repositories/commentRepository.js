@@ -86,9 +86,9 @@ let CommentRepository = exports.CommentRepository = class CommentRepository {
             if (!comment) {
                 return false;
             }
-            const like = yield Like_1.LikeModel.findOne({ commentId: commentId, userId: userId });
+            const like = yield Like_1.CommentLikeModel.findOne({ commentId: commentId, userId: userId });
             if (!like) {
-                const newLike = new Like_1.LikeModel({ id: new mongodb_1.ObjectId().toString(), commentId: commentId, userId: userId, likeStatus: likeStatus });
+                const newLike = new Like_1.CommentLikeModel({ id: new mongodb_1.ObjectId().toString(), commentId: commentId, userId: userId, likeStatus: likeStatus });
                 yield newLike.save();
                 if (likeStatus === 'Like') {
                     comment.likesInfo.likesCount += 1;

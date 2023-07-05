@@ -36,7 +36,7 @@ let CommentQueryRepository = exports.CommentQueryRepository = class CommentQuery
     getCommentById(id, userId) {
         return __awaiter(this, void 0, void 0, function* () {
             //fix typization
-            const like = yield Like_1.LikeModel.findOne({ commentId: id, userId: userId }).lean();
+            const like = yield Like_1.CommentLikeModel.findOne({ commentId: id, userId: userId }).lean();
             const likeStatus = like === null ? likeStatus_1.LikeStatuses.None : like.likeStatus;
             const comment = yield Comment_1.CommentModel.findOne({ id: id }, { projection: { _id: false, postId: false } }).lean();
             if (comment) {

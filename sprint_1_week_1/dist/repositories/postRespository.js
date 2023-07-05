@@ -21,8 +21,10 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.PostRepository = void 0;
 const Post_1 = require("../models/Post");
 const Comment_1 = require("../models/Comment");
+const mongodb_1 = require("mongodb");
 const postQueryRepository_1 = require("../queryRepositories/postQueryRepository");
 const inversify_1 = require("inversify");
+const Like_1 = require("../models/Like");
 let PostRepository = exports.PostRepository = class PostRepository {
     constructor() {
         this.postQueryRepository = new postQueryRepository_1.PostQueryRepository();
@@ -58,7 +60,8 @@ let PostRepository = exports.PostRepository = class PostRepository {
     }
     createComment(comment) {
         return __awaiter(this, void 0, void 0, function* () {
-            const post = yield this.postQueryRepository.getPostById(comment.postId);
+            //fix
+            const post = yield this.postQueryRepository.getPostById(comment.postId, '');
             if (!post) {
                 return null;
             }
@@ -70,6 +73,57 @@ let PostRepository = exports.PostRepository = class PostRepository {
                 return null;
             }
             return result;
+        });
+    }
+    updatePostLikeStatus(postId, likeStatus, userId, login) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const post = yield Post_1.PostModel.findOne({ id: postId });
+            if (!post) {
+                return false;
+            }
+            const like = yield Like_1.PostLikeModel.findOne({ postId: postId, userId: userId });
+            if (!like) {
+                const newLike = new Like_1.PostLikeModel({ id: new mongodb_1.ObjectId().toString(), postId: postId, userId: userId, login: login, addedAt: new Date().toISOString(), likeStatus: likeStatus });
+                yield newLike.save();
+                if (likeStatus === 'Like') {
+                    post.extendedLikesInfo.likesCount += 1;
+                }
+                else {
+                    post.extendedLikesInfo.dislikesCount += 1;
+                }
+                yield post.save();
+                return true;
+            }
+            if (like.likeStatus === likeStatus) {
+                return true;
+            }
+            if (likeStatus === 'None') {
+                if (like.likeStatus === 'Like') {
+                    post.extendedLikesInfo.likesCount -= 1;
+                }
+                else {
+                    post.extendedLikesInfo.dislikesCount -= 1;
+                }
+                like.likeStatus = likeStatus;
+                yield like.save();
+                yield post.save();
+                return true;
+            }
+            if (like.likeStatus !== likeStatus) {
+                like.likeStatus = likeStatus;
+                yield like.save();
+                if (likeStatus === 'Like') {
+                    post.extendedLikesInfo.likesCount += 1;
+                    post.extendedLikesInfo.dislikesCount -= 1;
+                }
+                else {
+                    post.extendedLikesInfo.likesCount -= 1;
+                    post.extendedLikesInfo.dislikesCount += 1;
+                }
+                yield post.save();
+                return true;
+            }
+            return true;
         });
     }
 };

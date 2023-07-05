@@ -3,7 +3,7 @@ import { Comment, CommentModel, CommentViewModel } from '../models/Comment'
 import { Result } from '../models/Result'
 import { ResultCode } from '../helpers/resultCode'
 import { CommentQueryRepository } from '../queryRepositories/commentQueryRepository'
-import { Like, LikeModel } from '../models/Like'
+import { CommentLike, CommentLikeModel } from '../models/Like'
 import { ObjectId } from 'mongodb'
 import { injectable } from 'inversify'
 
@@ -64,9 +64,9 @@ export class CommentRepository {
         if(!comment){
             return false
         }
-        const like = await LikeModel.findOne({commentId: commentId, userId: userId})
+        const like = await CommentLikeModel.findOne({commentId: commentId, userId: userId})
         if(!like){
-            const newLike = new LikeModel({id: new ObjectId().toString(), commentId: commentId, userId: userId, likeStatus: likeStatus})
+            const newLike = new CommentLikeModel({id: new ObjectId().toString(), commentId: commentId, userId: userId, likeStatus: likeStatus})
             await newLike.save()
             if(likeStatus === 'Like'){
                 comment.likesInfo.likesCount +=1

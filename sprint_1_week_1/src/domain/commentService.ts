@@ -1,6 +1,6 @@
 import { CommentRepository } from "../repositories/commentRepository"
 import { Result } from "../models/Result"
-import { Like, LikeModel, LikeSchema } from "../models/Like"
+import { CommentLike, CommentLikeModel, CommentLikeSchema } from "../models/Like"
 import { ObjectId } from "mongodb"
 import { injectable } from "inversify"
 
