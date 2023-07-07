@@ -11,9 +11,7 @@ import { post } from '@typegoose/typegoose'
 
 @injectable()
 export class PostRepository {
-    private postQueryRepository: PostQueryRepository
-    constructor(){
-        this.postQueryRepository = new PostQueryRepository()
+    constructor(protected postQueryRepository: PostQueryRepository){
     }
     async addPost(post: Post): Promise<boolean> {
         // TODO: return

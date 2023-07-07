@@ -26,8 +26,8 @@ const postQueryRepository_1 = require("../queryRepositories/postQueryRepository"
 const inversify_1 = require("inversify");
 const Like_1 = require("../models/Like");
 let PostRepository = exports.PostRepository = class PostRepository {
-    constructor() {
-        this.postQueryRepository = new postQueryRepository_1.PostQueryRepository();
+    constructor(postQueryRepository) {
+        this.postQueryRepository = postQueryRepository;
     }
     addPost(post) {
         return __awaiter(this, void 0, void 0, function* () {
@@ -129,5 +129,5 @@ let PostRepository = exports.PostRepository = class PostRepository {
 };
 exports.PostRepository = PostRepository = __decorate([
     (0, inversify_1.injectable)(),
-    __metadata("design:paramtypes", [])
+    __metadata("design:paramtypes", [postQueryRepository_1.PostQueryRepository])
 ], PostRepository);
